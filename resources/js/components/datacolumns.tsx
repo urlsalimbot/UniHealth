@@ -1,16 +1,7 @@
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Patient } from '@/types';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
 import { route } from 'ziggy-js';
 import { DataTableColumnHeader } from './datacolumnheader';
 
@@ -49,21 +40,16 @@ export const patientcolumns: ColumnDef<Patient>[] = [
             const patient = row.original;
 
             return (
-                <div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(patient.patient_id)}>Copy payment ID</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => router.get(route('patients.single', patient.patient_id))}>View patient</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                <div className="w-fit">
+                    <Button variant="default" className="p-2" onClick={() => router.get(route('patients.single', patient.patient_id))}>
+                        View
+                    </Button>
+                    <Button variant="outline" className="p-2" onClick={() => router.get(route('patients.edit', patient.patient_id))}>
+                        Edit
+                    </Button>
+                    <Button variant="destructive" className="p-2" onClick={() => router.delete(route('patients.destroy', patient.patient_id))}>
+                        Delete
+                    </Button>
                 </div>
             );
         },

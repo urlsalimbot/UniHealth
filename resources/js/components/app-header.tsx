@@ -13,18 +13,24 @@ import { dashboard, patients } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search, User } from 'lucide-react';
+import { route } from 'ziggy-js';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: route('dashboard'),
         icon: LayoutGrid,
     },
     {
         title: 'Patients',
-        href: patients(),
+        href: route('patients.index'),
+        icon: User,
+    },
+        {
+        title: 'Medication',
+        href: route('medications.index'),
         icon: User,
     },
 ];
@@ -100,7 +106,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </Sheet>
                     </div>
 
-                    <Link href={dashboard()} prefetch className="flex items-center space-x-2">
+                    <Link href={route('dashboard')} prefetch className="flex items-center space-x-2">
                         <AppLogo />
                     </Link>
 

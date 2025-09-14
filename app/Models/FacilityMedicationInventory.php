@@ -42,8 +42,7 @@ class FacilityMedicationInventory extends Model
         'last_counted_by',
         'expiry_alert_sent',
         'low_stock_alert_sent',
-        'TIMESTAMP',
-        'TIMESTAMP',
+        'created_at',
     ];
 
 

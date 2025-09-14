@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Medications extends Model
 {
@@ -12,6 +13,7 @@ class Medications extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = false; // migration only defines created_at
+    use hasFactory;
 
     protected $fillable = [
         'generic_name',

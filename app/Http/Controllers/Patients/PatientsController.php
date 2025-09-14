@@ -35,7 +35,7 @@ class PatientsController extends Controller
     }
 
 
-     public function create()
+    public function create()
     {
         return Inertia::render('patients/patient-create');
     }
@@ -52,8 +52,20 @@ class PatientsController extends Controller
     // Store a new patient
     public function store(Request $request)
     {
-        $patient = Patient::create($request->all());
-        return response()->json($patient, 201);
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'birth_date' => 'nullable|date',
+            'gender' => 'nullable|in:male,female,other', // adjust allowed values
+            'philhealth_id' => 'nullable|string|max:50|unique:patients,philhealth_id',
+        ]);
+
+        $patient = Patient::create($validated);
+
+        return response()->json([
+            'message' => 'Patient created successfully.',
+            'patient' => $patient,
+        ], 201);
     }
 
     // Update an existing patient

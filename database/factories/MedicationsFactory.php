@@ -3,12 +3,12 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Medication;
+use App\Models\Medications;
 use Illuminate\Support\Str;
 
-class MedicationFactory extends Factory
+class MedicationsFactory extends Factory
 {
-    protected $model = Medication::class;
+    protected $model = Medications::class;
 
     public function definition(): array
     {
