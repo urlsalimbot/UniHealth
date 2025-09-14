@@ -1,0 +1,26 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Medication;
+use Illuminate\Support\Str;
+
+class MedicationFactory extends Factory
+{
+    protected $model = Medication::class;
+
+    public function definition(): array
+    {
+        return [
+            'medication_id' => (string) Str::uuid(),
+            'generic_name' => $this->faker->name(),
+            'brand_names' => $this->faker->name(),
+            'strength' => $this->faker->word(),
+            'dosage_form' => $this->faker->word(),
+            'drug_class' => $this->faker->word(),
+            'controlled_substance' => $this->faker->boolean(),
+            'fda_registration' => $this->faker->word(),
+        ];
+    }
+}
