@@ -1,17 +1,17 @@
 import PatientForm from '@/components/patientform';
 import AppLayout from '@/layouts/app-layout';
+import patients from '@/routes/patients';
 import { type BreadcrumbItem } from '@/types';
 import { router, useForm } from '@inertiajs/react';
 import React from 'react';
-import { route } from 'ziggy-js'; // If using the @routes directive or a globally available `route` function
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Patients',
-        href: route('patients.index'),
+        href: patients.index.url(),
     },
     {
         title: 'Patient',
-        href: route('patients.create'),
+        href: patients.create.url(),
     },
 ];
 
@@ -24,7 +24,7 @@ export default function Create() {
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        router.post(route('patients.store'));
+        router.post(patients.store.url());
     }
 
     return (

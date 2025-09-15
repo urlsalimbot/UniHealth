@@ -1,19 +1,19 @@
 import PatientForm from '@/components/patientform';
 import AppLayout from '@/layouts/app-layout';
+import patients from '@/routes/patients';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { route } from 'ziggy-js'; // If using the @routes directive or a globally available `route` function
 
 export default function PatientSingleView() {
     const { patient } = usePage().props as any;
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Patients',
-            href: route('patients.index'),
+            href: patients.index.url(),
         },
         {
             title: patient.last_name, 
-            href: route('patients.single', patient.patient_id), 
+            href: patients.single.url(patient.patient_id), 
         },
     ];
 

@@ -14,13 +14,29 @@ class MedicationsController extends Controller
     /**
      * Display a listing of medications.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $medications = Medications::orderBy('created_at', 'desc')->paginate(10);
+        $query = Medications::query();
 
-        return Inertia::render('medications/index', [
-            'medications' => $medications,
+        // Filtering
+        if ($request->filled('generic_name')) {
+            $query->where('generic_name', 'like', '%' . $request->generic_name . '%');
+        }
+
+        // Sorting
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');    
+        $query->orderBy($sort, $direction);
+
+        // Paginate (server-side)
+        $medications = $query->paginate($request->get('per_page', 10))
+            ->appends($request->query());
+
+        return Inertia::render('medications/inventory-index', [
+            'medi' => $medications,
+            'filters' => $request->only(['generic_name', 'sort', 'direction', 'per_page']),
         ]);
+
     }
 
     /**
@@ -37,13 +53,13 @@ class MedicationsController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'generic_name'         => 'required|string|max:255',
-            'brand_names'          => 'nullable|string|max:255',
-            'strength'             => 'nullable|string|max:100',
-            'dosage_form'          => 'nullable|string|max:100',
-            'drug_class'           => 'nullable|string|max:100',
+            'generic_name' => 'required|string|max:255',
+            'brand_names' => 'nullable|string|max:255',
+            'strength' => 'nullable|string|max:100',
+            'dosage_form' => 'nullable|string|max:100',
+            'drug_class' => 'nullable|string|max:100',
             'controlled_substance' => 'nullable|boolean',
-            'fda_registration'     => 'nullable|string|max:100',
+            'fda_registration' => 'nullable|string|max:100',
         ]);
 
         Medications::create($validated);
@@ -55,11 +71,11 @@ class MedicationsController extends Controller
     /**
      * Show the form for editing the specified medication.
      */
-    public function edit(string $id)
+    public function edit(string $id)    
     {
         $medication = Medications::findOrFail($id);
 
-        return Inertia::render('medications/esdit', [
+        return Inertia::render('medications/edit', [
             'medication' => $medication,
         ]);
     }
@@ -72,13 +88,13 @@ class MedicationsController extends Controller
         $medication = Medications::findOrFail($id);
 
         $validated = $request->validate([
-            'generic_name'         => 'required|string|max:255',
-            'brand_names'          => 'nullable|string|max:255',
-            'strength'             => 'nullable|string|max:100',
-            'dosage_form'          => 'nullable|string|max:100',
-            'drug_class'           => 'nullable|string|max:100',
+            'generic_name' => 'required|string|max:255',
+            'brand_names' => 'nullable|string|max:255',
+            'strength' => 'nullable|string|max:100',
+            'dosage_form' => 'nullable|string|max:100',
+            'drug_class' => 'nullable|string|max:100',
             'controlled_substance' => 'nullable|boolean',
-            'fda_registration'     => 'nullable|string|max:100',
+            'fda_registration' => 'nullable|string|max:100',
         ]);
 
         $medication->update($validated);

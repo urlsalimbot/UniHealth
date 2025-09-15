@@ -9,29 +9,30 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
-import { dashboard, patients } from '@/routes';
+import { dashboard } from '@/routes';
+import medications from '@/routes/medications';
+import patients from '@/routes/patients';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search, User } from 'lucide-react';
-import { route } from 'ziggy-js';
+import { LayoutGrid, Menu, Pill, Search, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: route('dashboard'),
+        href: dashboard(),
         icon: LayoutGrid,
     },
     {
         title: 'Patients',
-        href: route('patients.index'),
+        href: patients.index.url(),
         icon: User,
     },
-        {
-        title: 'Medication',
-        href: route('medications.index'),
-        icon: User,
+    {
+        title: 'Inventory',
+        href: medications.index.url(),
+        icon: Pill,
     },
 ];
 
@@ -106,7 +107,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </Sheet>
                     </div>
 
-                    <Link href={route('dashboard')} prefetch className="flex items-center space-x-2">
+                    <Link href={dashboard()} prefetch className="flex items-center space-x-2">
                         <AppLogo />
                     </Link>
 

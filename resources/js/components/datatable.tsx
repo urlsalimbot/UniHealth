@@ -1,7 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { router } from '@inertiajs/react';
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import React from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
@@ -18,14 +19,22 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     paginator: LaravelPaginatorMeta;
     filters?: Record<string, any>;
+    label: string;
+    field: string;
     baseUrl: string;
 }
 
-export function DataTable<TData, TValue>({ columns, data, paginator, filters = {}, baseUrl }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, paginator, filters = {}, label, field, baseUrl }: DataTableProps<TData, TValue>) {
+    const [sorting, setSorting] = React.useState<SortingState>([]);
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
+        state: {
+            sorting,
+        },
     });
 
     const navigate = (params: Record<string, any>) => {
@@ -37,9 +46,9 @@ export function DataTable<TData, TValue>({ columns, data, paginator, filters = {
             {/* Filter */}
             <div className="flex items-center py-2">
                 <Input
-                    placeholder="Filter Last Name..."
-                    value={filters.last_name ?? ''}
-                    onChange={(e) => navigate({ last_name: e.target.value })}
+                    placeholder={`Filter ${label ?? field}`}
+                    value={filters[field] ?? ''}
+                    onChange={(e) => navigate({ [field]: e.target.value })}
                     className="max-w-sm"
                 />
             </div>

@@ -47,8 +47,6 @@
 
 <body class="font-sans antialiased">
     @inertia
-    @routes
-    <script src="{{ mix('js/app.js') }}"></script>
 </body>
 
-</html>
+</html> 
