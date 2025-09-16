@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Patient;
+use App\Models\Patients;
 
 class PatientsTableSeeder extends Seeder
 {
     public function run(): void
     {
-        Patient::factory()->count(10)->create();
+        Patients::factory()->count(10)->create();
     }
 }

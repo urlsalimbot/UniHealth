@@ -1,9 +1,9 @@
 import { DataTable } from '@/components/datatable';
 import { medicationscolumns } from '@/components/medicationscolumns';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import medications from '@/routes/medications';
 import { BreadcrumbItem, Medication } from '@/types';
-import { Button } from '@headlessui/react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [

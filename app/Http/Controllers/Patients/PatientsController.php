@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Patients;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Patient;
+use App\Models\Patients;
 use Inertia\Inertia;
 
 
@@ -12,7 +12,7 @@ class PatientsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Patient::query();
+        $query = Patients::query();
 
         // Filtering
         if ($request->filled('last_name')) {
@@ -43,7 +43,7 @@ class PatientsController extends Controller
     // Show a single patient
     public function show($id)
     {
-        $patient = Patient::findOrFail($id);
+        $patient = Patients::findOrFail($id);
         return Inertia::render("patients/patient-singleview", [
             'patient' => $patient,
         ]);
@@ -77,9 +77,12 @@ class PatientsController extends Controller
     }
 
     // Delete a patient
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        Patient::destroy($id);
-        return response()->json(null, 204);
+        $patient = Patients::findOrFail($id);
+        $patient->delete();
+
+        return redirect()->route('patients.index')
+            ->with('success', 'Medication deleted successfully.');
     }
 }
