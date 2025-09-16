@@ -1,4 +1,4 @@
-import { patientcolumns } from '@/components/patientcolumns';
+import { patientcolumns } from '@/components/columns-patients';
 import { DataTable } from '@/components/datatable';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';

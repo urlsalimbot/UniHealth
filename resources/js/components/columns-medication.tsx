@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import medications from '@/routes/medications';
+// import medications from '@/routes/medications';
 import { Medication } from '@/types';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
@@ -21,7 +21,7 @@ export const medicationscolumns: ColumnDef<Medication>[] = [
     {
         accessorKey: 'strength',
         header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="PhilHealth ID" />;
+            return <DataTableColumnHeader column={column} title="Strength" />;
         },
     },
     {
@@ -33,7 +33,7 @@ export const medicationscolumns: ColumnDef<Medication>[] = [
     {
         accessorKey: 'drug_class',
         header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="Drug C" />;
+            return <DataTableColumnHeader column={column} title="Drug Class" />;
         },
     },
     // {
@@ -60,12 +60,12 @@ export const medicationscolumns: ColumnDef<Medication>[] = [
                     {/* <Button variant="default" className="p-2" onClick={() => router.get(medication.view.url(patient.patient_id))}>
                         View
                     </Button> */}
-                    <Button variant="outline" className="p-2" onClick={() => router.get(medications.edit.url(medication.medication_id))}>
+                    {/* <Button variant="outline" className="p-2" onClick={() => router.get(medications.edit.url(medication.medication_id))}>
                         Edit
                     </Button>
                     <Button variant="destructive" className="p-2" onClick={() => router.delete(medications.destroy.url(medication.medication_id))}>
                         Delete
-                    </Button>
+                    </Button> */}
                 </div>
             );
         },

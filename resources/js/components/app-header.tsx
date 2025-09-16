@@ -10,13 +10,13 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
-import medications from '@/routes/medications';
 import patients from '@/routes/patients';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { LayoutGrid, Menu, Pill, Search, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import inventory from '@/routes/inventory';
 
 const mainNavItems: NavItem[] = [
     {
@@ -31,7 +31,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Inventory',
-        href: medications.index.url(),
+        href: inventory.index.url(),
         icon: Pill,
     },
 ];

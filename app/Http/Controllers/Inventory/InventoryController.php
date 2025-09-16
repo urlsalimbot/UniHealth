@@ -1,42 +1,97 @@
 <?php
 
-namespace App\Http\Controllers\Medications;
+namespace App\Http\Controllers\Inventory;
 
 
 use App\Http\Controllers\Controller;
 
 use App\Models\Medications;
+use App\Models\FacilityMedicationInventory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class MedicationsController extends Controller
+class InventoryController extends Controller
 {
     /**
      * Display a listing of medications.
      */
     public function index(Request $request)
     {
-        $query = Medications::query();
+        $perPage = $request->get('per_page', 10);
 
-        // Filtering
+        // -------------------------
+        // Medications Query
+        // -------------------------
+        $medicationsQuery = Medications::select([
+                'medication_id',
+                'generic_name',
+                'brand_names',
+                'strength',
+                'dosage_form',
+                'drug_class',
+                'created_at',
+            ]);
+
         if ($request->filled('generic_name')) {
-            $query->where('generic_name', 'like', '%' . $request->generic_name . '%');
+            $medicationsQuery->where('generic_name', 'like', '%' . $request->generic_name . '%');
         }
 
-        // Sorting
-        $sort = $request->get('sort', 'created_at');
-        $direction = $request->get('direction', 'desc');    
-        $query->orderBy($sort, $direction);
+        $medicationsSort = $request->get('medications_sort', 'created_at');
+        $medicationsDirection = $request->get('medications_direction', 'desc');
 
-        // Paginate (server-side)
-        $medications = $query->paginate($request->get('per_page', 10))
+        $medications = $medicationsQuery
+            ->orderBy($medicationsSort, $medicationsDirection)
+            ->paginate($perPage)
             ->appends($request->query());
 
-        return Inertia::render('medications/inventory-index', [
-            'medi' => $medications,
-            'filters' => $request->only(['generic_name', 'sort', 'direction', 'per_page']),
-        ]);
+        // -------------------------
+        // Inventory Query
+        // -------------------------
+        $inventoryQuery = FacilityMedicationInventory::with([
+            'medication:id,medication_id,generic_name,brand_names'
+        ])->select([
+                'inventory_id',
+                'facility_id',
+                'medication_id',
+                'current_stock',
+                'minimum_stock_level',
+                'maximum_stock_level',
+                'reorder_point',
+                'expiration_date',
+                'unit_cost',
+                'total_value',
+                'stock_status',
+                'created_at',
+            ]);
 
+        if ($request->filled('medication_id')) {
+            $inventoryQuery->where('medication_id', 'like', '%' . $request->medication_id . '%');
+        }
+
+        $inventorySort = $request->get('inventory_sort', 'created_at');
+        $inventoryDirection = $request->get('inventory_direction', 'desc');
+
+        $inventory = $inventoryQuery
+            ->orderBy($inventorySort, $inventoryDirection)
+            ->paginate($perPage)
+            ->appends($request->query());
+
+        // -------------------------
+        // Return to Inertia
+        // -------------------------
+        return Inertia::render('inventory/inventory-index', [
+            'medi' => $medications,
+            'curr_inventory' => $inventory,
+            'filters' => $request->only([
+                'generic_name',
+                'medication_id',
+                'medications_sort',
+                'medications_direction',
+                'inventory_sort',
+                'inventory_direction',
+                'per_page',
+            ]),
+        ]);
     }
 
     /**
