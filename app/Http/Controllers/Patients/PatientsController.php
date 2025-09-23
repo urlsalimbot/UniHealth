@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Patients;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Patients;
 use Inertia\Inertia;
 
@@ -43,37 +44,88 @@ class PatientsController extends Controller
     // Show a single patient
     public function show($id)
     {
-        $patient = Patients::findOrFail($id);
-        return Inertia::render("patients/patient-singleview", [
+        $patient = Patients::with([
+            'vital_signs' => fn($q) => $q->orderBy('created_at', 'desc'),
+            'medical_encounters' => fn($q) => $q->orderBy('encounter_date', 'desc'),
+            'medical_encounters.patient_prescriptions',
+        ])->findOrFail($id);
+
+        return Inertia::render('patients/patient-singleview', [
             'patient' => $patient,
+            'vital_signs' => $patient->vital_signs,
+            'medical_encounters' => $patient->medical_encounters,
+            'patient_prescriptions' => $patient->medical_encounters
+                ->pluck('patient_prescriptions')
+                ->flatten(),
         ]);
     }
+
 
     // Store a new patient
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'birth_date' => 'nullable|date',
-            'gender' => 'nullable|in:male,female,other', // adjust allowed values
             'philhealth_id' => 'nullable|string|max:50|unique:patients,philhealth_id',
+            'pwd_id' => 'nullable|string|max:50|unique:patients,pwd_id',
+            'senior_citizen_id' => 'nullable|string|max:50|unique:patients,senior_citizen_id',
+
+            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'suffix' => 'nullable|string|max:50',
+            'maiden_name' => 'nullable|string|max:255',
+            'nickname' => 'nullable|string|max:100',
+
+            'date_of_birth' => 'nullable|date',
+            'place_of_birth' => 'nullable|string|max:255',
+            'gender' => 'nullable|in:Male,Female,other',
+            'civil_status' => 'nullable|string|max:50',
+            'nationality' => 'nullable|string|max:100',
+            'religion' => 'nullable|string|max:100',
+
+            'mobile_number' => 'nullable|string|max:20',
+            'landline_number' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+
+            'house_number' => 'nullable|string|max:50',
+            'street' => 'nullable|string|max:255',
+            'barangay' => 'required|string|max:255',
+            'municipality_city' => 'required|string|max:255',
+            'province' => 'required|string|max:255',
+            'region' => 'required|string|max:255',
+            'postal_code' => 'nullable|string|max:20',
+
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_relationship' => 'nullable|string|max:100',
+            'emergency_contact_number' => 'nullable|string|max:20',
+            'emergency_contact_address' => 'nullable|string|max:255',
+
+            'is_active' => 'boolean',
+            'data_privacy_consent' => 'boolean',
+            'data_privacy_consent_date' => 'nullable|date',
         ]);
 
-        $patient = Patient::create($validated);
+        // Ensure boolean defaults (since unchecked checkboxes may be missing in request)
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['data_privacy_consent'] = $request->boolean('data_privacy_consent');
 
-        return response()->json([
-            'message' => 'Patient created successfully.',
-            'patient' => $patient,
-        ], 201);
+        $patient = Patients::create($validated);
+
+        return to_route('patient.view');
     }
+
+
 
     // Update an existing patient
     public function update(Request $request, $id)
     {
-        $patient = Patient::findOrFail($id);
+        $patient = Patients::findOrFail($id);
         $patient->update($request->all());
-        return response()->json($patient);
+        return Inertia::render('patient/patient-edit', [
+
+            'patient' => $patient
+
+        ]);
     }
 
     // Delete a patient
@@ -82,7 +134,8 @@ class PatientsController extends Controller
         $patient = Patients::findOrFail($id);
         $patient->delete();
 
-        return redirect()->route('patients.index')
-            ->with('success', 'Medication deleted successfully.');
+        return redirect()
+            ->route('patients.index')
+            ->with('success', 'Patient deleted successfully!');
     }
 }

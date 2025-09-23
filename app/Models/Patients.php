@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+Use Str;
 
 class Patients extends Model
 {
@@ -16,9 +16,8 @@ class Patients extends Model
 
     protected $table = 'patients';
     protected $primaryKey = 'patient_id';
-    public $incrementing = False;
+    public $incrementing = false;   // required for UUID
     protected $keyType = 'string';
-
     protected $fillable = [
         'philhealth_id',
         'pwd_id',
@@ -56,23 +55,40 @@ class Patients extends Model
         'created_at',
     ];
 
-    public function medical_encounters(): HasMany {
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->patient_id)) {
+                $model->patient_id = (string) Str::uuid();
+            }
+        });
+    }
+
+    public function medical_encounters(): HasMany
+    {
         return $this->hasMany(MedicalEncounters::class, 'encounter_id');
     }
 
-    public function patient_prescriptions(): HasMany {
+    public function patient_prescriptions(): HasMany
+    {
         return $this->hasMany(PatientPrescriptions::class, 'prescription_id');
     }
 
-    public function vital_signs(): HasMany {
+    public function vital_signs(): HasMany
+    {
         return $this->hasMany(VitalSigns::class, 'vital_sign_id');
     }
 
-    public function data_access_log(): HasMany {
+    public function data_access_log(): HasMany
+    {
         return $this->hasMany(DataAccessLog::class, 'log_id');
     }
 
-    public function data_sharing_consent(): HasMany {
+    public function data_sharing_consent(): HasMany
+    {
         return $this->hasMany(DataSharingConsent::class, 'consent_id');
     }
 

@@ -24,6 +24,12 @@ export const patientcolumns: ColumnDef<Patient>[] = [
             return <DataTableColumnHeader column={column} title="PhilHealth ID" />;
         },
     },
+    {
+        accessorKey: 'philhealth_id',
+        header: ({ column }) => {
+            return <DataTableColumnHeader column={column} title="PhilHealth ID" />;
+        },
+    },
     // {
     //     accessorKey: 'amount',
     //     header: () => <div className="text-right">Amount</div>,
@@ -45,7 +51,7 @@ export const patientcolumns: ColumnDef<Patient>[] = [
 
             return (
                 <div className="w-fit space-x-2">
-                    <Button variant="default" className="p-2" onClick={() => router.get(patients.single.url(patient.patient_id))}>
+                    <Button variant="default" className="p-2" onClick={() => router.get(patients.show.url(patient.patient_id))}>
                         View
                     </Button>
                     <Button variant="outline" className="p-2" onClick={() => router.get(patients.edit.url(patient.patient_id))}>
