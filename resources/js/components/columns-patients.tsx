@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
+import patients from '@/routes/patients';
 import { Patient } from '@/types';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from './datacolumnheader';
-import patients from '@/routes/patients';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 
 export const patientcolumns: ColumnDef<Patient>[] = [
     {
@@ -43,25 +44,82 @@ export const patientcolumns: ColumnDef<Patient>[] = [
     //         return <div className="text-right font-medium">{formatted}</div>;
     //     },
     // },
-    {
-        header: 'Actions',
-        id: 'actions',
-        cell: ({ row }) => {
-            const patient = row.original;
+{
+    header: 'Actions',
+    id: 'actions',
+    cell: ({ row }) => {
+      const patient = row.original;
 
-            return (
-                <div className="w-fit space-x-2">
-                    <Button variant="default" className="p-2" onClick={() => router.get(patients.show.url(patient.patient_id))}>
-                        View
-                    </Button>
-                    <Button variant="outline" className="p-2" onClick={() => router.get(patients.edit.url(patient.patient_id))}>
-                        Edit
-                    </Button>
-                    <Button variant="destructive" className="p-2" onClick={() => router.delete(patients.destroy.url(patient.patient_id))}>
-                        Delete
-                    </Button>
-                </div>
-            );
-        },
+      return (
+        <div className="flex gap-2">
+          {/* View Button */}
+          <Button
+            variant="default"
+            className="p-2"
+            onClick={() => router.get(patients.show.url(patient.patient_id))}
+          >
+            View
+          </Button>
+
+          {/* Edit Alert Dialog */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="p-2">
+                Edit
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Edit Patient</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to edit patient{" "}
+                  <span className="font-semibold">{patient.last_name}, {patient.first_name}</span>?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() =>
+                    router.get(patients.edit.url(patient.patient_id))
+                  }
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          {/* Delete Alert Dialog */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="p-2">
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Patient</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. Are you sure you want to
+                  permanently delete{" "}
+                  <span className="font-semibold">{patient.last_name}, {patient.first_name}</span>?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-red-600 hover:bg-red-700"
+                  onClick={() =>
+                    router.delete(patients.destroy.url(patient.patient_id))
+                  }
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      );
     },
+  },
 ];
