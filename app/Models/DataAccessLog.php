@@ -35,7 +35,7 @@ class DataAccessLog extends Model
 
     public function patients(): BelongsTo
     {
-        return $this->belongsTo(Patient::class, 'log_id');
+        return $this->belongsTo(Patients::class, 'log_id');
     }
 
     public function healthcare_facilities(): BelongsTo

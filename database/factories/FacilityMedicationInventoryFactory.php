@@ -3,19 +3,23 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Facility_medication_inventory;
+use App\Models\Medications;
+use App\Models\HealthcareFacilities;
 use Illuminate\Support\Str;
 
-class Facility_medication_inventoryFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FacilityMedicationInventory>
+ */
+class FacilityMedicationInventoryFactory extends Factory
 {
-    protected $model = Facility_medication_inventory::class;
 
     public function definition(): array
     {
         return [
-            'inventory_id' => (string) Str::uuid(),
-            'facility_id' => (string) Str::uuid(),
-            'medication_id' => (string) Str::uuid(),
+
+            'inventory_id' => 'STOCK' . $this->faker->unique()->numberBetween(100, 999999),
+            'facility_id' => HealthcareFacilities::inRandomOrder()->first()->facility_id,
+            'medication_id' => Medications::inRandomOrder()->first()->medication_id,
             'current_stock' => $this->faker->randomNumber(),
             'minimum_stock_level' => $this->faker->randomNumber(),
             'maximum_stock_level' => $this->faker->randomNumber(),
@@ -36,8 +40,6 @@ class Facility_medication_inventoryFactory extends Factory
             'stock_status' => $this->faker->word(),
             'last_count_date' => $this->faker->date(),
             'last_counted_by' => (string) Str::uuid(),
-            'expiry_alert_sent' => $this->faker->boolean(),
-            'low_stock_alert_sent' => $this->faker->boolean(),
         ];
     }
 }

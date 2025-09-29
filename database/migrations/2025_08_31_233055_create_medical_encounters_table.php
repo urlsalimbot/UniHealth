@@ -20,12 +20,7 @@ return new class extends Migration
             $table->time('encounter_time')->nullable();
             $table->date('admission_date')->nullable();
             $table->date('discharge_date')->nullable();
-            $table->string('case_rate_code')->nullable();
-            $table->string('drg_code')->nullable();
             $table->string('encounter_status')->nullable();
-            $table->decimal('total_charges')->nullable();
-            $table->decimal('philhealth_claims')->nullable();
-            $table->decimal('patient_payment')->nullable();
             $table->string('created_by')->nullable();
             $table->timestamps();
         });

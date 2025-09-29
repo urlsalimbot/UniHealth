@@ -3,12 +3,14 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Data_access_log;
+use App\Models\DataAccessLog;
 use Illuminate\Support\Str;
 
-class Data_access_logFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DataAccessLog>
+ */
+class DataAccessLogFactory extends Factory
 {
-    protected $model = Data_access_log::class;
 
     public function definition(): array
     {

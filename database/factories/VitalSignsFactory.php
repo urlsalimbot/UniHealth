@@ -2,22 +2,28 @@
 
 namespace Database\Factories;
 
+use App\Models\MedicalEncounters;
+use App\Models\Patients;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Vital_sign;
 use Illuminate\Support\Str;
 
-class Vital_signFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\VitalSigns>
+ */
+class VitalSignsFactory extends Factory
 {
-    protected $model = Vital_sign::class;
-
     public function definition(): array
-    {
+    {   
+
+        $encounter = MedicalEncounters::inRandomOrder()->first();
+
         return [
             'vital_sign_id' => (string) Str::uuid(),
-            'patient_id' => (string) Str::uuid(),
-            'encounter_id' => (string) Str::uuid(),
-            'recorded_by' => (string) Str::uuid(),
-            'measurement_date' => $this->faker->date(),
+            'patient_id' => Patients::inRandomOrder()->first()->patient_id,
+            'encounter_id' => $encounter->encounter_id,
+            'recorded_by' => User::whereIn('role', ['administrator', 'staff'])->inRandomOrder()->first()->name,
+            'measurement_date' => $encounter->encounter_date,
             'measurement_time' => $this->faker->word(),
             'systolic_bp' => $this->faker->randomNumber(),
             'diastolic_bp' => $this->faker->randomNumber(),

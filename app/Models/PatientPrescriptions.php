@@ -4,19 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class PatientPrescriptions extends Model
 {
+    public $timestamps = false;
     protected $table = 'patient_prescriptions';
     protected $primaryKey = 'prescription_id';
     public $incrementing = false;
     protected $keyType = 'string';
+    use HasFactory;
 
     protected $fillable = [
         'patient_id',
         'encounter_id',
         'medication_id',
-        'prescribing_provider_id',
         'dosage',
         'frequency',
         'route',
@@ -37,7 +40,7 @@ class PatientPrescriptions extends Model
      */
     public function patient(): BelongsTo
     {
-        return $this->belongsTo(Patient::class, 'patient_id', 'patient_id');
+        return $this->belongsTo(Patients::class, 'patient_id', 'patient_id');
     }
 
     /**

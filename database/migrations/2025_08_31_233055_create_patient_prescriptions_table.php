@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('patient_id')->nullable(false);
             $table->string('encounter_id')->nullable();
             $table->string('medication_id')->nullable(false);
-            $table->string('prescribing_provider_id')->nullable(false);
             $table->string('dosage')->nullable(false);
             $table->string('frequency')->nullable(false);
             $table->string('route')->nullable();

@@ -93,7 +93,7 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
 
     // Color scale: returns a Tailwind background color class based on intensity (0..1)
     function colorForCount(count: number) {
-        if (count <= 0) return 'bg-slate-50 border-slate-100';
+        if (count <= 0) return 'border-slate-100';
         if (monthMax === 0) return 'bg-green-50 border-green-100';
         const t = count / monthMax;
         // we'll pick 5 buckets
@@ -110,7 +110,7 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
             <CardHeader className="flex items-center justify-between">
                 <CardTitle>Encounters Heatmap</CardTitle>
                 <div className="flex items-center gap-2">
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm">
                         {monthName} {currentYear}
                     </div>
                     <div className="flex gap-1">
@@ -137,7 +137,7 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
             <CardContent>
                 <div className="mb-2 grid grid-cols-7 gap-1 text-xs">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-                        <div key={d} className="text-center text-[12px] font-medium text-muted-foreground">
+                        <div key={d} className="text-center text-[12px] font-medium ">
                             {d}
                         </div>
                     ))}
@@ -169,7 +169,7 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
 
                 <div className="mt-3 flex items-center gap-2 text-sm">
                     <div className="flex items-center gap-1">
-                        <div className="h-3 w-6 rounded-sm border bg-slate-50" />
+                        <div className="h-3 w-6 rounded-sm border bg-slate-200" />
                         <div className="text-xs text-muted-foreground">0</div>
                     </div>
                     <div className="flex items-center gap-1">

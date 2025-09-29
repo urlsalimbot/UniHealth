@@ -2,22 +2,28 @@
 
 namespace Database\Factories;
 
+
+use App\Models\Patients;
+use App\Models\MedicalEncounters;
+use App\Models\Medications;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Patient_prescription;
 use Illuminate\Support\Str;
 
-class Patient_prescriptionFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PatientPrescriptions>
+ */
+class PatientPrescriptionsFactory extends Factory
 {
-    protected $model = Patient_prescription::class;
 
     public function definition(): array
     {
+        $encounter = MedicalEncounters::inRandomOrder()->first();
+
         return [
-            'prescription_id' => (string) Str::uuid(),
-            'patient_id' => (string) Str::uuid(),
-            'encounter_id' => (string) Str::uuid(),
-            'medication_id' => (string) Str::uuid(),
-            'prescribing_provider_id' => (string) Str::uuid(),
+            'prescription_id' => (string) Str::uuid(), //make uuid
+            'patient_id' => Patients::inRandomOrder()->first()->patient_id,
+            'encounter_id' => $encounter->encounter_id,
+            'medication_id' => Medications::inRandomOrder()->first()->medication_id,
             'dosage' => $this->faker->word(),
             'frequency' => $this->faker->word(),
             'route' => $this->faker->word(),
@@ -26,7 +32,7 @@ class Patient_prescriptionFactory extends Factory
             'refills_allowed' => $this->faker->randomNumber(),
             'special_instructions' => $this->faker->sentence(),
             'indication' => $this->faker->sentence(),
-            'prescription_date' => $this->faker->date(),
+            'prescription_date' => $encounter->encounter_date,
             'start_date' => $this->faker->date(),
             'end_date' => $this->faker->date(),
             'prescription_status' => $this->faker->word(),

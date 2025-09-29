@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class VitalSigns extends Model
 {
@@ -12,6 +14,8 @@ class VitalSigns extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = false; // migration only defines created_at (no updated_at)
+    use HasFactory;
+
 
     protected $fillable = [
         'patient_id',
@@ -42,7 +46,7 @@ class VitalSigns extends Model
      */
     public function patient(): BelongsTo
     {
-        return $this->belongsTo(Patient::class, 'patient_id', 'patient_id');
+        return $this->belongsTo(Patients::class, 'patient_id', 'patient_id');
     }
 
     /**

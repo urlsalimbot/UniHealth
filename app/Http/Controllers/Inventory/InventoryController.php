@@ -48,7 +48,7 @@ class InventoryController extends Controller
         // Inventory Query
         // -------------------------
         $inventoryQuery = FacilityMedicationInventory::with([
-            'medication:id,medication_id,generic_name,brand_names'
+            'medication:medication_id'
         ])->select([
                 'inventory_id',
                 'facility_id',

@@ -3,12 +3,14 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Data_sharing_consent;
 use Illuminate\Support\Str;
 
-class Data_sharing_consentFactory extends Factory
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DataSharingConsent>
+ */
+class DataSharingConsentFactory extends Factory
 {
-    protected $model = Data_sharing_consent::class;
+    protected $model = DataSharingConsent::class;
 
     public function definition(): array
     {

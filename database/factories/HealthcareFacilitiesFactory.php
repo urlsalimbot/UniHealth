@@ -3,17 +3,19 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Healthcare_facilitie;
 use Illuminate\Support\Str;
 
-class Healthcare_facilitieFactory extends Factory
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\HealthcareFacilities>
+ */
+class HealthcareFacilitiesFactory extends Factory
 {
-    protected $model = Healthcare_facilitie::class;
 
     public function definition(): array
     {
         return [
-            'facility_id' => (string) Str::uuid(),
+            'facility_id' => 'FACI' . $this->faker->unique()->numberBetween(100, 999),
             'facility_code' => $this->faker->word(),
             'facility_name' => $this->faker->name(),
             'facility_type' => $this->faker->word(),

@@ -27,12 +27,7 @@
             'encounter_time',
             'admission_date',
             'discharge_date',
-            'case_rate_code',
-            'drg_code',
             'encounter_status',
-            'total_charges',
-            'philhealth_claims',
-            'patient_payment',
             'created_by',
         ];
 

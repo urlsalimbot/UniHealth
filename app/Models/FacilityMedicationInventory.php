@@ -48,13 +48,12 @@ class FacilityMedicationInventory extends Model
 
     public function healthcare_facilities(): BelongsTo
     {
-        return $this->belongsTo(HealthcareFacilities::class, 'inventory_id');
+        return $this->belongsTo(HealthcareFacilities::class, 'facility_id', 'facility_id');
     }
 
-    public function medications(): BelongsTo
+    public function medication()
     {
-        return $this->belongsTo(Medications::class, 'inventory_id');
+        return $this->belongsTo(Medications::class, 'medication_id', 'medication_id');
     }
-
 
 }
