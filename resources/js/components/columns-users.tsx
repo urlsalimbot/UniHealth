@@ -1,30 +1,36 @@
 import { Button } from '@/components/ui/button';
-import patients from '@/routes/patients';
-import { Patient } from '@/types';
+import { User } from '@/types';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from './datacolumnheader';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
+import admin from '@/routes/admin';
 
-export const patientcolumns: ColumnDef<Patient>[] = [
+export const usercolumns: ColumnDef<User>[] = [
     {
-        accessorKey: 'last_name',
+        accessorKey: 'name',
         header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="Last Name" />;
+            return <DataTableColumnHeader column={column} title="Name" />;
         },
     },
     {
-        accessorKey: 'first_name',
+        accessorKey: 'email',
         header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="First Name" />;
+            return <DataTableColumnHeader column={column} title="Email" />;
         },
     },
     {
-        accessorKey: 'philhealth_id',
+        accessorKey: 'role',
         header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="PhilHealth ID" />;
+            return <DataTableColumnHeader column={column} title="Role" />;
         },
     },
+    // {
+    //     accessorKey: 'philhealth_id',
+    //     header: ({ column }) => {
+    //         return <DataTableColumnHeader column={column} title="PhilHealth ID" />;
+    //     },
+    // },
     // {
     //     accessorKey: 'amount',
     //     header: () => <div className="text-right">Amount</div>,
@@ -42,21 +48,21 @@ export const patientcolumns: ColumnDef<Patient>[] = [
     header: 'Actions',
     id: 'actions',
     cell: ({ row }) => {
-      const patient = row.original;
+      const user = row.original;
 
       return (
         <div className="flex gap-2">
           {/* View Button */}
-          <Button
+          {/* <Button
             variant="default"
             className="p-2"
             onClick={() => router.get(patients.show.url(patient.patient_id))}
           >
             View
-          </Button>
+          </Button> */}
 
           {/* Edit Alert Dialog */}
-          <AlertDialog>
+          {/* <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="outline" className="p-2">
                 Edit
@@ -81,7 +87,7 @@ export const patientcolumns: ColumnDef<Patient>[] = [
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
-          </AlertDialog>
+          </AlertDialog> */}
 
           {/* Delete Alert Dialog */}
           <AlertDialog>
@@ -96,7 +102,7 @@ export const patientcolumns: ColumnDef<Patient>[] = [
                 <AlertDialogDescription>
                   This action cannot be undone. Are you sure you want to
                   permanently delete{" "}
-                  <span className="font-semibold">{patient.last_name}, {patient.first_name}</span>?
+                  <span className="font-semibold">{user.name}</span>?
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -104,7 +110,7 @@ export const patientcolumns: ColumnDef<Patient>[] = [
                 <AlertDialogAction
                   className="bg-red-600 hover:bg-red-700"
                   onClick={() =>
-                    router.delete(patients.destroy.url(patient.patient_id))
+                    router.delete(admin.users.destroy.url(user.id))
                   }
                 >
                   Delete
