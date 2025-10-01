@@ -23,14 +23,14 @@ class InventoryController extends Controller
         // Medications Query
         // -------------------------
         $medicationsQuery = Medications::select([
-                'medication_id',
-                'generic_name',
-                'brand_names',
-                'strength',
-                'dosage_form',
-                'drug_class',
-                'created_at',
-            ]);
+            'medication_id',
+            'generic_name',
+            'brand_names',
+            'strength',
+            'dosage_form',
+            'drug_class',
+            'created_at',
+        ]);
 
         if ($request->filled('generic_name')) {
             $medicationsQuery->where('generic_name', 'like', '%' . $request->generic_name . '%');
@@ -48,21 +48,21 @@ class InventoryController extends Controller
         // Inventory Query
         // -------------------------
         $inventoryQuery = FacilityMedicationInventory::with([
-            'medication:medication_id'
+            'medication:medication_id,generic_name,brand_names,dosage_form,strength',
         ])->select([
-                'inventory_id',
-                'facility_id',
-                'medication_id',
-                'current_stock',
-                'minimum_stock_level',
-                'maximum_stock_level',
-                'reorder_point',
-                'expiration_date',
-                'unit_cost',
-                'total_value',
-                'stock_status',
-                'created_at',
-            ]);
+                    'inventory_id',
+                    'facility_id',
+                    'medication_id',
+                    'current_stock',
+                    'minimum_stock_level',
+                    'maximum_stock_level',
+                    'reorder_point',
+                    'expiration_date',
+                    'unit_cost',
+                    'total_value',
+                    'stock_status',
+                    'created_at',
+                ]);
 
         if ($request->filled('medication_id')) {
             $inventoryQuery->where('medication_id', 'like', '%' . $request->medication_id . '%');
@@ -126,7 +126,7 @@ class InventoryController extends Controller
     /**
      * Show the form for editing the specified medication.
      */
-    public function edit(string $id)    
+    public function edit(string $id)
     {
         $medication = Medications::findOrFail($id);
 

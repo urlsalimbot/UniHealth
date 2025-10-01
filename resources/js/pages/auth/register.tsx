@@ -8,9 +8,12 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AuthLayout from '@/layouts/auth-layout';
+import { useState } from 'react';
 
 export default function Register() {
+    const [role, setRole] = useState<string>('user');
     return (
         <AuthLayout title="Create an account" description="Enter your details below to create your account">
             <Head title="Register" />
@@ -79,6 +82,28 @@ export default function Register() {
                                 />
                                 <InputError message={errors.password_confirmation} />
                             </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="role">Role</Label>
+                                <Select name="role" value={role} onValueChange={setRole} required>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="user">User</SelectItem>
+                                        <SelectItem value="staff">Staff</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={errors.role} />
+                            </div>
+
+                            {role === 'user' && (
+                                <div className="grid gap-2">
+                                    <Label htmlFor="philhealth_id">PhilHealth ID</Label>
+                                    <Input id="philhealth_id" type="text" name="philhealth_id" placeholder="Enter PhilHealth ID" required />
+                                    <InputError message={errors.philhealth_id} />
+                                </div>
+                            )}
 
                             <Button type="submit" className="mt-2 w-full" tabIndex={5}>
                                 {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}

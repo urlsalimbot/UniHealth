@@ -1,4 +1,5 @@
 import { medicationscolumns } from '@/components/columns-medication';
+import { stockscolumns } from '@/components/columns-stocks';
 import { DataTable } from '@/components/datatable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,8 +35,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index() {
-    const { medi, filters, curr_inventory, flash } = usePage().props as any;
+    const { medi, filters, curr_inventory } = usePage().props as any;
 
+    console.log(curr_inventory)
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Inventory" />
@@ -78,7 +80,7 @@ export default function Index() {
                         <CardContent>
                             <DataTable
                                 data={curr_inventory.data}
-                                columns={medicationscolumns}
+                                columns={stockscolumns}
                                 paginator={{
                                     current_page: curr_inventory.current_page,
                                     last_page: curr_inventory.last_page,

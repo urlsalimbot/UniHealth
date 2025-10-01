@@ -22,7 +22,13 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'patient_id', // ✅ allow patient link
     ];
+
+    public function patient()
+    {
+        return $this->belongsTo(Patients::class,'patient_id','patient_id');
+    }
 
 
     public const ROLE_ADMIN = 'administrator';
