@@ -1,5 +1,6 @@
 import PatientCreateController from '@/actions/App/Http/Controllers/Patients/PatientCreateController';
 import PatientForm from '@/components/patientform';
+import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import patients from '@/routes/patients';
 import { SharedData, type BreadcrumbItem } from '@/types';
@@ -11,25 +12,22 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: patients.index.url(),
     },
     {
-        title: 'Patient',
+        title: 'Create Patient',
         href: patients.create.url(),
     },
 ];
 
 export default function Create() {
-    // console.log(PatientsController.store.form())
-    const { auth } = usePage<SharedData>().props;
-
-    function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        router.post(patients.store.url());
-    }
 
     return (
-        <AppLayout>
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <h2 className="mb-4 text-lg font-bold">New Patient</h2>
-                <PatientForm {...PatientCreateController.store.form()} mode={'create'} />
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <div className="flex h-full flex-1 flex-col overflow-x-auto rounded-xl p-4 pt-2">
+                    <Card className="mt-4 flex-3">
+                        <CardContent>
+                            <PatientForm {...PatientCreateController.store.form()} mode={'create'} />
+                        </CardContent>
+                    </Card>
+
             </div>
         </AppLayout>
     );

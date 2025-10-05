@@ -23,15 +23,16 @@
 - [ ] update all controllers to include proper logging
 
 - [ ] patient dashboard
-- [ ] patient polish input
+- [x] patient polish input
 - [x] patient recorded vs nominal value charts
 - [x] patient historical chief complaints
 - [x] patient current prescribed medication
 - [x] patient most recent medical intervention
 
 - [ ] inventory dashboard
-- [ ] stocks quantity modification
+- [x] stocks quantity modification
 - [ ] stocks low quantity alert
+
 - [ ] inside medication interface
 - [ ] input medication interface
 - [ ] view and edit medication

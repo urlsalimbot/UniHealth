@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import medications from '@/routes/medications';
+import inventory from '@/routes/inventory';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEvent } from 'react';
@@ -7,17 +7,19 @@ import { FormEvent } from 'react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Inventory',
-        href: medications.index.url(),
+        href: inventory.index.url(),
     },
 ];
 
 export default function Edit() {
-    const { medication } = usePage().props as any;
+    const { inventory } = usePage().props as any;
 
     const { data, setData, put, processing, errors } = useForm({
         generic_name: medication.generic_name || '',
         brand_names: medication.brand_names || '',
         strength: medication.strength || '',
+
+        
         dosage_form: medication.dosage_form || '',
         drug_class: medication.drug_class || '',
         controlled_substance: medication.controlled_substance || false,
@@ -26,7 +28,7 @@ export default function Edit() {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        put(medications.update.url(medication.medication_id));
+        put(inventory.update.url(inventory.inventory_id));
     };
 
     return (

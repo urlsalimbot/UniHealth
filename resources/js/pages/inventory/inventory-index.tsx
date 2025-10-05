@@ -1,31 +1,13 @@
 import { medicationscolumns } from '@/components/columns-medication';
-import { stockscolumns } from '@/components/columns-stocks';
+import { getEditableStocksColumns } from '@/components/columns-stocks';
 import { DataTable } from '@/components/datatable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import inventory from '@/routes/inventory';
-import { BreadcrumbItem } from '@/types';
-
+import { BreadcrumbItem, FacilityMedicationInventory } from '@/types';
 import { Head, router, usePage } from '@inertiajs/react';
-
-type Medication = {
-    medication_id: string;
-    generic_name: string;
-    brand_names: string;
-    strength: string;
-    dosage_form: string;
-    drug_class: string;
-};
-
-type Inventory = {
-    inventory_id: string;
-    medication_id: string;
-    current_stock: number;
-    minimum_stock_level: number;
-    expiration_date: string;
-    supplier: string;
-};
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -37,50 +19,70 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Index() {
     const { medi, filters, curr_inventory } = usePage().props as any;
 
-    console.log(curr_inventory)
+    const [editableStocks, setEditableStocks] = useState(curr_inventory.data);
+    const [changedStocks, setChangedStocks] = useState<Record<string, Partial<FacilityMedicationInventory>>>({});
+
+    const handleStockChange = (id: string, field: keyof FacilityMedicationInventory, value: any) => {
+        setEditableStocks((prev: FacilityMedicationInventory[]) =>
+            prev.map((item: FacilityMedicationInventory) => (item.inventory_id === id ? { ...item, [field]: value } : item)),
+        );
+        setChangedStocks((prev) => ({
+            ...prev,
+            [id]: { ...prev[id], [field]: value },
+        }));
+    };
+
+    const handleSubmitChanges = () => {
+        if (Object.keys(changedStocks).length === 0) return;
+
+        router.put(
+            inventory.bulkupdate.url(),
+            { changes: changedStocks },
+            {
+                preserveScroll: true,
+                onSuccess: () => setChangedStocks({}),
+            },
+        );
+    };
+
+    const handleResetChanges = () => {
+        setEditableStocks(curr_inventory.data);
+        setChangedStocks({});
+    };
+
+    const editableStocksColumns = getEditableStocksColumns(handleStockChange);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Inventory" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="mb-4 flex justify-between">
-                    <h2 className="text-lg font-bold">Inventory</h2>
-                </div>
-
-                {/* <Card className="mt-4">
-                    <CardHeader>
-                        <CardTitle>Stock Alerts</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        {curr_inventory.filter((i: FacilityMedicationInventory) => i.current_stock <= i.minimum_stock_level).length === 0 ? (
-                            <p className="text-sm text-gray-500">No low stock alerts</p>
-                        ) : (
-                            <ul className="text-sm">
-                                {curr_inventory
-                                    .filter((i: FacilityMedicationInventory) => i.current_stock <= i.minimum_stock_level)
-                                    .map((i: FacilityMedicationInventory) => (
-                                        <li key={i.inventory_id} className="text-red-500">
-                                            Low stock for {i.medication_id} (current: {i.current_stock})
-                                        </li>
-                                    ))}
-                            </ul>
-                        )}
-                    </CardContent>
-                </Card> */}
                 <div className="flex space-x-4">
-                    <Card className="mt-4 flex-1">
-                        <CardHeader>
+                    {/* 🧾 Stocks Table (Editable) */}
+                    <Card className="mt-4 flex-3">
+                        <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>Stocks</CardTitle>
-                            <CardTitle>
+                            {/* ✅ Confirm/Reset Buttons */}
+                            {Object.keys(changedStocks).length > 0 ? (
+                                <div className="flex w-fit justify-end gap-2">
+                                    <Button onClick={handleSubmitChanges} variant="default">
+                                        Confirm Changes ({Object.keys(changedStocks).length})
+                                    </Button>
+                                    <Button variant="outline" onClick={handleResetChanges}>
+                                        Reset
+                                    </Button>
+                                </div>
+                            ) : (
                                 <Button className="w-fit justify-end" onClick={() => router.get(inventory.create.url())}>
-                                    + New Medication
+                                    + New Stock
                                 </Button>
-                            </CardTitle>
+                            )}
                         </CardHeader>
+
                         <CardContent>
                             <DataTable
-                                data={curr_inventory.data}
-                                columns={stockscolumns}
+                                data={editableStocks}
+                                columns={editableStocksColumns}
                                 paginator={{
                                     current_page: curr_inventory.current_page,
                                     last_page: curr_inventory.last_page,
@@ -91,11 +93,14 @@ export default function Index() {
                                 label="Current Stock"
                                 field="current_stock"
                                 baseUrl={inventory.index.url()}
+                                onRowClick={(row) => router.get(inventory.show(row.inventory_id))} // ✅ works now
                             />
                         </CardContent>
                     </Card>
+                                
+                    {/* 💊 Medications Table (Unchanged) */}
                     <Card className="mt-4 flex flex-1">
-                        <CardHeader className='flex flex-row items-center justify-between'>
+                        <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>Medications</CardTitle>
                             <CardTitle>
                                 <Button onClick={() => router.get(inventory.create.url())}>+ New Medication</Button>
@@ -115,6 +120,7 @@ export default function Index() {
                                 label="Generic Name"
                                 field="generic_name"
                                 baseUrl={inventory.index.url()}
+                                onRowClick={(row) => router.get(inventory.medication.show(row.medication_id))} // ✅ works nowI
                             />
                         </CardContent>
                     </Card>

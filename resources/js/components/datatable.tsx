@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, X } fro
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 interface LaravelPaginatorMeta {
     current_page: number;
@@ -22,9 +21,19 @@ interface DataTableProps<TData, TValue> {
     label: string;
     field: string;
     baseUrl: string;
+    onRowClick?: (row: TData) => void; // ✅ NEW PROP
 }
 
-export function DataTable<TData, TValue>({ columns, data, paginator, filters = {}, label, field, baseUrl }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+    columns,
+    data,
+    paginator,
+    filters = {},
+    label,
+    field,
+    baseUrl,
+    onRowClick,
+}: DataTableProps<TData, TValue>) {
     const [query, setQuery] = useState(filters[field] ?? '');
 
     const handleSearch = () => {
@@ -93,7 +102,26 @@ export function DataTable<TData, TValue>({ columns, data, paginator, filters = {
                     <TableBody>
                         {data.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id}>
+                                <TableRow
+                                    key={row.id}
+                                    className={onRowClick ? 'cursor-pointer transition-colors hover:bg-muted/50' : ''}
+                                    onClick={(e) => {
+                                        if (!onRowClick) return;
+
+                                        // ✅ Prevent clicks on interactive elements from triggering navigation
+                                        const target = e.target as HTMLElement;
+                                        if (
+                                            target.tagName === 'INPUT' ||
+                                            target.tagName === 'BUTTON' ||
+                                            target.closest('button') ||
+                                            target.closest('a')
+                                        ) {
+                                            return;
+                                        }
+
+                                        onRowClick(row.original);
+                                    }}
+                                >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                                     ))}
@@ -117,7 +145,7 @@ export function DataTable<TData, TValue>({ columns, data, paginator, filters = {
                 </div>
 
                 <div className="flex items-center space-x-4">
-                    <Select value={`${paginator.per_page}`} onValueChange={(v) => navigate({ per_page: Number(v), page: 1 })}>
+                    {/* <Select value={`${paginator.per_page}`} onValueChange={(v) => navigate({ per_page: Number(v), page: 1 })}>
                         <SelectTrigger className="h-8 w-[70px]">
                             <SelectValue placeholder={paginator.per_page} />
                         </SelectTrigger>
@@ -128,7 +156,7 @@ export function DataTable<TData, TValue>({ columns, data, paginator, filters = {
                                 </SelectItem>
                             ))}
                         </SelectContent>
-                    </Select>
+                    </Select> */}
 
                     <div className="flex items-center space-x-1">
                         <Button size="icon" variant="outline" disabled={paginator.current_page === 1} onClick={() => navigate({ page: 1 })}>

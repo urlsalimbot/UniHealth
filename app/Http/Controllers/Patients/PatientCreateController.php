@@ -56,7 +56,7 @@ class PatientCreateController extends Controller
             'emergency_contact_address' => 'nullable|string|max:255',
 
             'is_active' => 'boolean',
-            'data_privacy_consent' => 'boolean',
+            'data_privacy_consent' => 'required|boolean ',
             'data_privacy_consent_date' => 'nullable|date',
         ]);
 

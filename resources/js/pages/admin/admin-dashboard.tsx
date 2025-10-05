@@ -1,11 +1,10 @@
 import { usercolumns } from '@/components/columns-users';
 import { DataTable } from '@/components/datatable';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
-import patients from '@/routes/patients';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -22,24 +21,28 @@ export default function AdminDashboard() {
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="mb-4 flex justify-between">
-                    <h2 className="text-lg font-bold">Users</h2>
-                    {/*     <Button onClick={() => router.get(patients.create.url())}>+ New Patient</Button> */}
+                    <Card className="mt-4 flex flex-1">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle>Users</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <DataTable
+                                data={users.data}
+                                columns={usercolumns}
+                                paginator={{
+                                    current_page: users.current_page,
+                                    last_page: users.last_page,
+                                    per_page: users.per_page,
+                                    total: users.total,
+                                }}
+                                filters={filters}
+                                label="Name"
+                                field="name"
+                                baseUrl={admin.dashboard.url()}
+                            />
+                        </CardContent>
+                    </Card>
                 </div>
-
-                <DataTable
-                    data={users.data}
-                    columns={usercolumns}
-                    paginator={{
-                        current_page: users.current_page,
-                        last_page: users.last_page,
-                        per_page: users.per_page,
-                        total: users.total,
-                    }}
-                    filters={filters}
-                    label="Name"
-                    field="name"
-                    baseUrl={admin.dashboard.url()}
-                />
             </div>
         </AppLayout>
     );

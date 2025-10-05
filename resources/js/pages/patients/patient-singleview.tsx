@@ -1,13 +1,27 @@
 import VitalSignsDashboard from '@/components/patient-vitals-charts';
 import PatientForm from '@/components/patientform';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AppLayout from '@/layouts/app-layout';
-import { Button } from '@headlessui/react';
 import { Head, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function PatientSingleView() {
+    const [open, setOpen] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
     const { patient, medical_encounters, latest_encounter } = usePage().props as any;
 
     const breadcrumbs = [
@@ -15,13 +29,17 @@ export default function PatientSingleView() {
         { title: patient.last_name, href: `/patients/${patient.patient_id}` },
     ];
 
+    const handleConfirmEdit = () => {
+        setConfirmOpen(false);
+        setOpen(true);
+    };
+
     const latestVitals = latest_encounter?.vital_signs?.[0] || patient.vital_signs?.[0] || {};
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Patient Details" />
             <div className="mt-4 space-y-6 p-4">
-                
                 {/* --- Top Row: View Button + Summary Cards --- */}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     {/* View Patient Details Button */}
@@ -29,11 +47,60 @@ export default function PatientSingleView() {
                         <DialogTrigger asChild>
                             <Button className="shrink-0">View Patient Details</Button>
                         </DialogTrigger>
-                        <DialogContent className="w-full">
-                            <DialogHeader>
-                                <DialogTitle>Patient Details</DialogTitle>
+
+                        <DialogContent className="h-[90vh] max-w-[95vw] overflow-hidden p-0 md:max-w-6xl">
+                            <DialogHeader className="p-4 pb-0">
+                                <DialogTitle className="text-lg font-semibold">Patient Details</DialogTitle>
                             </DialogHeader>
-                            <PatientForm data={patient} mode="view" />
+
+                            {/* Scrollable area for the patient form */}
+                            <ScrollArea className="h-[calc(90vh-5rem)] px-6 pb-6">
+                                <PatientForm data={patient} mode="view" />
+                            </ScrollArea>
+                        </DialogContent>
+                    </Dialog>
+
+                    <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                        <AlertDialogTrigger asChild>
+                            <Button className="shrink-0">Edit Patient Details</Button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Confirm Edit</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    You are about to edit this patient’s details. Please ensure that any changes are correct before saving.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleConfirmEdit}>Proceed to Edit</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
+                    {/* --- Step 2: Unclosable Edit Dialog --- */}
+                    <Dialog open={open}>
+                        <DialogContent
+                            className="h-[90vh] max-w-[95vw] overflow-hidden p-0 md:max-w-6xl [&>button]:hidden"
+                            onPointerDownOutside={(e) => e.preventDefault()} // disable backdrop close
+                            onEscapeKeyDown={(e) => e.preventDefault()} // disable Esc close
+                        >
+                            {/* Header Row: Title (left) + Cancel (right) */}
+                            <div className="flex items-center justify-between border-b bg-background p-4">
+                                <DialogTitle className="text-lg font-semibold">Edit Patient Details</DialogTitle>
+                                <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+                                    Cancel
+                                </Button>
+                            </div>
+
+                            {/* Scrollable Patient Form */}
+                            <ScrollArea className="h-[calc(90vh-4rem)]">
+                                <div className="px-6 py-6">
+                                    <PatientForm data={patient} mode="edit" />
+                                </div>
+                            </ScrollArea>
                         </DialogContent>
                     </Dialog>
 

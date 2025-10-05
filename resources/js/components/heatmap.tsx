@@ -93,7 +93,7 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
 
     // Color scale: returns a Tailwind background color class based on intensity (0..1)
     function colorForCount(count: number) {
-        if (count <= 0) return 'border-slate-100';
+        if (count <= 0) return '';
         if (monthMax === 0) return 'bg-green-50 border-green-100';
         const t = count / monthMax;
         // we'll pick 5 buckets
@@ -169,7 +169,7 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
 
                 <div className="mt-3 flex items-center gap-2 text-sm">
                     <div className="flex items-center gap-1">
-                        <div className="h-3 w-6 rounded-sm border bg-slate-200" />
+                        <div className="h-3 w-6 rounded-sm bg-slate-200" />
                         <div className="text-xs text-muted-foreground">0</div>
                     </div>
                     <div className="flex items-center gap-1">

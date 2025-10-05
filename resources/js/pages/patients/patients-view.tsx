@@ -1,6 +1,7 @@
 import { patientcolumns } from '@/components/columns-patients';
 import { DataTable } from '@/components/datatable';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import patients from '@/routes/patients';
 import { type BreadcrumbItem } from '@/types';
@@ -18,27 +19,34 @@ export default function Patients() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Patients" />
-
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="mb-4 flex justify-between">
-                    <h2 className="text-lg font-bold">Patients</h2>
-                    <Button onClick={() => router.get(patients.create.url())}>+ New Patient</Button>
-                </div>
+                <div className="flex space-x-4">
+                    <Card className="mt-4 flex flex-1">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle>Patients</CardTitle>
+                            <CardTitle>
+                                <Button onClick={() => router.get(patients.create.url())}>+ New Patient</Button>
+                            </CardTitle>
+                        </CardHeader>
 
-                <DataTable
-                    data={patient.data}
-                    columns={patientcolumns}
-                    paginator={{
-                        current_page: patient.current_page,
-                        last_page: patient.last_page,
-                        per_page: patient.per_page,
-                        total: patient.total,
-                    }}
-                    filters={filters}
-                    label='Last Name'
-                    field='last_name'
-                    baseUrl={patients.index.url()}
-                />
+                        <CardContent>
+                            <DataTable
+                                data={patient.data}
+                                columns={patientcolumns}
+                                paginator={{
+                                    current_page: patient.current_page,
+                                    last_page: patient.last_page,
+                                    per_page: patient.per_page,
+                                    total: patient.total,
+                                }}
+                                filters={filters}
+                                label="Last Name"
+                                field="last_name"
+                                baseUrl={patients.index.url()}
+                            />
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </AppLayout>
     );
