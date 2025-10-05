@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\AuditLogger;
 use App\Models\User;
+use App\Models\Audit;
+use App\Notifications\AuditEventNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -26,7 +31,7 @@ class AdminControlDashboard extends Controller
         $direction = $request->get('direction', 'desc');
         $query->orderBy($sort, $direction);
 
-        // Paginate (server-side)
+        // Paginate
         $users = $query->paginate($request->get('per_page', 10))
             ->appends($request->query());
 
@@ -47,6 +52,17 @@ class AdminControlDashboard extends Controller
 
         $user->delete();
 
-        return redirect()->back()->with('success', 'User deleted successfully.');
+        // ✅ Log the deletion
+        $audit = AuditLogger::log('USER_DELETED', 'User', $user->id, [
+            'deleted_by' => Auth::id(),
+            'deleted_name' => Auth::user()->name,
+            'role' => $user->role,
+        ]);
+
+        // ✅ Notify all admins about the deletion
+        $admins = User::where('role', User::ROLE_ADMIN)->get();
+        Notification::send($admins, new AuditEventNotification($audit));
+
+        return redirect()->back()->with('success', 'User deleted and audit logged.');
     }
 }

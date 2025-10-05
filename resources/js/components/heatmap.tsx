@@ -108,7 +108,7 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
     return (
         <Card>
             <CardHeader className="flex items-center justify-between">
-                <CardTitle>Encounters Heatmap</CardTitle>
+                {/* <CardTitle>Encounters Heatmap</CardTitle> */}
                 <div className="flex items-center gap-2">
                     <div className="text-sm">
                         {monthName} {currentYear}

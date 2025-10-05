@@ -1,9 +1,9 @@
+import PatientsController from '@/actions/App/Http/Controllers/Patients/PatientsController';
 import PatientForm from '@/components/patientform';
 import AppLayout from '@/layouts/app-layout';
-import PatientsController from '@/actions/App/Http/Controllers/Patients/PatientsController';
 import patients from '@/routes/patients';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { router, useForm, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import React from 'react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -16,11 +16,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-
 export default function Create() {
-// console.log(PatientsController.store.form())
+    // console.log(PatientsController.store.form())
     const { auth } = usePage<SharedData>().props;
-
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -29,10 +27,10 @@ export default function Create() {
 
     return (
         <AppLayout>
-            <div className='flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4'>
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <h2 className="mb-4 text-lg font-bold">New Patient</h2>
-                <PatientForm {...PatientsController.store.form()} mode='create' />
-            </div>  
+                <PatientForm {...PatientsController.store.form()} mode={'create'} />
+            </div>
         </AppLayout>
     );
 }

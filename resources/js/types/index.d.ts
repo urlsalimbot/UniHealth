@@ -15,6 +15,27 @@ export interface NavGroup {
     items: NavItem[];
 }
 
+export interface DatabaseNotification {
+    id: string;
+    type: string;
+    data: Record<string, any>;
+    read_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+declare module '@inertiajs/core' {
+    interface PageProps extends InertiaPageProps {
+        auth: {
+            user:
+                | (User & {
+                      notifications?: DatabaseNotification[];
+                  })
+                | null;
+        };
+    }
+}
+
 export interface NavItem {
     title: string;
     href: NonNullable<InertiaLinkProps['href']>;

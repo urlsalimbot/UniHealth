@@ -10,14 +10,14 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import admin from '@/routes/admin';
 import inventory from '@/routes/inventory';
 import patients from '@/routes/patients';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Menu, Pill, Search, User, Clipboard } from 'lucide-react';
+import { Bell, Clipboard, LayoutGrid, Menu, Pill, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
-import admin from '@/routes/admin';
 
 const mainNavItems: NavItem[] = [
     {
@@ -33,13 +33,14 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Inventory',
         href: inventory.index.url(),
+
         icon: Pill,
     },
     {
         title: 'Users',
         href: admin.dashboard.url(),
         icon: Clipboard,
-    }
+    },
 ];
 
 const rightNavItems: NavItem[] = [
@@ -64,6 +65,8 @@ interface AppHeaderProps {
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
+    const notifications = auth.user?.notifications ?? [];
+
     const getInitials = useInitials();
     return (
         <>
@@ -145,9 +148,23 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
-                            <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
-                                <Search className="!size-5 opacity-80 group-hover:opacity-100" />
-                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
+                                        <Bell className="!size-5 opacity-80 group-hover:opacity-100" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56" align="end">
+                                    {notifications.map((n) => (
+                                        <div key={n.id} className="border-b p-2">
+                                            <span className="text-foreground">{n.data.action}</span>
+                                            <p>{n.data.entity}</p>
+                                            <p>{n.data.created_at}</p>
+                                        </div>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
                             <div className="hidden lg:flex">
                                 {rightNavItems.map((item) => (
                                     <TooltipProvider key={item.title} delayDuration={0}>

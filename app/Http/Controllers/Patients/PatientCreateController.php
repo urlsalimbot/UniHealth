@@ -9,57 +9,12 @@ use App\Models\Patients;
 use Inertia\Inertia;
 
 
-class PatientsController extends Controller
+class PatientCreateController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = Patients::query();
-
-        // Filtering
-        if ($request->filled('last_name')) {
-            $query->where('last_name', 'like', '%' . $request->last_name . '%');
-        }
-
-        // Sorting
-        $sort = $request->get('sort', 'created_at');
-        $direction = $request->get('direction', 'desc');
-        $query->orderBy($sort, $direction);
-
-        // Paginate (server-side)
-        $patients = $query->paginate($request->get('per_page', 10))
-            ->appends($request->query());
-
-        return Inertia::render('patients/patients-view', [
-            'patient' => $patients,
-            'filters' => $request->only(['last_name', 'sort', 'direction', 'per_page']),
-        ]);
-    }
-
-
     public function create()
     {
         return Inertia::render('patients/patient-create');
     }
-
-    // Show a single patient
-    public function show($id)
-    {
-        $patient = Patients::with([
-            'vital_signs' => fn($q) => $q->orderBy('created_at', 'desc'),
-            'medical_encounters' => fn($q) => $q->orderBy('encounter_date', 'desc'),
-            'medical_encounters.patient_prescriptions',
-        ])->findOrFail($id);
-
-        return Inertia::render('patients/patient-singleview', [
-            'patient' => $patient,
-            'vital_signs' => $patient->vital_signs,
-            'medical_encounters' => $patient->medical_encounters,
-            'patient_prescriptions' => $patient->medical_encounters
-                ->pluck('patient_prescriptions')
-                ->flatten(),
-        ]);
-    }
-
 
     // Store a new patient
     public function store(Request $request): RedirectResponse
@@ -111,31 +66,6 @@ class PatientsController extends Controller
 
         $patient = Patients::create($validated);
 
-        return to_route('patient.view');
-    }
-
-
-
-    // Update an existing patient
-    public function update(Request $request, $id)
-    {
-        $patient = Patients::findOrFail($id);
-        $patient->update($request->all());
-        return Inertia::render('patient/patient-edit', [
-
-            'patient' => $patient
-
-        ]);
-    }
-
-    // Delete a patient
-    public function destroy(string $id)
-    {
-        $patient = Patients::findOrFail($id);
-        $patient->delete();
-
-        return redirect()
-            ->route('patients.index')
-            ->with('success', 'Patient deleted successfully!');
+        return to_route('patient.view', ['id' => $patient->id]);
     }
 }
