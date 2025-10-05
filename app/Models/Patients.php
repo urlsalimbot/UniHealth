@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-Use Str;
+use Str;
 
 class Patients extends Model
 {
@@ -67,10 +67,11 @@ class Patients extends Model
         });
     }
 
-    public function medical_encounters(): HasMany
+    public function medical_encounters()
     {
-        return $this->hasMany(MedicalEncounters::class, 'encounter_id');
+        return $this->hasMany(MedicalEncounters::class, 'patient_id', 'patient_id');
     }
+
 
     public function patient_prescriptions(): HasMany
     {

@@ -11,25 +11,28 @@ use Inertia\Inertia;
 
 class ExistingPatientController extends Controller
 {
-  
+
     // Show a single patient
     public function show($id)
     {
         $patient = Patients::with([
-            'vital_signs' => fn($q) => $q->orderBy('created_at', 'desc'),
-            'medical_encounters' => fn($q) => $q->orderBy('encounter_date', 'desc'),
-            'medical_encounters.patient_prescriptions',
+            'medical_encounters' => function ($q) {
+                $q->orderBy('encounter_date', 'desc')
+                    ->with(['vital_signs', 'patient_prescriptions'])
+                    ->take(5);
+            },
         ])->findOrFail($id);
+
+        $latestEncounter = $patient->medical_encounters->first();
 
         return Inertia::render('patients/patient-singleview', [
             'patient' => $patient,
-            'vital_signs' => $patient->vital_signs,
             'medical_encounters' => $patient->medical_encounters,
-            'patient_prescriptions' => $patient->medical_encounters
-                ->pluck('patient_prescriptions')
-                ->flatten(),
+            'latest_encounter' => $latestEncounter,
         ]);
     }
+
+
 
     // Update an existing patient
     public function update(Request $request, $id)

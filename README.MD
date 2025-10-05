@@ -1,7 +1,9 @@
 # UNIHEALTH
+
 ## Integrated Municipal Health Information And Service Delivery System: A Unified Digital Platform For Hospitals, Rural Health Units, And Citizen Access
 
-### How to install and run 
+### How to install and run
+
 1. git clone -S https://www.github.com/urlsalimbot/unihealth
 
 2. cd unihealth
@@ -13,7 +15,6 @@
 
 6. composer run dev
 
-
 ## to-do list
 
 - [ ] data integrity
@@ -22,16 +23,16 @@
 - [ ] update all controllers to include proper logging
 
 - [ ] patient dashboard
-- [ ] patient polish input 
-- [ ] patient recorded vs nominal value charts
-- [ ] patient historical chief complaints
-- [ ] patient current prescribed medication
-- [ ] patient most recent medical intervention
+- [ ] patient polish input
+- [x] patient recorded vs nominal value charts
+- [x] patient historical chief complaints
+- [x] patient current prescribed medication
+- [x] patient most recent medical intervention
 
 - [ ] inventory dashboard
 - [ ] stocks quantity modification
 - [ ] stocks low quantity alert
-- [ ] inside medication interface 
+- [ ] inside medication interface
 - [ ] input medication interface
 - [ ] view and edit medication
 

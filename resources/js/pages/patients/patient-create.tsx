@@ -1,4 +1,4 @@
-import PatientsController from '@/actions/App/Http/Controllers/Patients/PatientsController';
+import PatientCreateController from '@/actions/App/Http/Controllers/Patients/PatientCreateController';
 import PatientForm from '@/components/patientform';
 import AppLayout from '@/layouts/app-layout';
 import patients from '@/routes/patients';
@@ -29,7 +29,7 @@ export default function Create() {
         <AppLayout>
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <h2 className="mb-4 text-lg font-bold">New Patient</h2>
-                <PatientForm {...PatientsController.store.form()} mode={'create'} />
+                <PatientForm {...PatientCreateController.store.form()} mode={'create'} />
             </div>
         </AppLayout>
     );

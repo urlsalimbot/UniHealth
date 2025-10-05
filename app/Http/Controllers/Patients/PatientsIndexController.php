@@ -9,7 +9,7 @@ use App\Models\Patients;
 use Inertia\Inertia;
 
 
-class PatientIndexController extends Controller
+class PatientsIndexController extends Controller
 {
     public function index(Request $request)
     {
