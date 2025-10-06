@@ -17,35 +17,38 @@
 
 ## to-do list
 
-- [ ] data integrity
-- [x] notifications for actions
-- [x] audit tracing for admin accounts
-- [ ] update all controllers to include proper logging
+-[ ] data integrity
+-[x] notifications for actions
+-[x] audit tracing for admin accounts
+-[ ] update all controllers to include proper logging
 
-- [ ] patient dashboard
-- [x] patient polish input
-- [x] patient recorded vs nominal value charts
-- [x] patient historical chief complaints
-- [x] patient current prescribed medication
-- [x] patient most recent medical intervention
+-[ ] patient dashboard
+-[x] patient polish input
+-[x] patient recorded vs nominal value charts
+-[x] patient historical chief complaints
+-[x] patient current prescribed medication
+-[x] patient most recent medical intervention
 
-- [ ] inventory dashboard
-- [x] stocks quantity modification
-- [ ] stocks low quantity alert
+-[ ] inventory dashboard
+-[x] stocks quantity modification
+-[ ] stocks low quantity alert
+-[ ] release 
 
-- [ ] inside medication interface
-- [ ] input medication interface
-- [ ] view and edit medication
+-[ ] inside medication interface
+-[ ] input medication interface
+-[ ] view and edit medication
 
-- [ ] staff dashboard finalization
-- [ ] radial chart of visits in the last 7 days
-- [ ] stock monitoring and updates
-- [ ] heatmap of encounters
-- [ ] patients triage urgency
+-[ ] staff dashboard finalization
+-[ ] radial chart of visits in the last 7 days
+-[ ] stock monitoring and updates
+-[ ] heatmap of encounters
+-[ ] patients triage urgency
 
-- [ ] patient facing interface
-- [ ] show only patients tab and inventory tab
-- [ ] patients tab view-only
-- [ ] inventory view-only
+-[ ] only admin can create and authorize staff accounts
+
+-[ ] patient facing interface
+-[ ] show only patients tab and inventory tab
+-[ ] patients tab view-only
+-[ ] inventory view-only
 
 - [ ] migrate to mysql

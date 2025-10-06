@@ -18,6 +18,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { Bell, Clipboard, LayoutGrid, Menu, Pill, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import { ScrollArea } from './ui/scroll-area';
 
 const mainNavItems: NavItem[] = [
     {
@@ -155,13 +156,19 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56" align="end">
-                                    {notifications.map((n) => (
-                                        <div key={n.id} className="border-b p-2">
-                                            <span className="text-foreground">{n.data.action}</span>
-                                            <p>{n.data.entity}</p>
-                                            <p>{n.data.created_at}</p>
-                                        </div>
-                                    ))}
+                                    <ScrollArea className='min-h-[16rem]'>
+                                        {notifications.length > 0 ? (
+                                            notifications.map((n) => (
+                                                <div key={n.id} className="border-b p-2">
+                                                    <span className="text-foreground">{n.data.action}</span>
+                                                    <p>{n.data.entity}</p>
+                                                    <p>{n.data.created_at}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p>No notifications found.</p>
+                                        )}
+                                    </ScrollArea>
                                 </DropdownMenuContent>
                             </DropdownMenu>
 

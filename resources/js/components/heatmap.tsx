@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useMemo, useState } from 'react';
 
@@ -106,7 +106,8 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
     const monthName = new Date(currentYear, currentMonth).toLocaleString(undefined, { month: 'long' });
 
     return (
-        <Card>
+        <>
+            {' '}
             <CardHeader className="flex items-center justify-between">
                 {/* <CardTitle>Encounters Heatmap</CardTitle> */}
                 <div className="flex items-center gap-2">
@@ -133,11 +134,10 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
                     </div>
                 </div>
             </CardHeader>
-
             <CardContent>
                 <div className="mb-2 grid grid-cols-7 gap-1 text-xs">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-                        <div key={d} className="text-center text-[12px] font-medium ">
+                        <div key={d} className="text-center text-[12px] font-medium">
                             {d}
                         </div>
                     ))}
@@ -192,6 +192,6 @@ export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { m
                     </div>
                 </div>
             </CardContent>
-        </Card>
+        </>
     );
 }

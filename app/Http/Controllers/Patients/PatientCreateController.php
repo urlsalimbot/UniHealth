@@ -56,7 +56,7 @@ class PatientCreateController extends Controller
             'emergency_contact_address' => 'nullable|string|max:255',
 
             'is_active' => 'boolean',
-            'data_privacy_consent' => 'required|boolean ',
+            'data_privacy_consent' => 'boolean',
             'data_privacy_consent_date' => 'nullable|date',
         ]);
 
@@ -66,6 +66,6 @@ class PatientCreateController extends Controller
 
         $patient = Patients::create($validated);
 
-        return to_route('patient.view', ['id' => $patient->id]);
+        return to_route('patient.show', ['id' => $patient->id]);
     }
 }

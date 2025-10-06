@@ -31,6 +31,8 @@
             'created_by',
         ];
 
+        //TO-DO intervention
+
         /** 
          * A medical encounter has many prescriptions.
          */

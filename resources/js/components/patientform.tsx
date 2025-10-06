@@ -93,11 +93,11 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
     );
 
     return (
-        <Form {...Actions} className="space-y-10">
+        <Form {...Actions} className="space-y-4">
             {({ processing, recentlySuccessful, errors }) => (
                 <>
                     {/* 3-column grid layout for cards */}
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2">
                         {/* Personal Info */}
                         <Card className="flex flex-col">
                             <CardHeader>
@@ -114,33 +114,6 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                             </CardContent>
                         </Card>
 
-                        {/* Identification */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Identification</CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid grid-cols-1 gap-4">
-                                {renderInput('philhealth_id', 'PhilHealth ID', errors)}
-                                {renderInput('pwd_id', 'PWD ID', errors)}
-                                {renderInput('senior_citizen_id', 'Senior Citizen ID', errors)}
-                            </CardContent>
-                        </Card>
-
-                        {/* Contact */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Contact Information</CardTitle>
-                            </CardHeader>
-                            <CardContent className="grid grid-cols-1 gap-4">
-                                {renderInput('email', 'Email', errors)}
-                                {renderInput('mobile_number', 'Mobile Number', errors)}
-                                {renderInput('landline_number', 'Landline Number', errors)}
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Address + Emergency Contact Side by Side */}
-                    <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
                         {/* Address */}
                         <Card className="flex flex-col">
                             <CardHeader>
@@ -154,6 +127,33 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                 {renderInput('province', 'Province', errors)}
                                 {renderInput('region', 'Region', errors)}
                                 {renderInput('postal_code', 'Postal Code', errors)}
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Address + Emergency Contact Side by Side */}
+                    <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+                        {/* Contact */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Contact Information</CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 gap-4">
+                                {renderInput('email', 'Email', errors)}
+                                {renderInput('mobile_number', 'Mobile Number', errors)}
+                                {renderInput('landline_number', 'Landline Number', errors)}
+                            </CardContent>
+                        </Card>
+
+                        {/* Identification */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Identification</CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 gap-4">
+                                {renderInput('philhealth_id', 'PhilHealth ID', errors)}
+                                {renderInput('pwd_id', 'PWD ID', errors)}
+                                {renderInput('senior_citizen_id', 'Senior Citizen ID', errors)}
                             </CardContent>
                         </Card>
 
@@ -173,12 +173,12 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
 
                     {/* Submit + Consent Inline */}
                     {!isView && (
-                        <div className="    flex flex-col items-start justify-between rounded-md sm:flex-row sm:items-center">
+                        <div className="flex flex-col items-start justify-between rounded-md sm:flex-row sm:items-center">
                             {renderConsentCheckbox(errors)}
                             <div className="flex items-center gap-3">
-                                <Button 
-                                className='px-8'
-                                disabled={processing}>{mode === 'edit' ? 'Update' : 'Submit and Save'}</Button>
+                                <Button className="px-8" disabled={processing}>
+                                    {mode === 'edit' ? 'Update' : 'Submit and Save'}
+                                </Button>
                                 <Transition
                                     show={recentlySuccessful}
                                     enter="transition ease-in-out"

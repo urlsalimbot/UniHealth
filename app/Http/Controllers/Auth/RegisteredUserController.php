@@ -47,8 +47,8 @@ class RegisteredUserController extends Controller
                 'philhealth_id' => 'required|string',
             ]);
 
-            $patient = Patients::where('name', $request->name)
-                ->where('philhealth_id', $request->philhealth_id)
+            $patient = Patients:://where('name', $request->name)
+                where('philhealth_id', $request->philhealth_id)
                 ->first();
 
             if (!$patient) {
