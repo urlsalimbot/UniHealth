@@ -65,7 +65,7 @@ export function DataTable<TData, TValue>({
     return (
         <div className="space-y-4">
             {/* Filter */}
-            <div className="flex items-center gap-2 py-2">
+            <div className="flex items-center gap-6">
                 <div className="relative w-full max-w-sm">
                     <Input
                         placeholder={`Filter ${label ?? field}`}

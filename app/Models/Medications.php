@@ -26,6 +26,21 @@ class Medications extends Model
         'created_at',
     ];
 
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->inventory_id)) {
+                do {
+                    $id = 'MED' . rand(100, 999);
+                } while (self::where('medication_id', $id)->exists());
+
+                $model->inventory_id = $id;
+            }
+        });
+    }
     /**
      * A medication can appear in many prescriptions.
      */

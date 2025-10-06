@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Transition } from '@headlessui/react';
 import { Form } from '@inertiajs/react';
 import InputError from './input-error';
+import { Label } from './ui/label';
 
 type PatientFormData = {
     patient_id?: string;
@@ -51,10 +52,11 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
         explicitType?: string,
         opts?: { textarea?: boolean; rows?: number },
     ) => {
+        
         if (opts?.textarea || name === 'emergency_contact_address') {
             return (
                 <div className="space-y-1">
-                    <label className="block text-sm font-medium">{label}</label>
+                    <Label className="block text-sm font-medium">{label}</Label>
                     <Textarea defaultValue={(data?.[name] as any) ?? ''} readOnly={isView} rows={opts?.rows ?? 3} className="w-full" />
                     <InputError className="mt-2" message={errors[name]} />
                 </div>
@@ -74,9 +76,9 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
 
         return (
             <div className="space-y-1">
-                <label htmlFor={name} className="block text-sm font-medium">
+                <Label htmlFor={name} className="block text-sm font-medium">
                     {label}
-                </label>
+                </Label>
                 <Input id={name} name={name} type={type} defaultValue={data?.[name] ?? ''} readOnly={isView} />
                 <InputError className="mt-2" message={errors[name]} />
             </div>
@@ -84,12 +86,12 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
     };
 
     const renderConsentCheckbox = (errors: any) => (
-        <label className="flex items-center gap-2 text-sm font-medium">
+        <Label className="flex items-center gap-2 text-sm font-medium">
             <Input type="checkbox" defaultChecked={!!data?.data_privacy_consent} readOnly={isView} className="h-4 w-4 rounded" />
             <span>Data Privacy Consent</span>
             {data?.data_privacy_consent_date && <span className="ml-2 text-xs text-muted-foreground">({data.data_privacy_consent_date})</span>}
             <InputError className="ml-2" message={errors['data_privacy_consent']} />
-        </label>
+        </Label>
     );
 
     return (

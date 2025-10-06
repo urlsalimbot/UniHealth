@@ -31,38 +31,37 @@ class PatientCreateController extends Controller
             'maiden_name' => 'nullable|string|max:255',
             'nickname' => 'nullable|string|max:100',
 
-            'date_of_birth' => 'nullable|date',
-            'place_of_birth' => 'nullable|string|max:255',
-            'gender' => 'nullable|in:Male,Female,other',
-            'civil_status' => 'nullable|string|max:50',
-            'nationality' => 'nullable|string|max:100',
+            'date_of_birth' => 'required|date',
+            'place_of_birth' => 'required|string|max:255',
+            'gender' => 'required|in:Male,Female,other',
+            'civil_status' => 'required|string|max:50',
+            'nationality' => 'required|string|max:100',
             'religion' => 'nullable|string|max:100',
 
-            'mobile_number' => 'nullable|string|max:20',
-            'landline_number' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
+            'mobile_number' => 'required|string|max:20',
+            'landline_number' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
 
             'house_number' => 'nullable|string|max:50',
-            'street' => 'nullable|string|max:255',
+            'street' => 'required|string|max:255',
             'barangay' => 'required|string|max:255',
             'municipality_city' => 'required|string|max:255',
             'province' => 'required|string|max:255',
             'region' => 'required|string|max:255',
-            'postal_code' => 'nullable|string|max:20',
+            'postal_code' => 'required|string|max:20',
 
-            'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_relationship' => 'nullable|string|max:100',
-            'emergency_contact_number' => 'nullable|string|max:20',
-            'emergency_contact_address' => 'nullable|string|max:255',
+            'emergency_contact_name' => 'required|string|max:255',
+            'emergency_contact_relationship' => 'required|string|max:100',
+            'emergency_contact_number' => 'required|string|max:20',
+            'emergency_contact_address' => 'required|string|max:255',
 
-            'is_active' => 'boolean',
-            'data_privacy_consent' => 'boolean',
-            'data_privacy_consent_date' => 'nullable|date',
+            'data_privacy_consent' => ['accepted'],
         ]);
 
         // Ensure boolean defaults (since unchecked checkboxes may be missing in request)
-        $validated['is_active'] = $request->boolean('is_active');
-        $validated['data_privacy_consent'] = $request->boolean('data_privacy_consent');
+        if ($request->boolean('data_privacy_consent')) {
+            $validated['data_privacy_consent_date'] = now();
+        }
 
         $patient = Patients::create($validated);
 

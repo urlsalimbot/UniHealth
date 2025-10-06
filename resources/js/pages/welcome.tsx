@@ -1,9 +1,19 @@
 import { about, dashboard, login, register } from '@/routes';
+import patients from '@/routes/patients';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
+
+    const user = auth.user;
+
+    // Define destination based on role
+    const isUser = user && user.role === 'user';
+    const patientId = user && typeof user.patient_id === 'string' ? user.patient_id : null;
+
+    const dashboardLink = isUser && patientId ? patients.show(patientId) : dashboard();
+    const dashboardLabel = isUser ? 'Patient' : 'Dashboard';
 
     return (
         <>
@@ -28,10 +38,10 @@ export default function Welcome() {
                         <div className="flex items-center gap-4">
                             {auth.user ? (
                                 <Link
-                                    href={dashboard()}
+                                    href={dashboardLink}
                                     className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
                                 >
-                                    Dashboard
+                                    {dashboardLabel}
                                 </Link>
                             ) : (
                                 <>

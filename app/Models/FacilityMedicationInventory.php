@@ -45,6 +45,21 @@ class FacilityMedicationInventory extends Model
         'created_at',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->inventory_id)) {
+                do {
+                    $id = 'STOCK' . rand(100, 999999);
+                } while (self::where('inventory_id', $id)->exists());
+
+                $model->inventory_id = $id;
+            }
+        });
+    }
+
 
     public function healthcare_facilities(): BelongsTo
     {
@@ -54,6 +69,11 @@ class FacilityMedicationInventory extends Model
     public function medication()
     {
         return $this->belongsTo(Medications::class, 'medication_id', 'medication_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(MedicationInventoryTransaction::class, 'inventory_id', 'inventory_id');
     }
 
 }

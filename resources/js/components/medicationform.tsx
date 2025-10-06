@@ -1,102 +1,92 @@
-import { Form, Link } from '@inertiajs/react';
+import { Transition } from '@headlessui/react';
+import { Form } from '@inertiajs/react';
+import InputError from './input-error';
+import { Button } from './ui/button';
+import { Checkbox } from './ui/checkbox';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 
-export default function Create({ data = null, mode = 'create', ...Actions }: any) {
+type MedicationFormData = {
+    generic_name: string;
+    brand_names?: string;
+    strength?: string;
+    dosage_form?: string;
+    drug_class?: string;
+    controlled_substance?: boolean;
+    fda_registration?: string;
+};
+
+export default function MedicationForm({ data = {}, mode = 'create', ...Actions }: any) {
+    const isView = mode === 'view';
+
+    const renderInput = (name: keyof MedicationFormData, label: string, errors: any, explicitType?: string) => {
+        const n = String(name).toLowerCase();
+        const type =
+            explicitType ||
+            (n.includes('date')
+                ? 'date'
+                : n.includes('email')
+                  ? 'email'
+                  : n.includes('number') || n.includes('phone') || n.includes('mobile')
+                    ? 'tel'
+                    : 'text');
+
+        return (
+            <div className="flex flex-col space-y-1">
+                <Label htmlFor={name}>{label}</Label>
+                <Input id={name} name={name} type={type} defaultValue={data?.[name] ?? ''} readOnly={isView} />
+                <InputError className="text-sm text-destructive" message={errors[name]} />
+            </div>
+        );
+    };
+
     return (
-        <div className="mx-auto max-w-3xl p-6">
-            <h1 className="mb-6 text-2xl font-bold">Add Medication</h1>
+        <Form {...Actions} className="space-y-8">
+            {({ processing, recentlySuccessful, errors }) => (
+                <>
+                    {/* Grid Form */}
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        {renderInput('generic_name', 'Generic Name', errors)}
+                        {renderInput('brand_names', 'Brand Names', errors)}
+                        {renderInput('strength', 'Strength', errors)}
+                        {renderInput('dosage_form', 'Dosage Form', errors)}
+                        {renderInput('drug_class', 'Drug Class', errors)}
+                        {renderInput('fda_registration', 'FDA Registration', errors)}
 
-            <Form {...Actions} className="space-y-10">
-                {({ processing, recentlySuccessful, errors }) => (
-                    <>
-                        <div>
-                            <label className="block font-medium">Generic Name</label>
-                            <input
-                                type="text"
-                                value={data.generic_name}
-                                onChange={(e) => setData('generic_name', e.target.value)}
-                                className="mt-1 w-full rounded-lg border px-3 py-2"
-                            />
-                            {errors.generic_name && <p className="text-sm text-red-600">{errors.generic_name}</p>}
-                        </div>
-
-                        <div>
-                            <label className="block font-medium">Brand Names</label>
-                            <input
-                                type="text"
-                                value={data.brand_names}
-                                onChange={(e) => setData('brand_names', e.target.value)}
-                                className="mt-1 w-full rounded-lg border px-3 py-2"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block font-medium">Strength</label>
-                                <input
-                                    type="text"
-                                    value={data.strength}
-                                    onChange={(e) => setData('strength', e.target.value)}
-                                    className="mt-1 w-full rounded-lg border px-3 py-2"
+                        {/* Controlled Substance Checkbox */}
+                        <div className="flex flex-col space-y-1">
+                            <Label htmlFor="controlled_substance">Controlled Substance</Label>
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="controlled_substance"
+                                    name="controlled_substance"
+                                    defaultChecked={!!data?.controlled_substance}
+                                    disabled={isView}
                                 />
+                                <span className="text-sm text-muted-foreground">Mark if this is a controlled medication</span>
                             </div>
-                            <div>
-                                <label className="block font-medium">Dosage Form</label>
-                                <input
-                                    type="text"
-                                    value={data.dosage_form}
-                                    onChange={(e) => setData('dosage_form', e.target.value)}
-                                    className="mt-1 w-full rounded-lg border px-3 py-2"
-                                />
-                            </div>
+                            <InputError className="text-sm text-destructive" message={errors['controlled_substance']} />
                         </div>
+                    </div>
 
-                        <div>
-                            <label className="block font-medium">Drug Class</label>
-                            <input
-                                type="text"
-                                value={data.drug_class}
-                                onChange={(e) => setData('drug_class', e.target.value)}
-                                className="mt-1 w-full rounded-lg border px-3 py-2"
-                            />
-                        </div>
+                    {/* Footer Buttons */}
+                    <div className="mt-10 flex items-center justify-end gap-4">
+                        <Transition
+                            show={recentlySuccessful}
+                            enter="transition ease-in-out duration-300"
+                            enterFrom="opacity-0"
+                            leave="transition ease-in-out duration-300"
+                            leaveTo="opacity-0"
+                        >
+                            <p className="text-sm text-muted-foreground">Saved successfully!</p>
+                        </Transition>
 
-                        <div>
-                            <label className="inline-flex items-center">
-                                <input
-                                    type="checkbox"
-                                    checked={data.controlled_substance}
-                                    onChange={(e) => setData('controlled_substance', e.target.checked)}
-                                    className="mr-2"
-                                />
-                                Controlled Substance
-                            </label>
-                        </div>
-
-                        <div>
-                            <label className="block font-medium">FDA Registration</label>
-                            <input
-                                type="text"
-                                value={data.fda_registration}
-                                onChange={(e) => setData('fda_registration', e.target.value)}
-                                className="mt-1 w-full rounded-lg border px-3 py-2"
-                            />
-                        </div>
-
-                        <div className="mt-6 flex justify-between">
-                            <Link href={medications.index.url()} className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400">
-                                Cancel
-                            </Link>
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="rounded-lg bg-blue-600 px-4 py-2 text-white shadow hover:bg-blue-700"
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </>
-                )}
-            </Form>
-        </div>
+                        <Button type="submit" disabled={processing}>
+                            {mode === 'edit' ? 'Update Medication' : 'Submit and Save'}
+                        </Button>
+                    </div>
+                </>
+            )}
+        </Form>
     );
 }

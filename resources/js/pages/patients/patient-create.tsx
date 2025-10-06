@@ -3,9 +3,8 @@ import PatientForm from '@/components/patientform';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import patients from '@/routes/patients';
-import { SharedData, type BreadcrumbItem } from '@/types';
-import { router, usePage } from '@inertiajs/react';
-import React from 'react';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Patients',
@@ -18,16 +17,15 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Create() {
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title={`Patient - Create`} />
             <div className="flex h-full flex-1 flex-col overflow-x-auto rounded-xl p-4 pt-2">
-                    <Card className="mt-4 flex-3">
-                        <CardContent>
-                            <PatientForm {...PatientCreateController.store.form()} mode={'create'} />
-                        </CardContent>
-                    </Card>
-
+                <Card className="mt-4 flex-3">
+                    <CardContent>
+                        <PatientForm {...PatientCreateController.store.form()} mode={'create'} />
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

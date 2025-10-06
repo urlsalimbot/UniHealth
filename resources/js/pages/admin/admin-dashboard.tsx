@@ -1,5 +1,6 @@
 import { usercolumns } from '@/components/columns-users';
 import { DataTable } from '@/components/datatable';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
@@ -24,6 +25,9 @@ export default function AdminDashboard() {
                     <Card className="mt-4 flex flex-1">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>Users</CardTitle>
+                            <CardTitle>
+                                <Button>+ New Staff</Button>
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <DataTable

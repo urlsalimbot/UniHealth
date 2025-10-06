@@ -17,38 +17,42 @@
 
 ## to-do list
 
--[ ] data integrity
--[x] notifications for actions
--[x] audit tracing for admin accounts
--[ ] update all controllers to include proper logging
+- [ ] data integrity
+- [x] notifications for actions
+- [x] audit tracing for admin accounts
+- [ ] update all controllers to include proper logging
 
--[ ] patient dashboard
--[x] patient polish input
--[x] patient recorded vs nominal value charts
--[x] patient historical chief complaints
--[x] patient current prescribed medication
--[x] patient most recent medical intervention
+- [ ] patient dashboard
+- [x] patient polish input
+- [x] patient recorded vs nominal value charts
+- [x] patient historical chief complaints
+- [x] patient current prescribed medication
+- [x] patient most recent medical intervention
 
--[ ] inventory dashboard
--[x] stocks quantity modification
--[ ] stocks low quantity alert
--[ ] release 
+- [ ] add vital signs intake
+- [ ] add medical encounters intake
+- [ ] add prescriptions intake
 
--[ ] inside medication interface
--[ ] input medication interface
--[ ] view and edit medication
+- [ ] inventory dashboard
+- [x] stocks quantity modification
+- [x] inside medication interface
+- [x] input medication interface
+- [x] view medication
+- [ ] edit medication
+- [ ] stocks low quantity alert
+- [ ] release table for transaction auditing
 
--[ ] staff dashboard finalization
--[ ] radial chart of visits in the last 7 days
--[ ] stock monitoring and updates
--[ ] heatmap of encounters
--[ ] patients triage urgency
+- [ ] staff dashboard finalization
+- [ ] radial chart of visits in the last 7 days
+- [ ] stock monitoring and updates
+- [ ] heatmap of encounters
+- [ ] patients triage urgency
 
--[ ] only admin can create and authorize staff accounts
+- [x] only admin can create and authorize staff accounts
 
--[ ] patient facing interface
--[ ] show only patients tab and inventory tab
--[ ] patients tab view-only
--[ ] inventory view-only
+- [ ] patient facing interface
+- [ ] show only patients tab and inventory tab
+- [ ] patients tab view-only
+- [ ] inventory view-only
 
 - [ ] migrate to mysql

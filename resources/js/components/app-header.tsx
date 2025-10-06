@@ -68,6 +68,28 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const { auth } = page.props;
     const notifications = auth.user?.notifications ?? [];
 
+    const userRole = auth.user?.role;
+    const patientId = auth.user?.patient_id;
+
+    let visibleNavItems = [...mainNavItems];
+
+    // 1️⃣ Adjust "Patients" link for regular users
+    visibleNavItems = visibleNavItems.map((item) => {
+        if (item.title === 'Patients' && userRole === 'user' && patientId) {
+            return {
+                ...item,
+                title: 'Patient',
+                href: `/patients/${patientId}`, // or patients.show.url(patientId) if using Ziggy routes
+            };
+        }
+        return item;
+    });
+
+    // 2️⃣ Hide restricted items for 'user' role
+    if (userRole === 'user') {
+        visibleNavItems = visibleNavItems.filter((item) => item.title !== 'Dashboard' && item.title !== 'Users');
+    }
+
     const getInitials = useInitials();
     return (
         <>
@@ -89,7 +111,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 <div className="flex h-full flex-1 flex-col space-y-4 p-4">
                                     <div className="flex h-full flex-col justify-between text-sm">
                                         <div className="flex flex-col space-y-4">
-                                            {mainNavItems.map((item) => (
+                                            {visibleNavItems.map((item) => (
                                                 <Link key={item.title} href={item.href} className="flex items-center space-x-2 font-medium">
                                                     {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
                                                     <span>{item.title}</span>
@@ -125,7 +147,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     <div className="ml-6 hidden h-full items-center space-x-6 lg:flex">
                         <NavigationMenu className="flex h-full items-stretch">
                             <NavigationMenuList className="flex h-full items-stretch space-x-2">
-                                {mainNavItems.map((item, index) => (
+                                {visibleNavItems.map((item, index) => (
                                     <NavigationMenuItem key={index} className="relative flex h-full items-center">
                                         <Link
                                             href={item.href}
@@ -156,7 +178,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56" align="end">
-                                    <ScrollArea className='min-h-[16rem]'>
+                                    <ScrollArea className="min-h-[16rem]">
                                         {notifications.length > 0 ? (
                                             notifications.map((n) => (
                                                 <div key={n.id} className="border-b p-2">

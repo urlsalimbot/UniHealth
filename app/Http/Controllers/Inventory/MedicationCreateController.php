@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Inventory;
 
-
 use App\Http\Controllers\Controller;
 use App\Models\Medications;
-use App\Models\FacilityMedicationInventory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class InventoryCreateController extends Controller
+class MedicationCreateController extends Controller
 {
-   
+
     /**
      * Show the form for creating a new medication.
      */
     public function create()
     {
-        return Inertia::render('medications/create');
+        return Inertia::render('inventory/medication-create');
     }
 
     /**
@@ -37,7 +35,7 @@ class InventoryCreateController extends Controller
 
         Medications::create($validated);
 
-        return redirect()->route('medications.index')
+        return redirect()->route('inventory.index')
             ->with('success', 'Medication added successfully.');
     }
-}       
+}

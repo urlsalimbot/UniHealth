@@ -17,9 +17,9 @@ class ExistingInventoryController extends Controller
      */
     public function show(string $id)
     {
-        $medication = FacilityMedicationInventory::findOrFail($id);
+        $medication = Medications::with(['facility_medication_inventory'])->findOrFail($id);
 
-        return Inertia::render('medications/edit', [
+        return Inertia::render('inventory/inventory-single', [
             'medication' => $medication,
         ]);
     }

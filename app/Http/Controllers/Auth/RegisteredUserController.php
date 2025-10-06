@@ -36,20 +36,18 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:staff,user',
-            'philhealth_id' => 'nullable|string', // only needed for users
+            'philhealth_id' => 'nullable|string',
         ]);
 
         $patientId = null;
 
-        // ✅ Only enforce patient check if role = "user"
+        // Only enforce patient check if role = "user"
         if ($request->role === User::ROLE_USER) {
             $request->validate([
                 'philhealth_id' => 'required|string',
             ]);
 
-            $patient = Patients:://where('name', $request->name)
-                where('philhealth_id', $request->philhealth_id)
-                ->first();
+            $patient = Patients::whereRaw('LOWER(philhealth_id) = ?', [strtolower($request->philhealth_id)])->first();
 
             if (!$patient) {
                 return back()->withErrors([
@@ -57,20 +55,20 @@ class RegisteredUserController extends Controller
                 ])->onlyInput('name', 'email');
             }
 
-            $patientId = $patient->id;
+            // ✅ Correct key name for your model
+            $patientId = $patient->patient_id;
         }
 
-        // ✅ Create user with or without patient link
+        // Create user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'patient_id' => $patientId, // null if staff/admin
+            'patient_id' => $patientId,
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
 
         if ($patientId !== null) {
