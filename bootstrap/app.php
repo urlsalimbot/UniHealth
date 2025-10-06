@@ -31,16 +31,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Handle 403 (Forbidden / Access Denied)
         $exceptions->render(function (HttpException $e, Request $request) {
             if ($e->getStatusCode() === 403) {
                 if ($request->inertia()) {
-                    // For Inertia requests, redirect back with a flash or render an Inertia error page
-                    //return redirect()->back()->with('error', 'Access denied.');
-                    // Or, you can do:
                     return Inertia::render('errors/403')->toResponse($request)->setStatusCode(403);
                 }
-                // Fallback for non-Inertia (regular HTTP) requests
                 return response()->view('errors.403', [], 403);
             }
         });

@@ -29,8 +29,8 @@
 - [x] patient current prescribed medication
 - [x] patient most recent medical intervention
 
-- [ ] add vital signs intake
 - [ ] add medical encounters intake
+- [ ] add vital signs intake
 - [ ] add prescriptions intake
 
 - [ ] inventory dashboard
@@ -50,9 +50,9 @@
 
 - [x] only admin can create and authorize staff accounts
 
-- [ ] patient facing interface
-- [ ] show only patients tab and inventory tab
-- [ ] patients tab view-only
+- [x] patient facing interface
+- [x] show only patients tab and inventory tab
+- [x] patients tab view-only
 - [ ] inventory view-only
 
 - [ ] migrate to mysql
