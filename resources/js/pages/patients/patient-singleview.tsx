@@ -1,3 +1,4 @@
+import CreateEncounterModal from '@/components/encountermodalform';
 import VitalSignsDashboard from '@/components/patient-vitals-charts';
 import PatientForm from '@/components/patientform';
 import {
@@ -22,7 +23,7 @@ import { useState } from 'react';
 export default function PatientSingleView() {
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const { patient, medical_encounters, latest_encounter } = usePage().props as any;
+    const { patient, medical_encounters, latest_encounter, encounterTypes } = usePage().props as any;
 
     const breadcrumbs = [
         { title: 'Patients', href: '/patients' },
@@ -171,10 +172,70 @@ export default function PatientSingleView() {
                     {/* Right sidebar encounters */}
                     <div className="lg:col-span-1">
                         <Card>
-                            <CardHeader>
+                            <CardHeader className="flex items-center justify-between">
                                 <CardTitle>Medical Encounters</CardTitle>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm">
+                                            Expand
+                                        </Button>
+                                    </DialogTrigger>
+
+                                    <DialogContent className="h-[90vh] max-w-[90vw] overflow-hidden p-0">
+                                        <DialogHeader className="p-4 pb-0">
+                                            <DialogTitle className="text-lg font-semibold">All Medical Encounters</DialogTitle>
+                                        </DialogHeader>
+
+                                        {/* Fullscreen scroll area */}
+                                        <ScrollArea className="h-[calc(90vh-4rem)] p-6">
+                                            {medical_encounters.length > 0 ? (
+                                                <ul className="space-y-3">
+                                                    {medical_encounters.map((enc: any) => (
+                                                        <li
+                                                            key={enc.encounter_id}
+                                                            className="rounded-md border p-3 text-sm shadow-sm transition hover:bg-muted/30"
+                                                        >
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="font-semibold">{enc.encounter_type}</div>
+                                                                <div className="text-xs text-gray-500">{enc.encounter_date}</div>
+                                                            </div>
+                                                            <div className="mt-2">
+                                                                <span className="font-medium text-gray-700">Complaint:</span>{' '}
+                                                                {enc.chief_complaint ?? 'N/A'}
+                                                            </div>
+                                                            {enc.intervention && (
+                                                                <div className="mt-1 text-xs text-gray-600">
+                                                                    <span className="font-medium text-gray-700">Intervention:</span>{' '}
+                                                                    {enc.intervention}
+                                                                </div>
+                                                            )}
+                                                            {enc.patient_prescriptions?.length > 0 && (
+                                                                <ul className="mt-2 ml-5 list-disc text-xs text-gray-600">
+                                                                    {enc.patient_prescriptions.map((rx: any) => (
+                                                                        <li key={rx.prescription_id}>{rx.medication_name}</li>
+                                                                    ))}
+                                                                </ul>
+                                                            )}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p className="text-sm text-muted-foreground">No medical encounters yet.</p>
+                                            )}
+                                        </ScrollArea>
+                                    </DialogContent>
+                                </Dialog>
                             </CardHeader>
+
                             <CardContent>
+                                <CardHeader>
+                                    <CardTitle></CardTitle>
+                                    <CreateEncounterModal
+                                        patient={patient}
+                                        lastEncounter={latest_encounter}
+                                        encounterTypes={encounterTypes}
+                                    />
+                                </CardHeader>
                                 <ScrollArea className="h-[32rem] pr-2">
                                     {medical_encounters.length > 0 ? (
                                         <ul className="space-y-2">

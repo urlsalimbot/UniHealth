@@ -25,12 +25,21 @@ class ExistingPatientController extends Controller
 
         $latestEncounter = $patient->medical_encounters->first();
 
+        // Optional: Encounter types for the select dropdown in your modal
+        $encounterTypes = [
+            'Consultation',
+            'Follow-up',
+            'Emergency',
+        ];
+
         return Inertia::render('patients/patient-singleview', [
             'patient' => $patient,
             'medical_encounters' => $patient->medical_encounters,
             'latest_encounter' => $latestEncounter,
+            'encounterTypes' => $encounterTypes,
         ]);
     }
+
 
 
 
