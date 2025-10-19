@@ -101,13 +101,6 @@ export default function MedicalEncounterView() {
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
                                         <h2 className="mb-2 font-semibold text-gray-800">Vital Signs</h2>
-                                        {/* Vital Signs */}
-                                        {selectedEncounter.vital_signs && selectedEncounter.vital_signs.length > 0 && (
-                                            <div>
-                                                <h2 className="mb-2 font-semibold text-gray-800">Vital Signs</h2>
-                                                <VitalSignsDashboard vitals={selectedEncounter.vital_signs[0]} />
-                                            </div>
-                                        )}
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <Button size="sm" variant="outline">
@@ -132,6 +125,10 @@ export default function MedicalEncounterView() {
                                         </Dialog>
                                     </div>
                                 </div>
+                                {/* Vital Signs */}
+                                {selectedEncounter.vital_signs && selectedEncounter.vital_signs.length > 0 && (
+                                    <VitalSignsDashboard vitals={selectedEncounter.vital_signs[0]} />
+                                )}
 
                                 {/* Prescriptions */}
                                 <div>
@@ -150,7 +147,7 @@ export default function MedicalEncounterView() {
                                                 </DialogHeader>
 
                                                 {/* Attachment Upload Form */}
-                                                <PatientPrescriptionForm    
+                                                <PatientPrescriptionForm
                                                     data={{ encounter_id: selectedEncounter.encounter_id }}
                                                     onSubmit={(e: any) => {
                                                         e.preventDefault();

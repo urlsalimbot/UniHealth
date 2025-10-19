@@ -24,9 +24,10 @@
 - [x] patient current prescribed medication
 - [x] patient most recent medical intervention
 
+- [ ] polish encounters panel
 - [x] add medical encounters intake
-- [ ] add vital signs intake
-- [ ] add prescriptions intake
+- [x] add vital signs intake
+- [x] add prescriptions intake
 - [x] add file attachments
 
 - [ ] inventory dashboard
