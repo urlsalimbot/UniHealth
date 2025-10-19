@@ -19,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index() {
-    const { medi, filters, curr_inventory } = usePage().props as any;
+    const { medi, filters, curr_inventory, low_stock_items } = usePage().props as any;
 
     const [editableStocks, setEditableStocks] = useState(curr_inventory.data);
     const [changedStocks, setChangedStocks] = useState<Record<string, Partial<FacilityMedicationInventory>>>({});
@@ -172,6 +172,48 @@ export default function Index() {
                             </ScrollArea>
                         </CardContent>
                     </Card>
+                    {/* 🚨 Low Stock Alert Panel */}
+                    {low_stock_items.length > 0 && (
+                        <Card className="mt-4 border-red-300 bg-red-50 dark:bg-red-950/30">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-red-600">⚠️ Low Stock Alerts ({low_stock_items.length})</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <ScrollArea className="max-h-64">
+                                    <Table className="w-full text-sm">
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Medication</TableHead>
+                                                <TableHead>Current Stock</TableHead>
+                                                <TableHead>Reorder Point</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {low_stock_items.map((item: any) => (
+                                                <TableRow
+                                                    key={item.inventory_id}
+                                                    className="cursor-pointer hover:bg-muted/50"
+                                                    onClick={() => router.get(inventory.item.show(item.medication_id))}
+                                                >
+                                                    <TableCell>{item.medication?.generic_name ?? '—'}</TableCell>
+                                                    <TableCell
+                                                        className={
+                                                            item.current_stock < item.minimum_stock_level
+                                                                ? 'font-semibold text-red-600'
+                                                                : 'font-medium text-amber-600'
+                                                        }
+                                                    >
+                                                        {item.current_stock}
+                                                    </TableCell>
+                                                    <TableCell>{item.reorder_point}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </ScrollArea>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
             </div>
         </AppLayout>

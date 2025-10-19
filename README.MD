@@ -35,14 +35,14 @@
 - [x] input medication interface
 - [x] view medication
 - [ ] edit medication
-- [ ] stocks low quantity alert
+- [x] stocks low quantity alert
 - [ ] release table for transaction auditing
 
 - [ ] staff dashboard finalization
-- [ ] radial chart of visits in the last 7 days
-- [ ] stock monitoring and updates
+- [x] radial chart of visits in the last 7 days
+- [x] stock monitoring and updates
 - [x] heatmap of encounters
-- [ ] patients triage urgency
+- [x] patients triage urgency
 
 - [x] only admin can create and authorize staff accounts
 

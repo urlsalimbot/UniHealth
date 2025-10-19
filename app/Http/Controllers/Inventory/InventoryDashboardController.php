@@ -47,25 +47,17 @@ class InventoryDashboardController extends Controller
         // Inventory Query
         // -------------------------
         $inventoryQuery = FacilityMedicationInventory::with([
-            'medication:medication_id,generic_name,brand_names,dosage_form,strength',
-        ])->select([
-                    'inventory_id',
-                    'facility_id',
-                    'medication_id',
-                    'current_stock',
-                    'minimum_stock_level',
-                    'maximum_stock_level',
-                    'reorder_point',
-                    'expiration_date',
-                    'unit_cost',
-                    'total_value',
-                    'stock_status',
-                    'created_at',
-                ]);
+            'medication',
+        ])->select();
 
         if ($request->filled('medication_id')) {
             $inventoryQuery->where('medication_id', 'like', '%' . $request->medication_id . '%');
         }
+
+        $low_stock_items = FacilityMedicationInventory::with('medication')
+            ->whereColumn('current_stock', '<', 'reorder_point')
+            ->get();
+
 
         $inventorySort = $request->get('inventory_sort', 'created_at');
         $inventoryDirection = $request->get('inventory_direction', 'desc');
@@ -81,6 +73,7 @@ class InventoryDashboardController extends Controller
         return Inertia::render('inventory/inventory-index', [
             'medi' => $medications,
             'curr_inventory' => $inventory,
+            'low_stock_items' => $low_stock_items,
             'filters' => $request->only([
                 'generic_name',
                 'medication_id',

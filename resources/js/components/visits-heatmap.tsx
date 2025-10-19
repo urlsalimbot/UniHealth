@@ -3,20 +3,6 @@ import { CardContent, CardHeader } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useMemo, useState } from 'react';
 
-/**
- * PatientEncountersHeatmap
- * Props:
- *  - medicalEncounters: Array of encounters. Each encounter must have an `encounter_date` (ISO string or 'YYYY-MM-DD').
- *
- * Usage:
- * <PatientEncountersHeatmap medicalEncounters={medical_encounters} />
- *
- * This component renders a calendar heatmap (month view) using only Tailwind + shadcn/ui components.
- */
-
-
-
-
 export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { medicalEncounters?: any[] }) {
     const today = new Date();
     const [currentYear, setCurrentYear] = useState<number>(today.getFullYear());

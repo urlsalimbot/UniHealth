@@ -1,5 +1,10 @@
+import AttachmentUploadForm from '@/components/form-encounter-attachment';
+import PatientPrescriptionForm from '@/components/form-encounter-prescription';
+import VitalSignsForm from '@/components/form-encounter-vitalsigns';
 import VitalSignsDashboard from '@/components/patient-vitals-charts';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
@@ -93,17 +98,68 @@ export default function MedicalEncounterView() {
                                     </p>
                                 </div>
 
-                                {/* Vital Signs */}
-                                {selectedEncounter.vital_signs && selectedEncounter.vital_signs.length > 0 && (
-                                    <div>
+                                <div>
+                                    <div className="mb-2 flex items-center justify-between">
                                         <h2 className="mb-2 font-semibold text-gray-800">Vital Signs</h2>
-                                        <VitalSignsDashboard vitals={selectedEncounter.vital_signs[0]} />
+                                        {/* Vital Signs */}
+                                        {selectedEncounter.vital_signs && selectedEncounter.vital_signs.length > 0 && (
+                                            <div>
+                                                <h2 className="mb-2 font-semibold text-gray-800">Vital Signs</h2>
+                                                <VitalSignsDashboard vitals={selectedEncounter.vital_signs[0]} />
+                                            </div>
+                                        )}
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button size="sm" variant="outline">
+                                                    + Add Vital Signs
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="sm:max-w-lg">
+                                                <DialogHeader>
+                                                    <DialogTitle>Upload Attachment</DialogTitle>
+                                                    <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
+                                                </DialogHeader>
+
+                                                {/* Attachment Upload Form */}
+                                                <VitalSignsForm
+                                                    data={{ encounter_id: selectedEncounter.encounter_id }}
+                                                    onSubmit={(e: any) => {
+                                                        e.preventDefault();
+                                                        // Handle submission logic (e.g., Inertia form post)
+                                                    }}
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
-                                )}
+                                </div>
 
                                 {/* Prescriptions */}
                                 <div>
-                                    <h2 className="mb-2 font-semibold text-gray-800">Prescriptions</h2>
+                                    <div className="mb-2 flex items-center justify-between">
+                                        <h2 className="mb-2 font-semibold text-gray-800">Prescriptions</h2>
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button size="sm" variant="outline">
+                                                    + Add Prescription
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="sm:max-w-lg">
+                                                <DialogHeader>
+                                                    <DialogTitle>Upload Attachment</DialogTitle>
+                                                    <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
+                                                </DialogHeader>
+
+                                                {/* Attachment Upload Form */}
+                                                <PatientPrescriptionForm    
+                                                    data={{ encounter_id: selectedEncounter.encounter_id }}
+                                                    onSubmit={(e: any) => {
+                                                        e.preventDefault();
+                                                        // Handle submission logic (e.g., Inertia form post)
+                                                    }}
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
                                     {selectedEncounter.patient_prescriptions?.length > 0 ? (
                                         <ul className="ml-4 list-disc space-y-1 text-sm text-gray-700">
                                             {selectedEncounter.patient_prescriptions.map((rx: any) => (
@@ -119,7 +175,34 @@ export default function MedicalEncounterView() {
 
                                 {/* Attached Documents */}
                                 <div>
-                                    <h2 className="mb-2 font-semibold text-gray-800">Attached Documents</h2>
+                                    <div className="mb-2 flex items-center justify-between">
+                                        <h2 className="font-semibold text-gray-800">Attached Documents</h2>
+
+                                        {/* Upload Attachment Dialog */}
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button size="sm" variant="outline">
+                                                    + Upload Attachment
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="sm:max-w-lg">
+                                                <DialogHeader>
+                                                    <DialogTitle>Upload Attachment</DialogTitle>
+                                                    <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
+                                                </DialogHeader>
+
+                                                {/* Attachment Upload Form */}
+                                                <AttachmentUploadForm
+                                                    data={{ encounter_id: selectedEncounter.encounter_id }}
+                                                    onSubmit={(e: any) => {
+                                                        e.preventDefault();
+                                                        // Handle submission logic (e.g., Inertia form post)
+                                                    }}
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+
                                     {selectedEncounter.attachments?.length > 0 ? (
                                         <ul className="ml-4 list-disc space-y-1 text-sm text-gray-700">
                                             {selectedEncounter.attachments.map((file: any) => (
