@@ -40,14 +40,24 @@ class HealthcareFacilities extends Model
         'is_active',
     ];
 
+        protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->facility_id)) {
+                do {
+                    $id = 'FACI' . rand(100, 999999);
+                } while (self::where('facility_id', $id)->exists());
+
+                $model->facility_id = $id;
+            }
+        });
+    }
+
     public function medical_encounters(): HasMany
     {
         return $this->hasMany(MedicalEncounters::class, 'encounter_id');
-    }
-
-    public function data_access_log(): HasMany
-    {
-        return $this->hasMany(DataAccessLog::class, 'log_id');
     }
 
     public function facility_medication_inventory(): HasMany

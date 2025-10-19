@@ -82,15 +82,4 @@ class Patients extends Model
     {
         return $this->hasMany(VitalSigns::class, 'vital_sign_id');
     }
-
-    public function data_access_log(): HasMany
-    {
-        return $this->hasMany(DataAccessLog::class, 'log_id');
-    }
-
-    public function data_sharing_consent(): HasMany
-    {
-        return $this->hasMany(DataSharingConsent::class, 'consent_id');
-    }
-
 }

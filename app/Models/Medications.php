@@ -32,12 +32,12 @@ class Medications extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            if (empty($model->inventory_id)) {
+            if (empty($model->medication_id)) {
                 do {
                     $id = 'MED' . rand(100, 999);
                 } while (self::where('medication_id', $id)->exists());
 
-                $model->inventory_id = $id;
+                $model->medication_id = $id;
             }
         });
     }

@@ -14,6 +14,9 @@ import { useMemo, useState } from 'react';
  * This component renders a calendar heatmap (month view) using only Tailwind + shadcn/ui components.
  */
 
+
+
+
 export default function PatientEncountersHeatmap({ medicalEncounters = [] }: { medicalEncounters?: any[] }) {
     const today = new Date();
     const [currentYear, setCurrentYear] = useState<number>(today.getFullYear());

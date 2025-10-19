@@ -1,5 +1,5 @@
 import PatientCreateController from '@/actions/App/Http/Controllers/Patients/PatientCreateController';
-import PatientForm from '@/components/patientform';
+import PatientForm from '@/components/form-patient';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import patients from '@/routes/patients';

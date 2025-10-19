@@ -8,12 +8,6 @@ type EditHandler = (id: string, field: keyof FacilityMedicationInventory, value:
 export const getEditableStocksColumns = (handleChange: EditHandler): ColumnDef<FacilityMedicationInventory>[] => [
     {
         header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="Inventory ID" />;
-        },
-        accessorKey: 'inventory_id',
-    },
-    {
-        header: ({ column }) => {
             return <DataTableColumnHeader column={column} title="Brand Name" />;
         },
         accessorKey: 'medication.brand_names',
@@ -23,6 +17,18 @@ export const getEditableStocksColumns = (handleChange: EditHandler): ColumnDef<F
             return <DataTableColumnHeader column={column} title="Generic Name" />;
         },
         accessorKey: 'medication.generic_name',
+    },
+    {
+        header: ({ column }) => {
+            return <DataTableColumnHeader column={column} title="Supplier" />;
+        },
+        accessorKey: 'supplier',
+    },
+    {
+        header: ({ column }) => {
+            return <DataTableColumnHeader column={column} title="Received by" />;
+        },
+        accessorKey: 'received_by',
     },
     {
         header: ({ column }) => {

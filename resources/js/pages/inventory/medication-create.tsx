@@ -1,5 +1,5 @@
 import MedicationCreateController from '@/actions/App/Http/Controllers/Inventory/MedicationCreateController';
-import MedicationForm from '@/components/medicationform';
+import MedicationForm from '@/components/form-medication';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import inventory from '@/routes/inventory';

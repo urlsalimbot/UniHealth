@@ -17,11 +17,6 @@
 
 ## to-do list
 
-- [ ] data integrity
-- [x] notifications for actions
-- [x] audit tracing for admin accounts
-- [ ] update all controllers to include proper logging
-
 - [ ] patient dashboard
 - [x] patient polish input
 - [x] patient recorded vs nominal value charts
@@ -32,6 +27,7 @@
 - [ ] add medical encounters intake
 - [ ] add vital signs intake
 - [ ] add prescriptions intake
+- [x] add file attachments
 
 - [ ] inventory dashboard
 - [x] stocks quantity modification
@@ -49,6 +45,14 @@
 - [ ] patients triage urgency
 
 - [x] only admin can create and authorize staff accounts
+
+- [ ] split staff/user roles further into patient, doctor, intake, pharmacist
+- [ ] send out patient intake form to a guest through UHID 
+
+- [ ] data integrity
+- [x] notifications for actions
+- [x] audit tracing for admin accounts
+- [ ] update all controllers to include proper logging
 
 - [x] patient facing interface
 - [x] show only patients tab and inventory tab

@@ -4,7 +4,7 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -14,6 +14,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Dashboard() {
+    const { encounters } = usePage().props as any
+    
+    console.log(encounters)
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -30,7 +33,7 @@ export default function Dashboard() {
                     </Card>
                 </div>
                 <Card className="min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PatientEncountersHeatmap />
+                    <PatientEncountersHeatmap medicalEncounters={encounters} />
                 </Card>
             </div>
         </AppLayout>

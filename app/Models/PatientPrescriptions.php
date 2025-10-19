@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
+
 
 
 class PatientPrescriptions extends Model
@@ -34,6 +36,17 @@ class PatientPrescriptions extends Model
         'prescription_status',
         'created_at',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->prescription_id)) {
+                $model->prescription_id = (string) Str::uuid();
+            }
+        });
+    }
 
     /**
      * A prescription belongs to a patient.

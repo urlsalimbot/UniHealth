@@ -3,6 +3,9 @@
 use App\Http\Controllers\Patients\PatientsIndexController;
 use App\Http\Controllers\Patients\PatientCreateController;
 use App\Http\Controllers\Patients\ExistingPatientController;
+use App\Http\Controllers\Patients\Encounters\AttachmentUploadController;
+use App\Http\Controllers\Patients\Encounters\ExistingEncounterController;
+use App\Http\Controllers\Patients\Encounters\EncounterCreateController;
 
 Route::prefix('patients')->name('patients.')->group(function () {
     Route::middleware(['auth', 'role:administrator,staff'])->group(function () {
@@ -26,11 +29,22 @@ Route::prefix('patients')->name('patients.')->group(function () {
         // DELETE — Delete a patient
         Route::delete('/{id}', [ExistingPatientController::class, 'destroy'])
             ->name('destroy');
+
+        Route::prefix('{id}/encounters')->name('encounters.')->group(function () {
+            Route::post('/create', [EncounterCreateController::class, 'store'])->name('store');
+            Route::post('/{encounter}/attachments', [AttachmentUploadController::class, 'store'])->name('attachments.upload');
+        });
+
     });
 
     Route::middleware(['auth', 'role:administrator,staff,user'])->group(function () {
         // SHOW — Show a single patient
         Route::get('/{id}', [ExistingPatientController::class, 'show'])
             ->name('show');
+
+        // SHOW — Show patient encounters
+        Route::get('/{id}/encounters', [ExistingEncounterController::class, 'index'])
+            ->name('encounters.index');
+
     });
 });

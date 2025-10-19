@@ -1,5 +1,5 @@
 import StockCreateController from '@/actions/App/Http/Controllers/Inventory/StockCreateController';
-import StockForm from '@/components/stockform';
+import StockForm from '@/components/form-stock';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import inventory from '@/routes/inventory';

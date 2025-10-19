@@ -30,7 +30,7 @@ export default function StockForm({ medications = [], facilities = [], ...Action
 
     return (
         <Form {...Actions} className="space-y-8">
-            {({ processing, recentlySuccessful, errors }) => (
+            {({ processing, recentlySuccessful, errors }) => (  
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                     {/* LEFT SIDE: Medication Selector */}
                     <Card className="md:col-span-1">

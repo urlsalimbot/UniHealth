@@ -24,6 +24,7 @@ class MedicalEncountersFactory extends Factory
             'encounter_type' => $this->faker->word(),
             'encounter_class' => $this->faker->word(),
             'chief_complaint' => $this->faker->sentence(),
+            'intervention' => $this->faker->sentence(),
             'encounter_date' => $this->faker->date(),
             'encounter_time' => $this->faker->word(),
             'admission_date' => $this->faker->date(),

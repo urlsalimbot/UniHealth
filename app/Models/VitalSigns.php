@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 
 class VitalSigns extends Model
@@ -40,6 +41,16 @@ class VitalSigns extends Model
         'thermometer_type',
         'created_at',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->vital_sign_id)) {
+                $model->vital_sign_id = (string) Str::uuid();
+            }
+        });
+    }
 
     /**
      * Vital sign record belongs to a patient.

@@ -1,6 +1,6 @@
-import CreateEncounterModal from '@/components/encountermodalform';
+import CreateEncounterModal from '@/components/form-encounter';
+import PatientForm from '@/components/form-patient';
 import VitalSignsDashboard from '@/components/patient-vitals-charts';
-import PatientForm from '@/components/patientform';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AppLayout from '@/layouts/app-layout';
+import patients from '@/routes/patients';
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -27,7 +28,7 @@ export default function PatientSingleView() {
 
     const breadcrumbs = [
         { title: 'Patients', href: '/patients' },
-        { title: patient.last_name, href: `/patients/${patient.patient_id}` },
+        { title: patient.last_name, href: patients.show.url(patient.patient_id) },
     ];
 
     const handleConfirmEdit = () => {
@@ -174,6 +175,7 @@ export default function PatientSingleView() {
                         <Card>
                             <CardHeader className="flex items-center justify-between">
                                 <CardTitle>Medical Encounters</CardTitle>
+                                <CreateEncounterModal patient={patient} lastEncounter={latest_encounter} encounterTypes={encounterTypes} />
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="outline" size="sm">
@@ -228,14 +230,6 @@ export default function PatientSingleView() {
                             </CardHeader>
 
                             <CardContent>
-                                <CardHeader>
-                                    <CardTitle></CardTitle>
-                                    <CreateEncounterModal
-                                        patient={patient}
-                                        lastEncounter={latest_encounter}
-                                        encounterTypes={encounterTypes}
-                                    />
-                                </CardHeader>
                                 <ScrollArea className="h-[32rem] pr-2">
                                     {medical_encounters.length > 0 ? (
                                         <ul className="space-y-2">
