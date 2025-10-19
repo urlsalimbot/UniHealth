@@ -24,7 +24,7 @@
 - [x] patient current prescribed medication
 - [x] patient most recent medical intervention
 
-- [ ] add medical encounters intake
+- [x] add medical encounters intake
 - [ ] add vital signs intake
 - [ ] add prescriptions intake
 - [x] add file attachments
@@ -41,7 +41,7 @@
 - [ ] staff dashboard finalization
 - [ ] radial chart of visits in the last 7 days
 - [ ] stock monitoring and updates
-- [ ] heatmap of encounters
+- [x] heatmap of encounters
 - [ ] patients triage urgency
 
 - [x] only admin can create and authorize staff accounts
