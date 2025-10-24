@@ -19,13 +19,14 @@ export default function Patients() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Patients" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-[calc(100vh-8.5rem)] flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex space-x-4">
                     <Card className="mt-4 flex flex-1">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>Patients</CardTitle>
-                            <CardTitle>
-                                <Button onClick={() => router.get(patients.create.url())}>+ New Patient</Button>
+                            <CardTitle className='space-x-4 flex'>
+                                <Button variant="outline"   onClick={() => router.get(patients.create.url())}>+ New Patient</Button>
+                                <Button onClick={() => router.post(patients.invite.url())}>+ Invite Patient</Button>
                             </CardTitle>
                         </CardHeader>
 

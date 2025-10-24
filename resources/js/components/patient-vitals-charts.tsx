@@ -1,96 +1,211 @@
-'use client';
-
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PolarAngleAxis, RadialBar, RadialBarChart, Tooltip } from 'recharts';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { VitalSign } from '@/types';
+import { useMemo, useState } from 'react';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CustomVitalTooltip } from './custom-tooltip';
 
-// normal ranges reference
-const normalRanges = {
-    systolic_bp: { min: 90, max: 120, label: 'mmHg' },
-    diastolic_bp: { min: 60, max: 80, label: 'mmHg' },
-    heart_rate: { min: 60, max: 100, label: 'bpm' },
-    respiratory_rate: { min: 12, max: 20, label: '/min' },
-    temperature: { min: 36.5, max: 37.5, label: '°C' },
-    oxygen_saturation: { min: 95, max: 100, label: '%' },
-    bmi: { min: 18.5, max: 24.9, label: 'kg/m²' },
-};
+/**
+ * VitalSignsDashboard Component
+ * @param {Object} props
+ * @param {Array} props.vitalSigns - Array of vital sign records from Laravel backend
+ */
+type FilterType = 'bp' | 'heart_rate' | 'temperature' | 'oxygen_saturation';
 
-// helper to compute percentage vs normal range
-const getChartData = (value: number, type: keyof typeof normalRanges) => {
-    const { min, max } = normalRanges[type];
-    const avg = (min + max) / 2;
-    const diff = value - avg;
-    const percent = Math.min(100, Math.max(0, (value / max) * 100));
+export default function VitalSignsDashboard({ vitalSigns = [] as VitalSign[] }) {
+    const [filterType, setFilterType] = useState<FilterType>('bp');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
-    return {
-        value,
-        diff,
-        percent,
+    const filteredData = useMemo(() => {
+        return vitalSigns.filter((vs) => {
+            const date = new Date(vs.measurement_date);
+            const afterStart = !startDate || date >= new Date(startDate);
+            const beforeEnd = !endDate || date <= new Date(endDate);
+            return afterStart && beforeEnd;
+        });
+    }, [vitalSigns, startDate, endDate]);
+
+    const chartData = useMemo(() => {
+        return filteredData
+            .slice()
+            .reverse()
+            .map((vs) => ({
+                date: new Date(vs.measurement_date).toLocaleDateString(),
+                systolic: vs.systolic_bp,
+                diastolic: vs.diastolic_bp,
+                heart_rate: vs.heart_rate,
+                temperature: vs.temperature,
+                oxygen_saturation: vs.oxygen_saturation,
+            }));
+    }, [filteredData]);
+
+    const vitalOptions: Record<FilterType, { key: string; name: string; color: string }[]> = {
+        bp: [
+            { key: 'systolic', name: 'Systolic BP', color: '#8884d8' },
+            { key: 'diastolic', name: 'Diastolic BP', color: '#82ca9d' },
+        ],
+        heart_rate: [{ key: 'heart_rate', name: 'Heart Rate', color: '#ff7300' }],
+        temperature: [{ key: 'temperature', name: 'Temperature', color: '#f87171' }],
+        oxygen_saturation: [{ key: 'oxygen_saturation', name: 'O₂ Saturation', color: '#38bdf8' }],
     };
-};
 
-type Props = {
-    vitals: {
-        systolic_bp: number;
-        diastolic_bp: number;
-        heart_rate: number;
-        respiratory_rate: number;
-        temperature: number;
-        oxygen_saturation: number;
-        bmi: number;
-    };
-};
+    const latest = filteredData?.[0];
 
-export default function VitalSignsDashboard({ vitals }: Props) {
-    const vitalKeys = Object.keys(vitals) as (keyof typeof normalRanges)[];
+    if (!vitalSigns.length) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Vital Signs</CardTitle>
+                </CardHeader>
+                <CardContent>No vital signs recorded.</CardContent>
+            </Card>
+        );
+    }
 
     return (
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
-            {vitalKeys.map((key) => {
-                const range = normalRanges[key];
-                if (!range) return null;
-
-                const { label, min, max } = range;
-                const { value, diff, percent } = getChartData(vitals[key], key);
-
-                const data = [{ name: key, value: percent, fill: '#4f46e5' }];  
-                return (
-                    <Card key={key} className="rounded-2xl shadow-md">
-                        <CardHeader>
-                            <CardTitle className="capitalize">{key.replace('_', ' ')}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex flex-col items-center justify-center">
-                            <RadialBarChart
-                                width={160}
-                                height={160}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius="70%"
-                                outerRadius="100%"
-                                barSize={14}
-                                data={data}
-                                startAngle={90}
-                                endAngle={-270}
+        <div className="space-y-6">
+            {/* --- Filters --- */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Filters</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-4">
+                        <div>
+                            <Label>Start Date</Label>
+                            <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        </div>
+                        <div>
+                            <Label>End Date</Label>
+                            <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        </div>
+                        <div>
+                            <Label>Vital Type</Label>
+                            <Select value={filterType} onValueChange={(value) => setFilterType(value as FilterType)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select vital type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="bp">Blood Pressure</SelectItem>
+                                    <SelectItem value="heart_rate">Heart Rate</SelectItem>
+                                    <SelectItem value="temperature">Temperature</SelectItem>
+                                    <SelectItem value="oxygen_saturation">Oxygen Saturation</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div>
+                            <Button
+                                variant="secondary"
+                                onClick={() => {
+                                    setStartDate('');
+                                    setEndDate('');
+                                    setFilterType('bp');
+                                }}
                             >
-                                <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-                                <RadialBar background dataKey="value" cornerRadius={8} />
-                                <Tooltip />
-                            </RadialBarChart>
-                            <div className="mt-2 text-center">
-                                <p className="text-xl font-semibold">
-                                    {value} {label}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                    Normal: {min}-{max} {label}
-                                </p>
-                                <p className={`text-sm ${diff > 0 ? 'text-red-500' : diff < 0 ? 'text-blue-500' : 'text-green-600'}`}>
-                                    {diff > 0 ? '+' : ''}
-                                    {diff.toFixed(1)} from normal
-                                </p>
-                            </div>
+                                Reset
+                            </Button>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* --- Summary --- */}
+            {latest && (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Blood Pressure</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-2xl font-semibold">
+                            {latest.systolic_bp}/{latest.diastolic_bp} mmHg
                         </CardContent>
                     </Card>
-                );
-            })}
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Heart Rate</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-2xl font-semibold">{latest.heart_rate} bpm</CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Temperature</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-2xl font-semibold">{latest.temperature}°C</CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>O₂ Saturation</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-2xl font-semibold">{latest.oxygen_saturation}%</CardContent>
+                    </Card>
+                </div>
+            )}
+
+            {/* --- Chart --- */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Vital Trends</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ResponsiveContainer width="100%" height={250}>
+                        <LineChart data={chartData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" />
+                            <YAxis />
+                            <Tooltip content={<CustomVitalTooltip />} />
+                            {vitalOptions[filterType].map((v) => (
+                                <Line key={v.key} type="monotone" dataKey={v.key} stroke={v.color} name={v.name} strokeWidth={2} />
+                            ))}
+                        </LineChart>
+                    </ResponsiveContainer>
+                </CardContent>
+            </Card>
+
+            {/* --- Table --- */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Vital Signs History</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ScrollArea className="h-[300px]">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Time</TableHead>
+                                    <TableHead>BP</TableHead>
+                                    <TableHead>HR</TableHead>
+                                    <TableHead>Temp</TableHead>
+                                    <TableHead>O₂ Sat</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredData.map((vs) => (
+                                    <TableRow key={vs.vital_sign_id}>
+                                        <TableCell>{new Date(vs.measurement_date).toLocaleDateString()}</TableCell>
+                                        <TableCell>{vs.measurement_time}</TableCell>
+                                        <TableCell>
+                                            {vs.systolic_bp}/{vs.diastolic_bp}
+                                        </TableCell>
+                                        <TableCell>{vs.heart_rate}</TableCell>
+                                        <TableCell>{vs.temperature}°C</TableCell>
+                                        <TableCell>{vs.oxygen_saturation}%</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
+                </CardContent>
+            </Card>
         </div>
     );
 }

@@ -75,11 +75,11 @@ class Patients extends Model
 
     public function patient_prescriptions(): HasMany
     {
-        return $this->hasMany(PatientPrescriptions::class, 'prescription_id');
+        return $this->hasMany(PatientPrescriptions::class, 'patient_id', 'patient_id');
     }
 
-    public function vital_signs(): HasMany
+    public function vital_signs()
     {
-        return $this->hasMany(VitalSigns::class, 'vital_sign_id');
+        return $this->hasMany(VitalSigns::class, 'patient_id', 'patient_id');
     }
 }

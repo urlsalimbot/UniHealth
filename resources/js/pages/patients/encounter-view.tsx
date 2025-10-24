@@ -10,11 +10,15 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import patients from '@/routes/patients';
 import { Head, usePage } from '@inertiajs/react';
+import { Download, Eye, FileText, ImageIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 export default function MedicalEncounterView() {
-    const { patient, medical_encounters } = usePage().props as any;
+    const { patient, medical_encounters, vitalsigns } = usePage().props as any;
     const [selectedEncounter, setSelectedEncounter] = useState<any>(null);
+    const [open, setOpen] = useState(false);
+
+    console.log(medical_encounters);
 
     // --- Group encounters by month (descending) ---
     const encountersByMonth = useMemo(() => {
@@ -42,7 +46,7 @@ export default function MedicalEncounterView() {
         >
             <Head title="Medical Encounters" />
 
-            <div className="flex h-[calc(100vh-6rem)] gap-4 p-4">
+            <div className="flex h-[calc(100vh-8.5rem)] gap-4 p-4">
                 {/* --- LEFT PANEL: Encounter List --- */}
                 <Card className="flex w-1/4 flex-col border border-muted/30 shadow-sm">
                     <CardHeader>
@@ -109,25 +113,19 @@ export default function MedicalEncounterView() {
                                             </DialogTrigger>
                                             <DialogContent className="sm:max-w-lg">
                                                 <DialogHeader>
-                                                    <DialogTitle>Upload Attachment</DialogTitle>
-                                                    <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
+                                                    <DialogTitle>Update Vital Signs</DialogTitle>
+                                                    <DialogDescription>Add a new vital signs reading for this medical encounter.</DialogDescription>
                                                 </DialogHeader>
 
-                                                {/* Attachment Upload Form */}
-                                                <VitalSignsForm
-                                                    data={{ encounter_id: selectedEncounter.encounter_id }}
-                                                    onSubmit={(e: any) => {
-                                                        e.preventDefault();
-                                                        // Handle submission logic (e.g., Inertia form post)
-                                                    }}
-                                                />
+                                                {/* Vital Signs Upload Form */}
+                                                <VitalSignsForm data={{ encounter_id: selectedEncounter.encounter_id }} />
                                             </DialogContent>
                                         </Dialog>
                                     </div>
                                 </div>
                                 {/* Vital Signs */}
                                 {selectedEncounter.vital_signs && selectedEncounter.vital_signs.length > 0 && (
-                                    <VitalSignsDashboard vitals={selectedEncounter.vital_signs[0]} />
+                                    <VitalSignsDashboard vitalSigns={selectedEncounter.vital_signs} />
                                 )}
 
                                 {/* Prescriptions */}
@@ -170,51 +168,91 @@ export default function MedicalEncounterView() {
                                     )}
                                 </div>
 
-                                {/* Attached Documents */}
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
                                         <h2 className="font-semibold text-gray-800">Attached Documents</h2>
 
                                         {/* Upload Attachment Dialog */}
-                                        <Dialog>
+                                        <Dialog open={open} onOpenChange={setOpen}>
                                             <DialogTrigger asChild>
                                                 <Button size="sm" variant="outline">
                                                     + Upload Attachment
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="sm:max-w-lg">
+                                            <DialogContent
+                                                className="sm:max-w-lg"
+                                                onInteractOutside={(e) => e.preventDefault()}
+                                                onEscapeKeyDown={(e) => e.preventDefault()}
+                                            >
                                                 <DialogHeader>
                                                     <DialogTitle>Upload Attachment</DialogTitle>
                                                     <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
                                                 </DialogHeader>
 
-                                                {/* Attachment Upload Form */}
                                                 <AttachmentUploadForm
-                                                    data={{ encounter_id: selectedEncounter.encounter_id }}
-                                                    onSubmit={(e: any) => {
-                                                        e.preventDefault();
-                                                        // Handle submission logic (e.g., Inertia form post)
-                                                    }}
+                                                    patient={patient}
+                                                    encounter={selectedEncounter}
+                                                    onSuccess={() => setOpen(false)} // ✅ Close dialog only after success
                                                 />
                                             </DialogContent>
                                         </Dialog>
                                     </div>
 
                                     {selectedEncounter.attachments?.length > 0 ? (
-                                        <ul className="ml-4 list-disc space-y-1 text-sm text-gray-700">
-                                            {selectedEncounter.attachments.map((file: any) => (
-                                                <li key={file.id}>
-                                                    <a
-                                                        href={file.url}
-                                                        target="_blank"
-                                                        className="text-blue-600 hover:underline"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        {file.filename}
-                                                    </a>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <ScrollArea className="max-h-[300px] rounded-xl border p-2">
+                                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                                {selectedEncounter.attachments.map((file: any) => {
+                                                    const isImage = file.filename?.match(/\.(jpg|jpeg|png|gif)$/i);
+                                                    const isPDF = file.filename?.match(/\.pdf$/i);
+
+                                                    return (
+                                                        <Card key={file.attachment_id} className="overflow-hidden w-fit">
+                                                            <CardContent className="space-y-2 p-3">
+                                                                <div className="flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/40">
+                                                                    {isImage ? (
+                                                                        <img
+                                                                            src={file.url}
+                                                                            alt={file.filename}
+                                                                            className="h-full w-full object-cover"
+                                                                        />
+                                                                    ) : isPDF ? (
+                                                                        <FileText className="h-10 w-10 text-muted-foreground" />
+                                                                    ) : (
+                                                                        <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="truncate text-sm font-medium text-gray-800">
+                                                                    {file.label || file.filename}
+                                                                </div>
+
+                                                                <div className="flex gap-4 justify-between">
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="secondary"
+                                                                        onClick={() => window.open(file.url, '_blank')}
+                                                                    >
+                                                                        <Eye className="mr-2 h-4 w-4" /> Preview
+                                                                    </Button>
+                                                                    <Button
+                                                                        size="sm"
+                                                                        variant="outline"
+                                                                        onClick={() => {
+                                                                            const link = document.createElement('a');
+                                                                            link.href = file.url;
+                                                                            link.download = file.filename;
+                                                                            link.click();
+                                                                        }}
+                                                                    >
+                                                                        <Download className="mr-2 h-4 w-4" /> Download
+                                                                    </Button>
+                                                                </div>
+                                                            </CardContent>
+                                                        </Card>
+                                                    );
+                                                })}
+                                            </div>
+                                        </ScrollArea>
                                     ) : (
                                         <p className="text-sm text-muted-foreground">No documents attached.</p>
                                     )}

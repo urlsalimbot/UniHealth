@@ -31,16 +31,10 @@ export const getEditableStocksColumns = (handleChange: EditHandler): ColumnDef<F
         accessorKey: 'received_by',
     },
     {
-        header: 'Expiration Date',
+        header: ({ column }) => {
+            return <DataTableColumnHeader column={column} title="Expiration Date" />;
+        },
         accessorKey: 'expiration_date',
-        // cell: ({ row }) => (
-        //     <Input
-        //         type="date"
-        //         className="w-40"
-        //         value={row.original.expiration_date ?? ''}
-        //         onChange={(e) => handleChange(row.original.inventory_id, 'expiration_date', e.target.value)}
-        //     />
-        // ),
     },
     {
         header: ({ column }) => {

@@ -17,17 +17,17 @@
 
 ## to-do list
 
-- [ ] patient dashboard
+- [x] patient dashboard
 - [x] patient polish input
 - [x] patient recorded vs nominal value charts
 - [x] patient historical chief complaints
 - [x] patient current prescribed medication
 - [x] patient most recent medical intervention
 
-- [ ] polish encounters panel
+- [x] polish encounters panel
 - [x] add medical encounters intake
-- [x] add vital signs intake
-- [x] add prescriptions intake
+- [ ] add vital signs intake
+- [ ] add prescriptions intake
 - [x] add file attachments
 
 - [ ] inventory dashboard
@@ -48,7 +48,7 @@
 - [x] only admin can create and authorize staff accounts
 
 - [ ] split staff/user roles further into patient, doctor, intake, pharmacist
-- [ ] send out patient intake form to a guest through UHID 
+- [x] send out patient intake form to a guest through UHID 
 
 - [ ] data integrity
 - [x] notifications for actions

@@ -18,13 +18,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AppLayout from '@/layouts/app-layout';
 import patients from '@/routes/patients';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function PatientSingleView() {
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const { patient, medical_encounters, latest_encounter, encounterTypes } = usePage().props as any;
+    const { patient, medical_encounters, latest_encounter, vitalsigns, encounterTypes } = usePage().props as any;
 
     const breadcrumbs = [
         { title: 'Patients', href: '/patients' },
@@ -38,12 +38,14 @@ export default function PatientSingleView() {
 
     const latestVitals = latest_encounter?.vital_signs?.[0] || patient.vital_signs?.[0] || {};
 
+    // console.log(vitalsigns);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Patient Details" />
-            <div className="mt-4 space-y-6 p-4">
+            <div className="mt-4 h-[calc(100vh-8.5rem)] space-y-4 px-4">
                 {/* --- Top Row: View Button + Summary Cards --- */}
-                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-start gap-3">
                     {/* View Patient Details Button */}
                     <Dialog>
                         <DialogTrigger asChild>
@@ -105,52 +107,6 @@ export default function PatientSingleView() {
                             </ScrollArea>
                         </DialogContent>
                     </Dialog>
-
-                    {/* Inline Summary Cards */}
-                    <div className="flex flex-1 flex-wrap justify-end gap-3">
-                        {/* Chief Complaint */}
-                        <Card className="w-[260px] border border-muted/30 shadow-sm">
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-sm font-semibold text-gray-700">Chief Complaint</CardTitle>
-                            </CardHeader>
-                            <CardContent className="truncate pt-0 text-sm text-gray-800">
-                                {latest_encounter?.chief_complaint ?? 'No complaint recorded'}
-                            </CardContent>
-                        </Card>
-
-                        {/* Medical Intervention */}
-                        <Card className="w-[260px] border border-muted/30 shadow-sm">
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-sm font-semibold text-gray-700">Intervention</CardTitle>
-                            </CardHeader>
-                            <CardContent className="truncate pt-0 text-sm text-gray-800">
-                                {latest_encounter?.intervention ?? latest_encounter?.encounter_class ?? 'No intervention recorded'}
-                            </CardContent>
-                        </Card>
-
-                        {/* Current Prescriptions */}
-                        <Card className="w-[260px] border border-muted/30 shadow-sm">
-                            <CardHeader className="pb-1">
-                                <CardTitle className="text-sm font-semibold text-gray-700">Current Medication</CardTitle>
-                            </CardHeader>
-                            <CardContent className="pt-0 text-sm text-gray-800">
-                                {latest_encounter?.patient_prescriptions?.length > 0 ? (
-                                    <ul className="ml-4 list-disc space-y-0.5">
-                                        {latest_encounter.patient_prescriptions.slice(0, 2).map((rx: any) => (
-                                            <li key={rx.prescription_id} className="truncate">
-                                                {rx.medication_name}
-                                            </li>
-                                        ))}
-                                        {latest_encounter.patient_prescriptions.length > 2 && (
-                                            <li className="text-xs text-gray-500">+ more medications</li>
-                                        )}
-                                    </ul>
-                                ) : (
-                                    <span className="text-sm text-gray-500">No prescriptions</span>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </div>
                 </div>
 
                 {/* --- Dashboard Below --- */}
@@ -158,14 +114,55 @@ export default function PatientSingleView() {
                     <div className="space-y-4 lg:col-span-3">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Vital Signs Dashboard</CardTitle>
+                                {/* <CardTitle>Vital Signs Dashboard</CardTitle> */}
+                                {/* Inline Summary Cards */}
+                                <CardTitle className="flex flex-1 flex-wrap justify-start gap-3">
+                                    {/* Chief Complaint */}
+                                    <Card className="w-[260px] border border-muted/30 shadow-sm">
+                                        <CardHeader className="pb-1">
+                                            <CardTitle className="text-sm font-semibold text-gray-700">Chief Complaint</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="truncate pt-0 text-sm text-gray-800">
+                                            {latest_encounter?.chief_complaint ?? 'No complaint recorded'}
+                                        </CardContent>
+                                    </Card>
+
+                                    {/* Medical Intervention */}
+                                    <Card className="w-[260px] border border-muted/30 shadow-sm">
+                                        <CardHeader className="pb-1">
+                                            <CardTitle className="text-sm font-semibold text-gray-700">Intervention</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="truncate pt-0 text-sm text-gray-800">
+                                            {latest_encounter?.intervention ?? latest_encounter?.encounter_class ?? 'No intervention recorded'}
+                                        </CardContent>
+                                    </Card>
+
+                                    {/* Current Prescriptions */}
+                                    <Card className="w-[260px] border border-muted/30 shadow-sm">
+                                        <CardHeader className="pb-1">
+                                            <CardTitle className="text-sm font-semibold text-gray-700">Current Medication</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="pt-0 text-sm text-gray-800">
+                                            {latest_encounter?.patient_prescriptions?.length > 0 ? (
+                                                <ul className="ml-4 list-disc space-y-0.5">
+                                                    {latest_encounter.patient_prescriptions.slice(0, 2).map((rx: any) => (
+                                                        <li key={rx.prescription_id} className="truncate">
+                                                            {rx.medication_name}
+                                                        </li>
+                                                    ))}
+                                                    {latest_encounter.patient_prescriptions.length > 2 && (
+                                                        <li className="text-xs text-gray-500">+ more medications</li>
+                                                    )}
+                                                </ul>
+                                            ) : (
+                                                <span className="text-sm text-gray-500">No prescriptions</span>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {latestVitals && Object.keys(latestVitals).length > 0 ? (
-                                    <VitalSignsDashboard vitals={latestVitals} />
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">No vital signs recorded.</p>
-                                )}
+                                <VitalSignsDashboard vitalSigns={vitalsigns} />
                             </CardContent>
                         </Card>
                     </div>
@@ -176,57 +173,15 @@ export default function PatientSingleView() {
                             <CardHeader className="flex items-center justify-between">
                                 <CardTitle>Medical Encounters</CardTitle>
                                 <CreateEncounterModal patient={patient} lastEncounter={latest_encounter} encounterTypes={encounterTypes} />
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm">
-                                            Expand
-                                        </Button>
-                                    </DialogTrigger>
-
-                                    <DialogContent className="h-[90vh] max-w-[90vw] overflow-hidden p-0">
-                                        <DialogHeader className="p-4 pb-0">
-                                            <DialogTitle className="text-lg font-semibold">All Medical Encounters</DialogTitle>
-                                        </DialogHeader>
-
-                                        {/* Fullscreen scroll area */}
-                                        <ScrollArea className="h-[calc(90vh-4rem)] p-6">
-                                            {medical_encounters.length > 0 ? (
-                                                <ul className="space-y-3">
-                                                    {medical_encounters.map((enc: any) => (
-                                                        <li
-                                                            key={enc.encounter_id}
-                                                            className="rounded-md border p-3 text-sm shadow-sm transition hover:bg-muted/30"
-                                                        >
-                                                            <div className="flex items-center justify-between">
-                                                                <div className="font-semibold">{enc.encounter_type}</div>
-                                                                <div className="text-xs text-gray-500">{enc.encounter_date}</div>
-                                                            </div>
-                                                            <div className="mt-2">
-                                                                <span className="font-medium text-gray-700">Complaint:</span>{' '}
-                                                                {enc.chief_complaint ?? 'N/A'}
-                                                            </div>
-                                                            {enc.intervention && (
-                                                                <div className="mt-1 text-xs text-gray-600">
-                                                                    <span className="font-medium text-gray-700">Intervention:</span>{' '}
-                                                                    {enc.intervention}
-                                                                </div>
-                                                            )}
-                                                            {enc.patient_prescriptions?.length > 0 && (
-                                                                <ul className="mt-2 ml-5 list-disc text-xs text-gray-600">
-                                                                    {enc.patient_prescriptions.map((rx: any) => (
-                                                                        <li key={rx.prescription_id}>{rx.medication_name}</li>
-                                                                    ))}
-                                                                </ul>
-                                                            )}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <p className="text-sm text-muted-foreground">No medical encounters yet.</p>
-                                            )}
-                                        </ScrollArea>
-                                    </DialogContent>
-                                </Dialog>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={(e: any) => {
+                                        router.get(patients.encounters.index.url(patient.patient_id));
+                                    }}
+                                >
+                                    Expand
+                                </Button>
                             </CardHeader>
 
                             <CardContent>

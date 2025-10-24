@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Patients\PatientsIndexController;
 use App\Http\Controllers\Patients\PatientCreateController;
+use App\Http\Controllers\Patients\PatientInvitationController;
+use App\Http\Controllers\Patients\PatientRegistrationController;
 use App\Http\Controllers\Patients\ExistingPatientController;
 use App\Http\Controllers\Patients\Encounters\AttachmentUploadController;
 use App\Http\Controllers\Patients\Encounters\ExistingEncounterController;
@@ -14,6 +16,10 @@ Route::prefix('patients')->name('patients.')->group(function () {
         Route::get('/', [PatientsIndexController::class, 'index'])
             ->name('index');
 
+        // UPDATE — Update an existing patient
+        Route::put('/{id}', [ExistingPatientController::class, 'update'])
+            ->name('update');
+
         // CREATE — Show patient creation form
         Route::get('/create', [PatientCreateController::class, 'create'])
             ->name('create');
@@ -22,16 +28,18 @@ Route::prefix('patients')->name('patients.')->group(function () {
         Route::post('/', [PatientCreateController::class, 'store'])
             ->name('store');
 
-        // UPDATE — Update an existing patient
-        Route::put('/{id}', [ExistingPatientController::class, 'update'])
-            ->name('update');
+        // INVITE — Generate invite token for patient registration
+        Route::post('/invite', [PatientInvitationController::class, 'store'])
+            ->name('invite');
 
         // DELETE — Delete a patient
         Route::delete('/{id}', [ExistingPatientController::class, 'destroy'])
             ->name('destroy');
 
         Route::prefix('{id}/encounters')->name('encounters.')->group(function () {
+
             Route::post('/create', [EncounterCreateController::class, 'store'])->name('store');
+
             Route::post('/{encounter}/attachments', [AttachmentUploadController::class, 'store'])->name('attachments.upload');
         });
 
@@ -47,4 +55,10 @@ Route::prefix('patients')->name('patients.')->group(function () {
             ->name('encounters.index');
 
     });
+
+    Route::get('/register/{token}', [PatientRegistrationController::class, 'showForm'])
+        ->name('register.show');
+
+    Route::post('/register/{token}', [PatientRegistrationController::class, 'submit'])
+        ->name('register.submit');
 });

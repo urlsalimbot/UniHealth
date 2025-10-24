@@ -32,10 +32,13 @@ class ExistingPatientController extends Controller
             'Emergency',
         ];
 
+        $vitalSigns = $patient->vital_signs()->orderBy('measurement_date', 'desc')->get();
+
         return Inertia::render('patients/patient-singleview', [
             'patient' => $patient,
             'medical_encounters' => $patient->medical_encounters,
             'latest_encounter' => $latestEncounter,
+            'vitalsigns' => $vitalSigns,
             'encounterTypes' => $encounterTypes,
         ]);
     }

@@ -1,3 +1,4 @@
+import AttachmentUploadController from '@/actions/App/Http/Controllers/Patients/Encounters/AttachmentUploadController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,39 +12,30 @@ type AttachmentFormData = {
     attachment?: File | null;
 };
 
-export default function AttachmentUploadForm({ data = {}, ...Actions }: any) {
+export default function AttachmentUploadForm({ data = {}, patient, encounter }: any) {
     const [fileName, setFileName] = useState<string | null>(null);
 
     return (
-        <Form {...Actions} className="space-y-8">
+        <Form
+            {...AttachmentUploadController.store.form({
+                id: patient.patient_id,
+                encounter: encounter.encounter_id,
+            })}
+            className="space-y-4"
+        >
             {({ processing, recentlySuccessful, errors }) => (
                 <>
                     {/* Grid Form */}
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div className="flex flex-col space-y-1">
                             <Label>Label</Label>
-                            <Input
-                                id="label"
-                                name="label"
-                                type="text"
-                                defaultValue={data?.label ?? ''}
-                                onChange={(e) => Actions.setData(name, e.target.value)}
-                            />
+                            <Input id="label" name="label" type="text" defaultValue={data?.label ?? ''} />
                             <InputError className="text-sm text-destructive" message={errors.label} />
                         </div>
 
                         <div className="flex flex-col space-y-1">
                             <Label>Attachment</Label>
-                            <Input
-                                id="attachment"
-                                name="attachement"
-                                type="file"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    const file = e.target.files?.[0] || null;
-                                    setFileName(file ? file.name : null);
-                                    Actions.setData(name, file);
-                                }}
-                            />
+                            <Input id="attachment" name="attachment" type="file" />
                             {fileName && <p className="text-xs text-muted-foreground">Selected: {fileName}</p>}
                             <InputError className="text-sm text-destructive" message={errors.attachement} />
                         </div>
@@ -62,7 +54,7 @@ export default function AttachmentUploadForm({ data = {}, ...Actions }: any) {
                         </Transition>
 
                         <Button type="submit" disabled={processing}>
-                            Update Attachment
+                            Upload Attachment
                         </Button>
                     </div>
                 </>

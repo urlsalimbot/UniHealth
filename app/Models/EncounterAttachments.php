@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Filesystem\FilesystemAdapter;
 
 class EncounterAttachments extends Model
 {
@@ -32,6 +34,21 @@ class EncounterAttachments extends Model
             }
         });
     }
+
+    // ✅ Generate public URL
+    public function getUrlAttribute()
+    {
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk('public');
+        return $disk->url($this->file_path);
+    }
+
+    // ✅ Get filename (for UI display)
+    public function getFilenameAttribute()
+    {
+        return basename($this->file_path);
+    }
+
 
     public function medical_encounter(): BelongsTo
     {
