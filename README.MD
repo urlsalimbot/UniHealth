@@ -42,7 +42,8 @@ Citizen Access
 - [x] inside medication interface
 - [x] input medication interface
 - [x] view medication
-- [ ] edit medication <!--implement-->
+- [ ] edit medication button <!--implement-->
+- [ ] recall stocks button <!--implement-->
 - [x] stocks low quantity alert
 - [ ] release table for transaction auditing <!--implement-->
 

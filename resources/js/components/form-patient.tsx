@@ -4,8 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Transition } from '@headlessui/react';
 import { Form } from '@inertiajs/react';
+import { useState } from 'react';
 import InputError from './input-error';
 import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 type PatientFormData = {
     patient_id?: string;
@@ -44,6 +46,9 @@ type PatientFormData = {
 
 export default function PatientForm({ data = null, mode = 'create', token = '', ...Actions }: any) {
     const isView = mode === 'view';
+
+    const [gender, setGender] = useState<string>('');
+    const [civil, setCivil] = useState<string>('');
 
     const renderInput = (
         name: keyof PatientFormData,
@@ -111,8 +116,42 @@ export default function PatientForm({ data = null, mode = 'create', token = '', 
                                 {renderInput('last_name', 'Last Name', errors)}
                                 {renderInput('date_of_birth', 'Date of Birth', errors)}
                                 {renderInput('place_of_birth', 'Place of Birth', errors)}
-                                {renderInput('gender', 'Gender', errors)}
-                                {renderInput('civil_status', 'Civil Status', errors)}
+
+                                {/* {renderInput('gender', 'Gender', errors)} */}
+                                <div className="space-y-1">
+                                    <Label htmlFor="gender">Gender</Label>
+                                    <Select name="gender" value={gender} onValueChange={setGender} required>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Gender" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Male">Male</SelectItem>
+                                            <SelectItem value="Female">Female</SelectItem>
+                                            <SelectItem value="Other">Other</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <InputError message={errors.gender} />
+                                </div>
+
+                                {/* {renderInput('civil_status', 'Civil Status', errors)} */}
+                                <div className="space-y-1">
+                                    <Label htmlFor="gender">Civil Status</Label>
+                                    <Select name="civil_status" value={civil} onValueChange={setCivil} required>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Civil Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Single">Single</SelectItem>
+                                            <SelectItem value="Married">Married</SelectItem>
+                                            <SelectItem value="Widowed">Widowed</SelectItem>
+                                            <SelectItem value="Annulled">Annulled</SelectItem>
+                                            <SelectItem value="Legally">Legally</SelectItem>
+                                            <SelectItem value="Separated">Separated</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <InputError message={errors.civil_status} />
+                                </div>
+
                                 {renderInput('nationality', 'Nationality', errors)}
                             </CardContent>
                         </Card>
