@@ -22,7 +22,7 @@ type PatientFormData = {
     place_of_birth?: string;
     gender?: string;
     civil_status?: string;
-    nationality?: string;
+    nationality: string;
     religion?: string;
     mobile_number?: string;
     landline_number?: string;
@@ -42,7 +42,7 @@ type PatientFormData = {
     data_privacy_consent_date?: string;
 };
 
-export default function PatientForm({ data = null, mode = 'create', ...Actions }: any) {
+export default function PatientForm({ data = null, mode = 'create', token = '', ...Actions }: any) {
     const isView = mode === 'view';
 
     const renderInput = (
@@ -52,12 +52,11 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
         explicitType?: string,
         opts?: { textarea?: boolean; rows?: number },
     ) => {
-        
         if (opts?.textarea || name === 'emergency_contact_address') {
             return (
                 <div className="space-y-1">
                     <Label className="block text-sm font-medium">{label}</Label>
-                    <Textarea defaultValue={(data?.[name] as any) ?? ''} readOnly={isView} rows={opts?.rows ?? 3} className="w-full" />
+                    <Textarea defaultValue={(data?.[name] as any) ?? ''} name={name} readOnly={isView} rows={opts?.rows ?? 3} className="w-full" />
                     <InputError className="mt-2" message={errors[name]} />
                 </div>
             );
@@ -100,6 +99,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                 <>
                     {/* 3-column grid layout for cards */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2">
+                        <input type="hidden" name="token" value={token} />
                         {/* Personal Info */}
                         <Card className="flex flex-col">
                             <CardHeader>
@@ -113,6 +113,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                 {renderInput('place_of_birth', 'Place of Birth', errors)}
                                 {renderInput('gender', 'Gender', errors)}
                                 {renderInput('civil_status', 'Civil Status', errors)}
+                                {renderInput('nationality', 'Nationality', errors)}
                             </CardContent>
                         </Card>
 
@@ -176,7 +177,23 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                     {/* Submit + Consent Inline */}
                     {!isView && (
                         <div className="flex flex-col items-start justify-between rounded-md sm:flex-row sm:items-center">
-                            {renderConsentCheckbox(errors)}
+                            <Label className="flex items-center gap-2 text-sm font-medium">
+                                <Input
+                                    type="checkbox"
+                                    name="data_privacy_consent" // ✅ REQUIRED for Laravel validation
+                                    value="1" // ✅ ensures Laravel sees "on" or "1"
+                                    defaultChecked={!!data?.data_privacy_consent}
+                                    readOnly={isView}
+                                    className="h-4 w-4 rounded"
+                                />
+                                <span>Data Privacy Consent</span>
+
+                                {data?.data_privacy_consent_date && (
+                                    <span className="ml-2 text-xs text-muted-foreground">({data.data_privacy_consent_date})</span>
+                                )}
+
+                                <InputError className="ml-2" message={errors['data_privacy_consent']} />
+                            </Label>{' '}
                             <div className="flex items-center gap-3">
                                 <Button className="px-8" disabled={processing}>
                                     {mode === 'edit' ? 'Update' : 'Submit and Save'}

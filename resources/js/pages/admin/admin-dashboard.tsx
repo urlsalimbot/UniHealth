@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import { type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,7 +26,7 @@ export default function AdminDashboard() {
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>Users</CardTitle>
                             <CardTitle>
-                                <Button>+ New Staff</Button>
+                                <Button onClick={() => {router.visit(admin.users.create.url())}}>+ New Staff</Button>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>

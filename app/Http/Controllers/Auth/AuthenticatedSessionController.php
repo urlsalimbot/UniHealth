@@ -35,9 +35,9 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
-        // ✅ Role-based redirect after login
-        if ($user->role === \App\Models\User::ROLE_USER && $user->patient_id) {
-            return redirect()->route('patients.show', $user->patient_id);
+        if ($user->role === \App\Models\User::ROLE_PTNT && $user->patient_id) {
+            return redirect()->route('patients.show', $user->patient_id)
+                ->with('success', 'successfully logged in');
         }
 
         return redirect()->intended(route('dashboard', absolute: false));

@@ -6,6 +6,8 @@ use App\Http\Controllers\Patients\PatientInvitationController;
 use App\Http\Controllers\Patients\PatientRegistrationController;
 use App\Http\Controllers\Patients\ExistingPatientController;
 use App\Http\Controllers\Patients\Encounters\AttachmentUploadController;
+use App\Http\Controllers\Patients\Encounters\PrescriptionStoreController;
+use App\Http\Controllers\Patients\Encounters\VitalSignStoreController;
 use App\Http\Controllers\Patients\Encounters\ExistingEncounterController;
 use App\Http\Controllers\Patients\Encounters\EncounterCreateController;
 
@@ -41,6 +43,11 @@ Route::prefix('patients')->name('patients.')->group(function () {
             Route::post('/create', [EncounterCreateController::class, 'store'])->name('store');
 
             Route::post('/{encounter}/attachments', [AttachmentUploadController::class, 'store'])->name('attachments.upload');
+
+            Route::post('/{encounter}/vitals', [VitalSignStoreController::class, 'store'])->name('vitals.store');
+
+            Route::post('/{encounter}/prescriptions', [PrescriptionStoreController::class, 'store'])->name('prescriptions.store');
+
         });
 
     });

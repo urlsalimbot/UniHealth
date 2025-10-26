@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import admin from '@/routes/admin';
 import { User } from '@/types';
 import { router } from '@inertiajs/react';
@@ -15,6 +14,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from './ui/alert-dialog';
+import { Button } from './ui/button';
 
 export const usercolumns: ColumnDef<User>[] = [
     {
@@ -35,25 +35,6 @@ export const usercolumns: ColumnDef<User>[] = [
             return <DataTableColumnHeader column={column} title="Role" />;
         },
     },
-    // {
-    //     accessorKey: 'philhealth_id',
-    //     header: ({ column }) => {
-    //         return <DataTableColumnHeader column={column} title="PhilHealth ID" />;
-    //     },
-    // },
-    // {
-    //     accessorKey: 'amount',
-    //     header: () => <div className="text-right">Amount</div>,
-    //     cell: ({ row }) => {
-    //         const amount = parseFloat(row.getValue('amount'));
-    //         const formatted = new Intl.NumberFormat('en-US', {
-    //             style: 'currency',
-    //             currency: 'USD',
-    //         }).format(amount);
-
-    //         return <div className="text-right font-medium">{formatted}</div>;
-    //     },
-    // },
     {
         header: () => <div className="text-right">Actions</div>,
         id: 'actions',
@@ -62,32 +43,12 @@ export const usercolumns: ColumnDef<User>[] = [
 
             return (
                 <div className="flex justify-end gap-2">
-                    {/* Delete Alert Dialog */}
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button variant="destructive" className="p-2">
-                                Delete
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Delete User</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This action cannot be undone. Are you sure you want to permanently delete{' '}
-                                    <span className="font-semibold">{user.name}</span>?
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                    className="bg-red-600 hover:bg-red-700"
-                                    onClick={() => router.delete(admin.users.destroy.url(user.id))}
-                                >
-                                    Delete
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
+                    {/* View Button */}
+                    <Button variant="default" className="p-2" onClick={() => router.get(admin.users.show.url(user.id))}>
+                        View
+                    </Button>
+
+                    
                 </div>
             );
         },

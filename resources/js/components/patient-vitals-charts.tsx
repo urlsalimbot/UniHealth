@@ -73,7 +73,7 @@ export default function VitalSignsDashboard({ vitalSigns = [] as VitalSign[] }) 
             {/* --- Filters --- */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Filters</CardTitle>
+                    <CardTitle className="text-md font-bold">Filters</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-4">
@@ -153,7 +153,7 @@ export default function VitalSignsDashboard({ vitalSigns = [] as VitalSign[] }) 
             {/* --- Chart --- */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Vital Trends</CardTitle>
+                    <CardTitle className="text-md font-bold">Vital Trends</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <ResponsiveContainer width="100%" height={250}>
@@ -173,7 +173,7 @@ export default function VitalSignsDashboard({ vitalSigns = [] as VitalSign[] }) 
             {/* --- Table --- */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Vital Signs History</CardTitle>
+                    <CardTitle className="text-md font-bold">Vital Signs History</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <ScrollArea className="h-[300px]">

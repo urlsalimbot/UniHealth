@@ -14,7 +14,8 @@ class PatientInvitationController extends Controller
 
         $link = route('patients.register.show', $invitation->token);
 
-        return back()->with('success', 'Invitation link generated!')
+        return back()
+            ->with('success', 'Invitation link generated!')
             ->with('invitation_link', $link);
     }
 }

@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
         $patientId = null;
 
         // Only enforce patient check if role = "user"
-        if ($request->role === User::ROLE_USER) {
+        if ($request->role === User::ROLE_PTNT) {
             $request->validate([
                 'philhealth_id' => 'required|string',
             ]);
@@ -64,7 +64,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role' => 'patient',
             'patient_id' => $patientId,
         ]);
 

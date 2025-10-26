@@ -26,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
                     'success' => session('success'),
                     'error' => session('error'),
                     'warning' => session('warning'),
+
+                    'invitation_link' => session('invitation_link'),
                 ];
             },
         ]);

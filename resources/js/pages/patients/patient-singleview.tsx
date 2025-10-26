@@ -118,31 +118,31 @@ export default function PatientSingleView() {
                                 {/* Inline Summary Cards */}
                                 <CardTitle className="flex flex-1 flex-wrap justify-start gap-3">
                                     {/* Chief Complaint */}
-                                    <Card className="w-[260px] border border-muted/30 shadow-sm">
-                                        <CardHeader className="pb-1">
-                                            <CardTitle className="text-sm font-semibold text-gray-700">Chief Complaint</CardTitle>
+                                    <Card className="w-[260px] border shadow-sm">
+                                        <CardHeader>
+                                            <CardTitle className="text-md font-bold">Chief Complaint</CardTitle>
                                         </CardHeader>
-                                        <CardContent className="truncate pt-0 text-sm text-gray-800">
+                                        <CardContent className="truncate pt-0 text-sm">
                                             {latest_encounter?.chief_complaint ?? 'No complaint recorded'}
                                         </CardContent>
                                     </Card>
 
                                     {/* Medical Intervention */}
-                                    <Card className="w-[260px] border border-muted/30 shadow-sm">
-                                        <CardHeader className="pb-1">
-                                            <CardTitle className="text-sm font-semibold text-gray-700">Intervention</CardTitle>
+                                    <Card className="w-[260px] border shadow-sm">
+                                        <CardHeader>
+                                            <CardTitle className="text-md font-bold">Intervention</CardTitle>
                                         </CardHeader>
-                                        <CardContent className="truncate pt-0 text-sm text-gray-800">
+                                        <CardContent className="truncate pt-0 text-sm">
                                             {latest_encounter?.intervention ?? latest_encounter?.encounter_class ?? 'No intervention recorded'}
                                         </CardContent>
                                     </Card>
 
                                     {/* Current Prescriptions */}
-                                    <Card className="w-[260px] border border-muted/30 shadow-sm">
-                                        <CardHeader className="pb-1">
-                                            <CardTitle className="text-sm font-semibold text-gray-700">Current Medication</CardTitle>
+                                    <Card className="w-[260px] border shadow-sm">
+                                        <CardHeader>
+                                            <CardTitle className="text-md font-bold">Current Medication</CardTitle>
                                         </CardHeader>
-                                        <CardContent className="pt-0 text-sm text-gray-800">
+                                        <CardContent className="pt-0 text-sm">
                                             {latest_encounter?.patient_prescriptions?.length > 0 ? (
                                                 <ul className="ml-4 list-disc space-y-0.5">
                                                     {latest_encounter.patient_prescriptions.slice(0, 2).map((rx: any) => (
@@ -151,11 +151,11 @@ export default function PatientSingleView() {
                                                         </li>
                                                     ))}
                                                     {latest_encounter.patient_prescriptions.length > 2 && (
-                                                        <li className="text-xs text-gray-500">+ more medications</li>
+                                                        <li className="text-xs">+ more medications</li>
                                                     )}
                                                 </ul>
                                             ) : (
-                                                <span className="text-sm text-gray-500">No prescriptions</span>
+                                                <span className="text-sm">No prescriptions</span>
                                             )}
                                         </CardContent>
                                     </Card>
@@ -191,9 +191,9 @@ export default function PatientSingleView() {
                                             {medical_encounters.map((enc: any) => (
                                                 <li key={enc.encounter_id} className="rounded-md border p-2 text-sm">
                                                     <div className="font-semibold">{enc.encounter_type}</div>
-                                                    <div className="text-xs text-gray-500">{enc.encounter_date}</div>
+                                                    <div className="text-xs">{enc.encounter_date}</div>
                                                     <div className="mt-1">
-                                                        <span className="font-medium text-gray-700">Complaint:</span> {enc.chief_complaint ?? 'N/A'}
+                                                        <span className="font-medium">Complaint:</span> {enc.chief_complaint ?? 'N/A'}
                                                     </div>
                                                 </li>
                                             ))}

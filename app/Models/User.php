@@ -6,8 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -27,13 +28,15 @@ class User extends Authenticatable
 
     public function patient()
     {
-        return $this->belongsTo(Patients::class,'patient_id','patient_id');
+        return $this->belongsTo(Patients::class, 'patient_id', 'patient_id');
     }
 
 
     public const ROLE_ADMIN = 'administrator';
-    public const ROLE_STAFF = 'staff';
-    public const ROLE_USER = 'user';
+    public const ROLE_STAFF = 'intake-staff';
+    public const ROLE_DOCTOR = 'doctor';
+    public const ROLE_PHARM = 'pharmacist';
+    public const ROLE_PTNT = 'patient';
 
     public function isAdmin(): bool
     {
@@ -43,6 +46,22 @@ class User extends Authenticatable
     public function isStaff(): bool
     {
         return $this->role === self::ROLE_STAFF;
+    }
+
+    public function isDoctor(): bool
+    {
+        return $this->role === self::ROLE_DOCTOR;
+    }
+
+    public function isPharm(): bool
+    {
+        return $this->role === self::ROLE_PHARM;
+    }
+
+
+    public function isPatient(): bool
+    {
+        return $this->role === self::ROLE_PTNT;
     }
 
     /**

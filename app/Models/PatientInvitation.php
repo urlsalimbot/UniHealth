@@ -23,6 +23,12 @@ class PatientInvitation extends Model
         ]);
     }
 
+
+    protected $casts = [
+        'expires_at' => 'datetime',
+        'used_at' => 'datetime',
+    ];
+
     public function isExpired(): bool
     {
         return $this->expires_at->isPast();

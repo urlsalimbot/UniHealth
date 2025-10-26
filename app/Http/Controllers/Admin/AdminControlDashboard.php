@@ -41,28 +41,5 @@ class AdminControlDashboard extends Controller
         ]);
     }
 
-    /**
-     * Delete a user or staff account.
-     */
-    public function destroy(User $user)
-    {
-        if ($user->role === User::ROLE_ADMIN) {
-            abort(403, 'Cannot delete administrator accounts.');
-        }
-
-        $user->delete();
-
-        // ✅ Log the deletion
-        $audit = AuditLogger::log('USER_DELETED', 'User', $user->id, [
-            'deleted_by' => Auth::id(),
-            'deleted_name' => Auth::user()->name,
-            'role' => $user->role,
-        ]);
-
-        // ✅ Notify all admins about the deletion
-        $admins = User::where('role', User::ROLE_ADMIN)->get();
-        Notification::send($admins, new AuditEventNotification($audit));
-
-        return redirect()->back()->with('success', 'User deleted and audit logged.');
-    }
+   
 }
