@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Patients;
+use App\Models\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -24,15 +25,28 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $role = $this->faker->randomElement(['administrator', 'intake-staff', 'patient', 'pharmacist', 'doctor']);
+        $role = $this->faker->randomElement([
+            User::ROLE_ADMIN,
+            User::ROLE_STAFF,
+            User::ROLE_PTNT,
+            User::ROLE_PHARM,
+            User::ROLE_DOCTOR,
+        ]);
 
         $name = $this->faker->name();
+        $patientId = null;
 
-        if ($role === 'patient') {
+        // ✅ If user is a patient, attach a random Patient record
+        if ($role === User::ROLE_PTNT) {
             $patient = Patients::inRandomOrder()->first();
-            if ($patient) {
-                $name = trim($patient->first_name . ' ' . $patient->last_name);
+
+            // Create one if none exist (so seeding won't break)
+            if (!$patient) {
+                $patient = Patients::factory()->create();
             }
+
+            $name = trim($patient->first_name . ' ' . $patient->last_name);
+            $patientId = $patient->patient_id; // or $patient->id depending on your schema
         }
 
         return [
@@ -42,6 +56,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'role' => $role,
+            'patient_id' => $patientId,
         ];
     }
 
