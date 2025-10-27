@@ -65,6 +65,6 @@ class PatientCreateController extends Controller
 
         $patient = Patients::create($validated);
 
-        return to_route('patient.show', ['id' => $patient->id]);
+        return to_route('patients.show', ['id' => $patient->patient_id]);
     }
 }

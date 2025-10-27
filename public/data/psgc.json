@@ -1,0 +1,28 @@
+{
+  "region": {
+    "code": "030000000",
+    "name": "REGION III (Central Luzon)"
+  },
+  "province": {
+    "code": "031400000",
+    "name": "Bulacan"
+  },
+  "city_municipality": {
+    "code": "031415000",
+    "name": "Norzagaray"
+  },
+  "barangays": [
+    { "code": "031415001", "name": "Bigte" },
+    { "code": "031415002", "name": "Bitungol" },
+    { "code": "031415003", "name": "Friendship Village Resources (FVR)" },
+    { "code": "031415004", "name": "Matictic" },
+    { "code": "031415005", "name": "Minuyan" },
+    { "code": "031415006", "name": "Partida" },
+    { "code": "031415007", "name": "Pinagkamaligan" },
+    { "code": "031415008", "name": "Poblacion" },
+    { "code": "031415009", "name": "San Lorenzo" },
+    { "code": "031415010", "name": "San Mateo" },
+    { "code": "031415011", "name": "San Roque" },
+    { "code": "031415012", "name": "Tigbe" }
+  ]
+}

@@ -206,7 +206,7 @@ export default function MedicalEncounterView() {
                                                     const isPDF = file.filename?.match(/\.pdf$/i);
 
                                                     return (
-                                                        <Card key={file.attachment_id} className="overflow-hidden w-fit">
+                                                        <Card key={file.attachment_id} className="w-fit overflow-hidden">
                                                             <CardContent className="space-y-2 p-3">
                                                                 <div className="flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/40">
                                                                     {isImage ? (
@@ -226,7 +226,7 @@ export default function MedicalEncounterView() {
                                                                     {file.label || file.filename}
                                                                 </div>
 
-                                                                <div className="flex gap-4 justify-between">
+                                                                <div className="flex justify-between gap-4">
                                                                     <Button
                                                                         size="sm"
                                                                         variant="secondary"
