@@ -11,14 +11,17 @@ import { cn } from '@/lib/utils';
 import patients from '@/routes/patients';
 import { Head, usePage } from '@inertiajs/react';
 import { Download, Eye, FileText, ImageIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export default function MedicalEncounterView() {
-    const { patient, medical_encounters, vitalsigns } = usePage().props as any;
+    const { patient, medical_encounters, vitalsigns, flash } = usePage().props as any;
     const [selectedEncounter, setSelectedEncounter] = useState<any>(null);
     const [open, setOpen] = useState(false);
+    const [vitalsDialogOpen, setVitalsDialogOpen] = useState(false);
 
     console.log(medical_encounters);
+
+    
 
     // --- Group encounters by month (descending) ---
     const encountersByMonth = useMemo(() => {
@@ -32,6 +35,21 @@ export default function MedicalEncounterView() {
             });
         return groups;
     }, [medical_encounters]);
+
+    console.log('FLASH:', flash);
+
+    const didOpenFromFlash = useRef(false);
+
+    useEffect(() => {
+        if (!didOpenFromFlash.current && flash?.selected_encounter_id && medical_encounters?.length) {
+            const match = medical_encounters.find((enc: any) => enc.encounter_id == flash.selected_encounter_id);
+            if (match) {
+                setSelectedEncounter(match);
+                setVitalsDialogOpen(true);
+                didOpenFromFlash.current = true;
+            }
+        }
+    }, [flash, medical_encounters]);
 
     return (
         <AppLayout
@@ -105,9 +123,9 @@ export default function MedicalEncounterView() {
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
                                         <h2 className="mb-2 font-semibold text-gray-800">Vital Signs</h2>
-                                        <Dialog>
+                                        <Dialog open={vitalsDialogOpen} onOpenChange={setVitalsDialogOpen}>
                                             <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline">
+                                                <Button size="sm" variant="outline" onClick={() => setVitalsDialogOpen(true)}>
                                                     + Add Vital Signs
                                                 </Button>
                                             </DialogTrigger>
@@ -116,8 +134,6 @@ export default function MedicalEncounterView() {
                                                     <DialogTitle>Update Vital Signs</DialogTitle>
                                                     <DialogDescription>Add a new vital signs reading for this medical encounter.</DialogDescription>
                                                 </DialogHeader>
-
-                                                {/* Vital Signs Upload Form */}
                                                 <VitalSignsForm data={{ encounter_id: selectedEncounter.encounter_id }} />
                                             </DialogContent>
                                         </Dialog>
