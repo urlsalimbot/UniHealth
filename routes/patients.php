@@ -12,7 +12,7 @@ use App\Http\Controllers\Patients\Encounters\ExistingEncounterController;
 use App\Http\Controllers\Patients\Encounters\EncounterCreateController;
 
 Route::prefix('patients')->name('patients.')->group(function () {
-    Route::middleware(['auth', 'role:administrator,staff'])->group(function () {
+    Route::middleware(['auth', 'role:administrator,intake-staff,doctor'])->group(function () {
 
         // INDEX — List all patients
         Route::get('/', [PatientsIndexController::class, 'index'])
@@ -52,7 +52,7 @@ Route::prefix('patients')->name('patients.')->group(function () {
 
     });
 
-    Route::middleware(['auth', 'role:administrator,staff,user'])->group(function () {
+    Route::middleware(['auth', 'role:administrator,intake-staff,patient,doctor'])->group(function () {
         // SHOW — Show a single patient
         Route::get('/{id}', [ExistingPatientController::class, 'show'])
             ->name('show');

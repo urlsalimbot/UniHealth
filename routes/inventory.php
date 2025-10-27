@@ -8,7 +8,7 @@ use App\Http\Controllers\Inventory\StockCreateController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('inventory')->name('inventory.')->group(function () {
-    Route::middleware(['auth', 'role:administrator,staff'])->group(function () {
+    Route::middleware(['auth', 'role:administrator,pharmacist'])->group(function () {
 
 
 
@@ -41,7 +41,7 @@ Route::prefix('inventory')->name('inventory.')->group(function () {
             ->name('destroy');
     });
 
-    Route::middleware(['auth', 'role:administrator,staff,user'])->group(function () {
+    Route::middleware(['auth', 'role:administrator,intake-staff,patient,pharm,doctor'])->group(function () {
 
 
         // SHOW — Show a single inventory
