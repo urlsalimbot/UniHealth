@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
+use OwenIt\Auditing\Contracts\Auditable;
 
-
-class VitalSigns extends Model
+class VitalSigns extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     protected $table = 'vital_signs';
     protected $primaryKey = 'vital_sign_id';
     public $incrementing = false;
@@ -22,6 +23,26 @@ class VitalSigns extends Model
         'patient_id',
         'encounter_id',
         'recorded_by',
+        'measurement_date',
+        'measurement_time',
+        'systolic_bp',
+        'diastolic_bp',
+        'heart_rate',
+        'respiratory_rate',
+        'temperature',
+        'oxygen_saturation',
+        'weight',
+        'height',
+        'bmi',
+        'pain_score',
+        'pain_location',
+        'general_appearance',
+        'mental_status',
+        'bp_cuff_size',
+        'thermometer_type',
+        'created_at',
+    ];
+    protected $auditInclude = [
         'measurement_date',
         'measurement_time',
         'systolic_bp',

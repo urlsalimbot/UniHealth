@@ -4,6 +4,11 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use App\Models\Patients;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+use OwenIt\Auditing\Models\Audit;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Patients>
@@ -51,5 +56,29 @@ class PatientsFactory extends Factory
             'data_privacy_consent' => $this->faker->boolean(),
             'data_privacy_consent_date' => $this->faker->dateTime(),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Patients $patient) {
+            // ✅ Fake a logged-in user for auditing context
+            $user = User::first() ?? User::factory()->create([
+                'name' => 'Audit Seeder User',
+                'email' => 'audit@example.com',
+            ]);
+            Auth::login($user);
+
+            // ✅ Mark as "created" audit event and manually log it
+            $patient->auditEvent = 'created';
+            $auditData = $patient->toAudit(); // returns array ready for Audit model
+
+            Audit::create($auditData); // manually inserts audit record
+
+            // ✅ Add creator reference (optional)
+            $patient->created_by = $user->id;
+            $patient->saveQuietly();
+
+            Auth::logout();
+        });
     }
 }

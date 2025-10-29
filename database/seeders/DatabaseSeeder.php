@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        User::factory(10)->create();
+        // User::factory(10)->create();
         // User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
@@ -29,15 +29,18 @@ class DatabaseSeeder extends Seeder
         //     'role' => 'administrator',
         // ]);
 
-        Patients::factory(10)->create();
+        Patients::factory(100)->create();
         HealthcareFacilities::factory()->count(1)->create();
 
-        Medications::factory(10)->create();
-        FacilityMedicationInventory::factory(10)->create();
+        User::factory(10)->create();
 
-        MedicalEncounters::factory(50)->create();
-        PatientPrescriptions::factory(50)->create();
-        VitalSigns::factory(50)->create();
+        Medications::factory(20)->create();
+        FacilityMedicationInventory::factory(100)->create();
+
+        MedicalEncounters::factory(20)->create();
+        PatientPrescriptions::factory(100)->create();
+        VitalSigns::factory(100)->create();
+
 
 
 

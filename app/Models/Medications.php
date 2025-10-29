@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Medications extends Model
+class Medications extends Model implements Auditable
 {
+
+    use \OwenIt\Auditing\Auditable;
     protected $table = 'medications';
     protected $primaryKey = 'medication_id';
     public $incrementing = false;
@@ -16,6 +19,16 @@ class Medications extends Model
     use hasFactory;
 
     protected $fillable = [
+        'generic_name',
+        'brand_names',
+        'strength',
+        'dosage_form',
+        'drug_class',
+        'controlled_substance',
+        'fda_registration',
+        'created_at',
+    ];
+    protected $auditInclude = [
         'generic_name',
         'brand_names',
         'strength',

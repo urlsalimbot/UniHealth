@@ -64,6 +64,7 @@ Citizen Access
 - [x] audit tracing for admin accounts
 - [ ] update all controllers to include proper logging <!--test-->
 
+- [ ] one source of truth
 - [x] patient facing interface
 - [x] show only patients tab and inventory tab
 - [x] patients tab view-only

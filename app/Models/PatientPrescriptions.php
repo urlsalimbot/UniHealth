@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
+use OwenIt\Auditing\Contracts\Auditable;
 
-
-class PatientPrescriptions extends Model
+class PatientPrescriptions extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     public $timestamps = false;
     protected $table = 'patient_prescriptions';
     protected $primaryKey = 'prescription_id';
@@ -36,6 +37,27 @@ class PatientPrescriptions extends Model
         'prescription_status',
         'created_at',
     ];
+ 
+    protected $auditInclude = [
+        'patient_id',
+        'encounter_id',
+        'medication_id',
+        'dosage',
+        'frequency',
+        'route',
+        'duration',
+        'quantity_prescribed',
+        'refills_allowed',
+        'special_instructions',
+        'indication',
+        'prescription_date',
+        'start_date',
+        'end_date',
+        'prescription_status',
+        'created_at',
+    ];
+
+
 
     protected static function boot()
     {

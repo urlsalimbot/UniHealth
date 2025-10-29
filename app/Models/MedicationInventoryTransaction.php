@@ -4,10 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class MedicationInventoryTransaction extends Model
+class MedicationInventoryTransaction extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     protected $fillable = [
+        'inventory_id',
+        'facility_id',
+        'medication_id',
+        'transaction_type',
+        'quantity',
+        'direction',
+        'remarks',
+        'reference_no',
+        'performed_by',
+    ];
+
+    protected $auditInclude = [
         'inventory_id',
         'facility_id',
         'medication_id',

@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use OwenIt\Auditing\Contracts\Auditable;
 
-
-class MedicalEncounters extends Model
+class MedicalEncounters extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     use HasFactory;
 
     protected $table = 'medical_encounters';
@@ -19,6 +20,21 @@ class MedicalEncounters extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'patient_id',
+        'facility_id',
+        'encounter_type',
+        'encounter_class',
+        'chief_complaint',
+        'intervention',
+        'encounter_date',
+        'encounter_time',
+        'admission_date',
+        'discharge_date',
+        'encounter_status',
+        'created_by',
+    ];
+
+    protected $auditInclude = [
         'patient_id',
         'facility_id',
         'encounter_type',

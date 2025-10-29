@@ -3,15 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Filesystem\FilesystemAdapter;
 
-class EncounterAttachments extends Model
+class EncounterAttachments extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     use HasFactory;
+
 
     protected $table = 'encounter_attachments';
     protected $primaryKey = 'attachment_id';
@@ -22,6 +25,11 @@ class EncounterAttachments extends Model
         'encounter_id',
         'label',
         'file_path',
+    ];
+
+    protected $auditInclude = [
+        'encounter_id',
+        'label',
     ];
 
     protected static function boot()

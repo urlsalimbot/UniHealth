@@ -7,11 +7,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Str;
 
-class Patients extends Model
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use \OwenIt\Auditing\Auditable;
+
+class Patients extends Model implements AuditableContract
 {
 
+
     /** @use HasFactory<\Database\Factories\PatientsFactory> */
-    use HasFactory;
+    use HasFactory, Auditable;
 
 
     protected $table = 'patients';
@@ -19,6 +23,43 @@ class Patients extends Model
     public $incrementing = false;   // required for UUID
     protected $keyType = 'string';
     protected $fillable = [
+        'philhealth_id',
+        'pwd_id',
+        'senior_citizen_id',
+        'last_name',
+        'first_name',
+        'middle_name',
+        'suffix',
+        'maiden_name',
+        'nickname',
+        'date_of_birth',
+        'place_of_birth',
+        'gender',
+        'civil_status',
+        'nationality',
+        'religion',
+        'mobile_number',
+        'landline_number',
+        'email',
+        'house_number',
+        'street',
+        'barangay',
+        'municipality_city',
+        'province',
+        'region',
+        'postal_code',
+        'emergency_contact_name',
+        'emergency_contact_relationship',
+        'emergency_contact_number',
+        'emergency_contact_address',
+        'created_by',
+        'updated_by',
+        'is_active',
+        'data_privacy_consent',
+        'created_at',
+    ];
+
+    protected $auditInclude = [
         'philhealth_id',
         'pwd_id',
         'senior_citizen_id',

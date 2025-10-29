@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-class PatientInvitation extends Model
+use OwenIt\Auditing\Contracts\Auditable;
+class PatientInvitation extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     use HasFactory;
 
     protected $fillable = ['token', 'created_by', 'expires_at', 'used_at'];
+    protected $auditInclude = ['token', 'created_by', 'expires_at', 'used_at'];
 
     protected $dates = ['expires_at', 'used_at'];
 

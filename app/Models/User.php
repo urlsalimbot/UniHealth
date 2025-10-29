@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-class User extends Authenticatable implements MustVerifyEmail
+use OwenIt\Auditing\Contracts\Auditable;
+class User extends Authenticatable implements MustVerifyEmail, Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -25,6 +26,18 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
         'patient_id', // ✅ allow patient link
     ];
+    
+    protected $auditInclude = [
+        'name',
+        'email',
+        'password',
+        'role',
+        'patient_id', // ✅ allow patient link
+    ];
+
+
+
+
 
     public function patient()
     {
