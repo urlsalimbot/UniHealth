@@ -60,6 +60,7 @@ class Patients extends Model implements AuditableContract
     ];
 
     protected $auditInclude = [
+        'patient_id',
         'philhealth_id',
         'pwd_id',
         'senior_citizen_id',

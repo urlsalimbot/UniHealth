@@ -20,6 +20,7 @@ class PatientPrescriptions extends Model implements Auditable
     use HasFactory;
 
     protected $fillable = [
+        'prescription_id',
         'patient_id',
         'encounter_id',
         'medication_id',
@@ -37,7 +38,7 @@ class PatientPrescriptions extends Model implements Auditable
         'prescription_status',
         'created_at',
     ];
- 
+
     protected $auditInclude = [
         'patient_id',
         'encounter_id',

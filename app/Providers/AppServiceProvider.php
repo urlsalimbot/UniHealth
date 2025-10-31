@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use Auth;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
+use OwenIt\Auditing\Models\Audit;
 
 class AppServiceProvider extends ServiceProvider
 {

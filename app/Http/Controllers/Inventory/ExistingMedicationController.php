@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inventory;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\HealthcareFacilities;
 use App\Models\Medications;
 use App\Models\FacilityMedicationInventory;
 use Illuminate\Http\Request;
@@ -17,10 +18,16 @@ class ExistingMedicationController extends Controller
      */
     public function show(string $id)
     {
-        $medication = Medications::with(['facility_medication_inventory'])->findOrFail($id);
+        $medication = Medications::with([
+            'facility_medication_inventory',
+            'facility_medication_inventory.healthcare_facilities'
+        ])->findOrFail($id);
+
+        $facilities = HealthcareFacilities::inRandomOrder()->first();
 
         return Inertia::render('inventory/inventory-single', [
             'medication' => $medication,
+            'facility' => $facilities->facility_name,
         ]);
     }
 

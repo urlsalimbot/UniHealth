@@ -29,6 +29,7 @@ class Medications extends Model implements Auditable
         'created_at',
     ];
     protected $auditInclude = [
+        'medication_id',
         'generic_name',
         'brand_names',
         'strength',

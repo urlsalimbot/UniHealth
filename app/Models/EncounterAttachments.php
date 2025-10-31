@@ -28,6 +28,7 @@ class EncounterAttachments extends Model implements Auditable
     ];
 
     protected $auditInclude = [
+        'attachment_id',
         'encounter_id',
         'label',
     ];

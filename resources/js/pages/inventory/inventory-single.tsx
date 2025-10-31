@@ -1,12 +1,15 @@
+import { dispose, zeroOut } from '@/actions/App/Http/Controllers/Inventory/StockEndOfLifeController';
+import ConfirmDialog from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import inventory from '@/routes/inventory';
 import { BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 
 export default function InventorySingle() {
-    const { medication } = usePage().props as any;
+    const { medication, facility } = usePage().props as any;
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Inventory', href: inventory.index.url() },
@@ -25,16 +28,22 @@ export default function InventorySingle() {
 
             <div className="flex flex-col gap-6 p-6 md:flex-row">
                 {/* LEFT: Medication Hero */}
-                <Card className="flex-1">
+                <Card className="flex-1 h-fit">
                     <CardHeader>
                         <CardTitle className="text-2xl font-semibold">{medication.generic_name}</CardTitle>
-                        <CardDescription>
-                            {medication.drug_class} • {medication.dosage_form} • {medication.strength}
-                        </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <p>
                             <span className="font-medium">Brand Names:</span> {medication.brand_names || '—'}
+                        </p>
+                        <p>
+                            <span className="font-medium">Drug Class:</span> {medication.drug_class || '—'}
+                        </p>
+                        <p>
+                            <span className="font-medium">Dosage Form:</span> {medication.dosage_form || '—'}
+                        </p>
+                        <p>
+                            <span className="font-medium">Strength:</span> {medication.strength || '—'}
                         </p>
                         <p>
                             <span className="font-medium">FDA Registration:</span> {medication.fda_registration || 'N/A'}
@@ -49,36 +58,67 @@ export default function InventorySingle() {
                 {/* RIGHT: Facility Inventory */}
                 <Card className="flex-[1.5]">
                     <CardHeader>
-                        <CardTitle className="text-xl">Facility Inventory</CardTitle>
+                        <CardTitle className="text-xl">Facility Inventory: {facility}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {medication.facility_medication_inventory?.length ? (
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                {medication.facility_medication_inventory.map((inv: any, i: number) => {
-                                    const status = getStockStatus(inv.current_stock, inv.minimum_stock);
-                                    return (
-                                        <Card key={i} className="border border-border shadow-sm transition hover:shadow-md">
-                                            <CardHeader className="pb-2">
-                                                <div className="flex items-center justify-between">
-                                                    <CardTitle className="text-base font-semibold">{inv.facility?.facility_name}</CardTitle>
-                                                    <Badge className={status.color}>{status.label}</Badge>
-                                                </div>
-                                            </CardHeader>
-                                            <CardContent className="space-y-1 text-sm">
-                                                <p>
-                                                    <span className="font-medium">Current Stock:</span> {inv.current_stock}
-                                                </p>
-                                                <p>
-                                                    <span className="font-medium">Minimum Stock:</span> {inv.minimum_stock_level}
-                                                </p>
-                                                <p>
-                                                    <span className="font-medium">Expiration Date:</span>{' '}
-                                                    {inv.expiration_date ? new Date(inv.expiration_date).toLocaleDateString() : '—'}
-                                                </p>
-                                            </CardContent>
-                                        </Card>
-                                    );
-                                })}
+                                {medication.facility_medication_inventory
+                                    .slice() // create a shallow copy so we don’t mutate props
+                                    .sort((a: any, b: any) => {
+                                        const dateA = a.expiration_date ? new Date(a.expiration_date).getTime() : Infinity;
+                                        const dateB = b.expiration_date ? new Date(b.expiration_date).getTime() : Infinity;
+                                        return dateA - dateB; // ascending: oldest first
+                                    })
+                                    .map((inv: any, i: number) => {
+                                        const status = getStockStatus(inv.current_stock, inv.minimum_stock_level);
+                                        return (
+                                            <Card key={i} className="border border-border shadow-sm transition hover:shadow-md">
+                                                <CardHeader className="pb-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <CardTitle className="text-base font-semibold">{inv.supplier}</CardTitle>
+                                                        <Badge className={status.color}>{status.label}</Badge>
+                                                        <div className="space-x-2">
+                                                            <ConfirmDialog
+                                                                onConfirm={() => dispose(inv.inventory_id)}
+                                                                trigger={<Button variant="destructive">Disposed</Button>}
+                                                                title="Confirm Disposal of Stock"
+                                                                description="Are you sure you have disposed of this stock and want to proceed?"
+                                                                confirmLabel="Confirm"
+                                                                cancelLabel="Cancel"
+                                                            />
+                                                            <ConfirmDialog
+                                                                onConfirm={() => zeroOut(inv.inventory_id)}
+                                                                trigger={<Button variant="destructive">Depleted</Button>}
+                                                                title="Confirm Depletion of Stock"
+                                                                description="Are you sure this stock reached 0 inventory and want to proceed?"
+                                                                confirmLabel="Confirm"
+                                                                cancelLabel="Cancel"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </CardHeader>
+                                                <CardContent className="space-y-1 text-sm">
+                                                    <p>
+                                                        <span className="font-medium">Current Stock:</span> {inv.current_stock}
+                                                    </p>
+                                                    <p>
+                                                        <span className="font-medium">Minimum Stock:</span> {inv.minimum_stock_level}
+                                                    </p>
+                                                    <p>
+                                                        <span className="font-medium">Expiration Date:</span>{' '}
+                                                        {inv.expiration_date
+                                                            ? new Date(inv.expiration_date).toLocaleDateString('en-US', {
+                                                                  year: 'numeric',
+                                                                  month: 'long',
+                                                                  day: 'numeric',
+                                                              })
+                                                            : '—'}
+                                                    </p>
+                                                </CardContent>
+                                            </Card>
+                                        );
+                                    })}
                             </div>
                         ) : (
                             <p className="text-sm text-muted-foreground">No inventory records found for this medication.</p>

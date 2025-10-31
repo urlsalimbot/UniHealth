@@ -35,6 +35,7 @@ class MedicalEncounters extends Model implements Auditable
     ];
 
     protected $auditInclude = [
+        'encounter_id',
         'patient_id',
         'facility_id',
         'encounter_type',

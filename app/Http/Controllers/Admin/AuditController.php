@@ -30,7 +30,7 @@ class AuditController extends Controller
 
         $audits = $query->latest()->paginate(20)->withQueryString();
 
-        return Inertia::render('Admin/Audits/Index', [
+        return Inertia::render('admin/audits-index', [
             'audits' => $audits,
             'filters' => $request->only(['search', 'model', 'event']),
         ]);
@@ -38,7 +38,7 @@ class AuditController extends Controller
 
     public function show(Audit $audit)
     {
-        return Inertia::render('Admin/Audits/Show', [
+        return Inertia::render('admin/audits-show', [
             'audit' => $audit->load('user'),
         ]);
     }

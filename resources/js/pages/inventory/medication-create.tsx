@@ -11,7 +11,7 @@ export default function MedicationCreate() {
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Inventory', href: inventory.index.url() },
-        { title: 'Create Medication', href: inventory.medicationcreate.url() },
+        { title: 'Create Medication', href: inventory.medication.create.url() },
     ];
 
     const getStockStatus = (current: number, minimum: number) => {

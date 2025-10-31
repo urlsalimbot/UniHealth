@@ -47,7 +47,6 @@ export default function Index() {
     };
 
     const filteredMeds = useMemo(() => {
-        // ❌ old: const meds = medications?.data ?? [];
         const meds = Array.isArray(medications) ? medications : (medications?.data ?? []);
         if (!searchMedication) return meds;
         const term = searchMedication.toLowerCase();

@@ -1,9 +1,9 @@
 # UNIHEALTH
 
-Integrated Municipal Health Information And Service Delivery System: 
-A Unified Digital Platform For 
-Hospitals, 
-Rural Health Units, And 
+Integrated Municipal Health Information And Service Delivery System:
+A Unified Digital Platform For
+Hospitals,
+Rural Health Units, And
 Citizen Access
 
 ## How to install and run
@@ -23,7 +23,7 @@ Citizen Access
 
 - [x] patient dashboard
 
-- [ ] patient polish input
+- [x] patient polish input
 
 - [x] patient recorded vs nominal value charts
 - [x] patient historical chief complaints
@@ -42,9 +42,9 @@ Citizen Access
 - [x] inside medication interface
 - [x] input medication interface
 - [x] view medication
-- [ ] edit medication button <!--implement-->
-- [ ] recall stocks button <!--implement-->
-- [x] stocks low quantity alert
+- [x] edit medication button <!--implement-->
+- [x] EOL stocks button <!--implement-->
+- [ ] stocks low quantity alert <!--IMPROVE-->
 - [ ] release table for transaction auditing <!--implement-->
 
 - [ ] staff dashboard finalization <!--polish-->
@@ -56,18 +56,24 @@ Citizen Access
 - [x] only admin can create and authorize staff accounts
 - [ ] send temporary passwords to email add <!--implement-->
 
-- [x] split staff/user roles further into patient, doctor, intake, pharmacist 
-- [x] send out patient intake form to a guest through UHID 
+- [x] split staff/user roles further into patient, doctor, intake, pharmacist
+- [x] send out patient intake form to a guest through UHID
 
-- [ ] data integrity <!--complete below-->
+- [x] data integrity <!--complete below-->
 - [x] notifications for actions
 - [x] audit tracing for admin accounts
 - [x] update all controllers to include proper logging <!--test-->
 
-- [ ] one source of truth
+- [x] one source of truth
 - [x] patient facing interface
 - [x] show only patients tab and inventory tab
 - [x] patients tab view-only
-- [ ] inventory view-only <!--test-->
+
+- [ ] mobile accessibility for patient show
+- [ ] mobile accessibility for inventory request show
+
+- [ ] medication search bar for patient
+- [ ] patient medication release request
+- [x] revert paatient intake
 
 - [ ] migrate to mysql

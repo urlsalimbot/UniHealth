@@ -1,4 +1,4 @@
-import StockCreateController from '@/actions/App/Http/Controllers/Inventory/StockCreateController';
+import StockIntakeController from '@/actions/App/Http/Controllers/Inventory/StockIntakeController';
 import StockForm from '@/components/form-stock';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
@@ -6,7 +6,7 @@ import inventory from '@/routes/inventory';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
 
-export default function InventoryIntakePage() {
+export default function StockReleasePage() {
     const { medications, facilities } = usePage().props as any;
 
     const form = useForm({
@@ -25,7 +25,7 @@ export default function InventoryIntakePage() {
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Inventory', href: inventory.index.url() },
-        { title: 'Intake', href: inventory.stockcreate.url() },
+        { title: 'Intake', href: inventory.stock.create.url() },
     ];
 
     return (
@@ -35,7 +35,7 @@ export default function InventoryIntakePage() {
             <div className="flex h-full flex-1 flex-col overflow-x-auto rounded-xl p-4 pt-2">
                 <Card className="flex flex-1">
                     <CardContent className="p-6">
-                        <StockForm medications={medications} facilities={facilities} {...StockCreateController.store.form()} />
+                        <StockForm medications={medications} facilities={facilities} {...StockIntakeController.store.form()} />
                     </CardContent>
                 </Card>
             </div>

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class StockCreateController extends Controller
+class StockIntakeController extends Controller
 {
     /**
      * Show the form for creating a new stock.
@@ -24,7 +24,7 @@ class StockCreateController extends Controller
 
         $facilities = HealthcareFacilities::select('facility_id', 'facility_name')->orderBy('facility_name')->get();
 
-        return Inertia::render('inventory/stock-create', [
+        return Inertia::render('inventory/stock/intake', [
             'medications' => $medications,
             'facilities' => $facilities,
         ]);

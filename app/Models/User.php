@@ -26,8 +26,9 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         'role',
         'patient_id', // ✅ allow patient link
     ];
-    
+
     protected $auditInclude = [
+        'id',
         'name',
         'email',
         'password',
@@ -47,8 +48,8 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
 
     public const ROLE_ADMIN = 'administrator';
     public const ROLE_STAFF = 'intake-staff';
-    public const ROLE_DOCTOR = 'doctor';
-    public const ROLE_PHARM = 'pharmacist';
+    public const ROLE_DOCTOR = 'health-staff';
+    public const ROLE_PHARM = 'inventory-staff';
     public const ROLE_PTNT = 'patient';
 
     public function isAdmin(): bool

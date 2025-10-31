@@ -1,4 +1,3 @@
-// File: resources/js/components/medications-table.tsx
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -16,10 +15,18 @@ export default function MedicationsTable({ medications, search, onSearchChange, 
             {/* 🔍 Filter input */}
             <Input placeholder="Search medications..." value={search} onChange={onSearchChange} className="w-full" />
 
-            <ScrollArea className="h-[400px] rounded-md border">
-                <Table className="w-full text-sm">
-                    <TableHeader className="sticky top-0 z-10 bg-background">
-                        <TableRow className="border-b text-left">
+            {/* ✅ Fixed header table (non-scrollable) */}
+            <div className="border-b">
+                <Table className="w-full table-fixed text-sm">
+                    <colgroup>
+                        <col className="w-[20%]" />
+                        <col className="w-[25%]" />
+                        <col className="w-[20%]" />
+                        <col className="w-[15%]" />
+                        <col className="w-[20%]" />
+                    </colgroup>
+                    <TableHeader>
+                        <TableRow className="bg-background text-left">
                             <TableHead className="p-2 font-medium">Generic Name</TableHead>
                             <TableHead className="p-2 font-medium">Brand Names</TableHead>
                             <TableHead className="p-2 font-medium">Dosage Form</TableHead>
@@ -27,7 +34,19 @@ export default function MedicationsTable({ medications, search, onSearchChange, 
                             <TableHead className="p-2 font-medium">Drug Class</TableHead>
                         </TableRow>
                     </TableHeader>
+                </Table>
+            </div>
 
+            {/* ✅ Scrollable body table (aligned via same colgroup) */}
+            <ScrollArea className="h-[400px] rounded-md border">
+                <Table className="w-full table-fixed text-sm">
+                    <colgroup>
+                        <col className="w-[20%]" />
+                        <col className="w-[25%]" />
+                        <col className="w-[20%]" />
+                        <col className="w-[15%]" />
+                        <col className="w-[20%]" />
+                    </colgroup>
                     <TableBody>
                         {medications.length > 0 ? (
                             medications.map((row) => (

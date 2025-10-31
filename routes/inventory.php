@@ -2,11 +2,11 @@
 
 use App\Http\Controllers\Inventory\ExistingMedicationController;
 use App\Http\Controllers\Inventory\ExistingStockController;
-use App\Http\Controllers\Inventory\InventoryCreateController;
+use App\Http\Controllers\Inventory\StockIntakeController;
 use App\Http\Controllers\Inventory\InventoryDashboardController;
-use App\Http\Controllers\Inventory\ExistingInventoryController;
 use App\Http\Controllers\Inventory\MedicationCreateController;
-use App\Http\Controllers\Inventory\StockCreateController;
+use App\Http\Controllers\Inventory\StockEndOfLifeController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('inventory')->name('inventory.')->group(function () {
@@ -30,16 +30,19 @@ Route::prefix('inventory')->name('inventory.')->group(function () {
             ->name('medication.destroy');
 
         // CREATE — Show inventory medication creation form
-        Route::get('stock/create', [StockCreateController::class, 'create'])
+        Route::get('stock/create', [StockIntakeController::class, 'create'])
             ->name('stock.create');
 
         // STORE — Handle inventory medication form submission
-        Route::post('stock/', [StockCreateController::class, 'store'])
+        Route::post('stock/', [StockIntakeController::class, 'store'])
             ->name('stock.store');
 
-        // UPDATE — Update an existing inventory
-        Route::put('stocks/bulkupdate', [ExistingStockController::class, 'bulkupdate'])
-            ->name('stock.bulkupdate');
+
+        Route::post('/{inventory}/dispose', [StockEndOfLifeController::class, 'dispose'])
+            ->name('dispose');
+
+        Route::post('/{inventory}/zero', [StockEndOfLifeController::class, 'zeroOut'])
+            ->name('zero');
     });
 
     Route::middleware(['auth', 'role:administrator,intake-staff,pharm,doctor'])->group(function () {

@@ -48,6 +48,7 @@ class FacilityMedicationInventory extends Model implements AuditableContract
     ];
 
     protected $auditInclude = [
+        'inventory_id',
         'facility_id',
         'medication_id',
         'current_stock',
@@ -74,6 +75,49 @@ class FacilityMedicationInventory extends Model implements AuditableContract
         'low_stock_alert_sent',
         'created_at',
     ];
+
+    public const STATUS_ACTIVE = 'Active';
+    public const STATUS_DISPOSED = 'Disposed';
+    public const STATUS_EMPTY = 'Depleted';
+
+    public function markAsDisposed(string $remarks = null): void
+    {
+        $this->update([
+            'current_stock' => 0,
+            'stock_status' => self::STATUS_DISPOSED,
+            'remarks' => $remarks ?? 'Disposed due to expiry',
+        ]);
+
+        // Optional: record disposal as a transaction
+        $this->transactions()->create([
+            'facility_id' => $this->facility_id,
+            'medication_id' => $this->medication_id,
+            'transaction_type' => 'DISPOSAL',
+            'direction' => 'OUT',
+            'quantity' => 0,
+            'remarks' => $remarks ?? 'Expired stock disposed',
+            'performed_by' => auth()->id(),
+        ]);
+    }
+
+    public function markAsDepleted(string $remarks = null): void
+    {
+        $this->update([
+            'current_stock' => 0,
+            'stock_status' => self::STATUS_EMPTY,
+            'remarks' => $remarks ?? 'Stock naturally depleted',
+        ]);
+
+        $this->transactions()->create([
+            'facility_id' => $this->facility_id,
+            'medication_id' => $this->medication_id,
+            'transaction_type' => 'ADJUSTMENT',
+            'direction' => 'OUT',
+            'quantity' => 0,
+            'remarks' => $remarks ?? 'Stock zeroed out manually',
+            'performed_by' => auth()->id(),
+        ]);
+    }
 
     protected static function boot()
     {

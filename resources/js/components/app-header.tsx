@@ -14,10 +14,10 @@ import inventory from '@/routes/inventory';
 import patients from '@/routes/patients';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/react';
-import { Bell, Clipboard, LayoutGrid, Menu, Pill, User } from 'lucide-react';
+import { Bell, CheckCircle2, Clipboard, LayoutGrid, Menu, Pill, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
-import { ScrollArea } from './ui/scroll-area';
+import NotificationsPanel from './notifications';
 
 const mainNavItems: NavItem[] = [
     {
@@ -40,6 +40,11 @@ const mainNavItems: NavItem[] = [
         title: 'Users',
         href: admin.dashboard(),
         icon: Clipboard,
+    },
+    {
+        title: 'Audits',
+        href: admin.audits.index(),
+        icon: CheckCircle2,
     },
 ];
 
@@ -95,11 +100,16 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             { title: 'Patients', href: patients.index(), icon: User },
             { title: 'Inventory', href: inventory.index(), icon: Pill },
             { title: 'Users', href: admin.dashboard(), icon: Clipboard },
+            { title: 'Audits', href: admin.audits.index(), icon: CheckCircle2 },
         ],
         'patient-intake': [{ title: 'Patients', href: patients.index(), icon: User }],
         doctor: [
             { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
             { title: 'Patients', href: patients.index(), icon: User },
+            { title: 'Inventory', href: inventory.index(), icon: Pill },
+        ],
+        pharmacist: [
+            { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
             { title: 'Inventory', href: inventory.index(), icon: Pill },
         ],
         patient: [
@@ -114,7 +124,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const activeItemStyles = 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
     const isGuest = userRole === 'guest';
-
     return (
         <>
             <div className="border-b border-sidebar-border/80">
@@ -204,19 +213,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="w-56" align="end">
-                                        <ScrollArea className="min-h-[16rem]">
-                                            {notifications.length > 0 ? (
-                                                notifications.map((n) => (
-                                                    <div key={n.id} className="border-b p-2">
-                                                        <span className="text-foreground">{n.data.action}</span>
-                                                        <p>{n.data.entity}</p>
-                                                        <p>{n.data.created_at}</p>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <p>No notifications found.</p>
-                                            )}
-                                        </ScrollArea>
+                                        <NotificationsPanel auth={auth} notifications={auth?.user?.notifications} />
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
