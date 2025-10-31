@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\TransactionDirection;
+use App\Enums\TransactionType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class MedicationInventoryTransaction extends Model implements Auditable
+class MedicationInventoryTransaction extends Model implements AuditableContract
 {
     use \OwenIt\Auditing\Auditable;
 
@@ -20,6 +22,11 @@ class MedicationInventoryTransaction extends Model implements Auditable
         'remarks',
         'reference_no',
         'performed_by',
+    ];
+
+    protected $casts = [
+        'transaction_type' => TransactionType::class,
+        'direction' => TransactionDirection::class,
     ];
 
     protected $auditInclude = [
@@ -37,6 +44,11 @@ class MedicationInventoryTransaction extends Model implements Auditable
     public function inventory(): BelongsTo
     {
         return $this->belongsTo(FacilityMedicationInventory::class, 'inventory_id', 'inventory_id');
+    }
+
+    public function medication(): BelongsTo
+    {
+        return $this->belongsTo(FacilityMedicationInventory::class, 'medication_id', 'medication_id');
     }
 
     public function user(): BelongsTo

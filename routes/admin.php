@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminControlDashboard;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\ExistingUserController;
 use App\Http\Controllers\Admin\UserCreateController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,12 @@ Route::middleware(['auth', 'role:administrator'])->name('admin.')->group(functio
 
     Route::delete('/users/{user}', [ExistingUserController::class, 'destroy'])
         ->name('users.destroy');
+
+    Route::get('audits', [AuditController::class, 'index'])
+        ->name('audits.index');
+
+    Route::get('audits/{audit}', [AuditController::class, 'show'])
+        ->name('audits.show');
 
 });
 

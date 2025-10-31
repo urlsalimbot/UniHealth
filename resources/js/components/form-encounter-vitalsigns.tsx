@@ -6,13 +6,46 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Transition } from '@headlessui/react';
 import { Form } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 export default function VitalSignsForm({ data = {}, patient, encounter }: any) {
+    const [today, setToday] = useState('');
+    const [currentTime, setCurrentTime] = useState('');
+
+    // 🕒 Auto-fill today's date in ISO format (YYYY-MM-DD)
+    useEffect(() => {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        setToday(now.toISOString().split('T')[0]);
+        setCurrentTime(`${hours}:${minutes}`);
+    }, []);
+
     return (
         <Form {...VitalSignStoreController.store.form({ id: patient.patient_id, encounter: encounter.encounter_id })} className="space-y-8">
             {({ processing, recentlySuccessful, errors }) => (
                 <>
+                    {/* Measurement Date */}
+                    <div className="flex flex-col space-y-1">
+                        <Label htmlFor="measurement_date">Measurement Date</Label>
+                        <Input
+                            id="measurement_date"
+                            name="measurement_date"
+                            type="date"
+                            defaultValue={data?.measurement_date ?? new Date().toISOString().split('T')[0]}
+                        />
+                        <InputError message={errors.measurement_date} />
+                    </div>
+
+                    {/* Measurement Time */}
+                    <div className="flex flex-col space-y-1">
+                        <Label htmlFor="measurement_time">Measurement Time</Label>
+                        <Input id="measurement_time" name="measurement_time" type="time" defaultValue={data?.measurement_time ?? currentTime} />
+                        <InputError message={errors.measurement_time} />
+                    </div>
+
                     {/* Vitals Grid */}
+
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                         {/* Blood Pressure */}
                         <div className="flex flex-col space-y-1">

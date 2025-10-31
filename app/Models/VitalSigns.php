@@ -43,6 +43,9 @@ class VitalSigns extends Model implements Auditable
         'created_at',
     ];
     protected $auditInclude = [
+        'patient_id',
+        'encounter_id',
+        'recorded_by',
         'measurement_date',
         'measurement_time',
         'systolic_bp',

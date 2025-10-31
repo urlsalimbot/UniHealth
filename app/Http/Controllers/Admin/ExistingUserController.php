@@ -38,16 +38,6 @@ class ExistingUserController extends Controller
 
         $user->delete();
 
-        // ✅ Log the deletion
-        $audit = AuditLogger::log('USER_DELETED', 'User', $user->id, [
-            'deleted_by' => Auth::id(),
-            'deleted_name' => Auth::user()->name,
-            'role' => $user->role,
-        ]);
-
-        // ✅ Notify all admins about the deletion
-        $admins = User::where('role', User::ROLE_ADMIN)->get();
-        Notification::send($admins, new AuditEventNotification($audit));
 
         return redirect()
             ->route('admin.dashboard')

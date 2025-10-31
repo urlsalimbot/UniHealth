@@ -19,10 +19,6 @@ export default function MedicalEncounterView() {
     const [open, setOpen] = useState(false);
     const [vitalsDialogOpen, setVitalsDialogOpen] = useState(false);
 
-    console.log(medical_encounters);
-
-    
-
     // --- Group encounters by month (descending) ---
     const encountersByMonth = useMemo(() => {
         const groups: Record<string, any[]> = {};
@@ -35,8 +31,6 @@ export default function MedicalEncounterView() {
             });
         return groups;
     }, [medical_encounters]);
-
-    console.log('FLASH:', flash);
 
     const didOpenFromFlash = useRef(false);
 
@@ -74,7 +68,7 @@ export default function MedicalEncounterView() {
                         <ScrollArea className="h-full pr-2">
                             {Object.entries(encountersByMonth).map(([month, encounters]) => (
                                 <div key={month} className="mb-4">
-                                    <h3 className="mb-2 text-sm font-semibold text-gray-600">{month}</h3>
+                                    <h3 className="mb-2 text-sm font-semibold">{month}</h3>
                                     <ul className="space-y-1">
                                         {encounters.map((enc: any) => (
                                             <li
@@ -87,9 +81,9 @@ export default function MedicalEncounterView() {
                                             >
                                                 <div className="flex justify-between">
                                                     <span className="font-medium">{enc.encounter_type}</span>
-                                                    <span className="text-xs text-gray-500">{new Date(enc.encounter_date).toLocaleDateString()}</span>
+                                                    <span className="text-xs">{new Date(enc.encounter_date).toLocaleDateString()}</span>
                                                 </div>
-                                                <div className="truncate text-xs text-gray-700">{enc.chief_complaint ?? 'No complaint'}</div>
+                                                <div className="truncate text-xs">{enc.chief_complaint ?? 'No complaint'}</div>
                                             </li>
                                         ))}
                                     </ul>
@@ -111,18 +105,18 @@ export default function MedicalEncounterView() {
                             <div className="space-y-6">
                                 {/* Encounter Summary */}
                                 <div>
-                                    <h2 className="mb-2 font-semibold text-gray-800">Summary</h2>
-                                    <p className="text-sm text-gray-700">
+                                    <h2 className="mb-2 font-semibold">Summary</h2>
+                                    <p className="text-sm">
                                         <strong>Complaint:</strong> {selectedEncounter.chief_complaint ?? 'N/A'}
                                     </p>
-                                    <p className="text-sm text-gray-700">
+                                    <p className="text-sm">
                                         <strong>Intervention:</strong> {selectedEncounter.intervention ?? selectedEncounter.encounter_class ?? 'N/A'}
                                     </p>
                                 </div>
 
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
-                                        <h2 className="mb-2 font-semibold text-gray-800">Vital Signs</h2>
+                                        <h2 className="mb-2 font-semibold">Vital Signs</h2>
                                         <Dialog open={vitalsDialogOpen} onOpenChange={setVitalsDialogOpen}>
                                             <DialogTrigger asChild>
                                                 <Button size="sm" variant="outline" onClick={() => setVitalsDialogOpen(true)}>
@@ -134,7 +128,11 @@ export default function MedicalEncounterView() {
                                                     <DialogTitle>Update Vital Signs</DialogTitle>
                                                     <DialogDescription>Add a new vital signs reading for this medical encounter.</DialogDescription>
                                                 </DialogHeader>
-                                                <VitalSignsForm data={{ encounter_id: selectedEncounter.encounter_id }} />
+                                                <VitalSignsForm
+                                                    data={{ encounter_id: selectedEncounter.encounter_id }}
+                                                    patient={patient}
+                                                    encounter={selectedEncounter}
+                                                />
                                             </DialogContent>
                                         </Dialog>
                                     </div>
@@ -147,7 +145,7 @@ export default function MedicalEncounterView() {
                                 {/* Prescriptions */}
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
-                                        <h2 className="mb-2 font-semibold text-gray-800">Prescriptions</h2>
+                                        <h2 className="mb-2 font-semibold">Prescriptions</h2>
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <Button size="sm" variant="outline">
@@ -160,9 +158,11 @@ export default function MedicalEncounterView() {
                                                     <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
                                                 </DialogHeader>
 
-                                                {/* Attachment Upload Form */}
+                                                {/* Patient Prescription Form*/}
                                                 <PatientPrescriptionForm
                                                     data={{ encounter_id: selectedEncounter.encounter_id }}
+                                                    patient={patient}
+                                                    encounter={selectedEncounter}
                                                     onSubmit={(e: any) => {
                                                         e.preventDefault();
                                                         // Handle submission logic (e.g., Inertia form post)
@@ -172,7 +172,7 @@ export default function MedicalEncounterView() {
                                         </Dialog>
                                     </div>
                                     {selectedEncounter.patient_prescriptions?.length > 0 ? (
-                                        <ul className="ml-4 list-disc space-y-1 text-sm text-gray-700">
+                                        <ul className="ml-4 list-disc space-y-1 text-sm">
                                             {selectedEncounter.patient_prescriptions.map((rx: any) => (
                                                 <li key={rx.prescription_id}>
                                                     {rx.medication_name} — {rx.dosage ?? ''} {rx.frequency ?? ''}
@@ -186,7 +186,7 @@ export default function MedicalEncounterView() {
 
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
-                                        <h2 className="font-semibold text-gray-800">Attached Documents</h2>
+                                        <h2 className="font-semibold">Attached Documents</h2>
 
                                         {/* Upload Attachment Dialog */}
                                         <Dialog open={open} onOpenChange={setOpen}>
@@ -238,9 +238,7 @@ export default function MedicalEncounterView() {
                                                                     )}
                                                                 </div>
 
-                                                                <div className="truncate text-sm font-medium text-gray-800">
-                                                                    {file.label || file.filename}
-                                                                </div>
+                                                                <div className="truncate text-sm font-medium">{file.label || file.filename}</div>
 
                                                                 <div className="flex justify-between gap-4">
                                                                     <Button

@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use \OwenIt\Auditing\Auditable;
 
-class FacilityMedicationInventory extends Model implements Auditable
+class FacilityMedicationInventory extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
-    use \OwenIt\Auditing\Auditable;
     protected $table = 'facility_medication_inventory';
     protected $primaryKey = 'inventory_id';
     public $incrementing = False;

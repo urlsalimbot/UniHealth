@@ -21,7 +21,7 @@ interface DataTableProps<TData, TValue> {
     label: string;
     field: string;
     baseUrl: string;
-    onRowClick?: (row: TData) => void; // ✅ NEW PROP
+    onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -145,19 +145,6 @@ export function DataTable<TData, TValue>({
                 </div>
 
                 <div className="flex items-center space-x-4">
-                    {/* <Select value={`${paginator.per_page}`} onValueChange={(v) => navigate({ per_page: Number(v), page: 1 })}>
-                        <SelectTrigger className="h-8 w-[70px]">
-                            <SelectValue placeholder={paginator.per_page} />
-                        </SelectTrigger>
-                        <SelectContent side="top">
-                            {[10, 20, 25, 50].map((n) => (
-                                <SelectItem key={n} value={`${n}`}>
-                                    {n}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select> */}
-
                     <div className="flex items-center space-x-1">
                         <Button size="icon" variant="outline" disabled={paginator.current_page === 1} onClick={() => navigate({ page: 1 })}>
                             <ChevronsLeft />

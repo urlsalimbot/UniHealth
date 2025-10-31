@@ -12,16 +12,18 @@ use Inertia\Inertia;
 class InventoryDashboardController extends Controller
 {
     /**
-     * Display a listing of medications.
+     * Display a listing of medications and stocks.
      */
     public function index(Request $request)
     {
-        $perPage = $request->get('per_page', 10);
+        // 📦 Inventory pagination
+        $inventoryPerPage = $request->get('per_page', 10);
+        $inventoryPage = $request->get('page', 1);
 
-        // -------------------------
-        // Medications Query
-        // -------------------------
-        $medicationsQuery = Medications::select([
+        /**
+         * 💊 LOAD ALL MEDICATIONS (no pagination)
+         */
+        $medications = Medications::select([
             'medication_id',
             'generic_name',
             'brand_names',
@@ -29,62 +31,49 @@ class InventoryDashboardController extends Controller
             'dosage_form',
             'drug_class',
             'created_at',
-        ]);
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get(); // ✅ no pagination here
 
-        if ($request->filled('generic_name')) {
-            $medicationsQuery->where('generic_name', 'like', '%' . $request->generic_name . '%');
-        }
 
-        $medicationsSort = $request->get('medications_sort', 'created_at');
-        $medicationsDirection = $request->get('medications_direction', 'desc');
+        /**
+         * 🧾 INVENTORY QUERY — merged by medication_id
+         */
+        $inventorySort = $request->get('sort', 'created_at');
+        $inventoryDirection = $request->get('direction', 'desc');
 
-        $medications = $medicationsQuery
-            ->orderBy($medicationsSort, $medicationsDirection)
-            ->paginate($perPage)
-            ->appends($request->query());
+        $inventory = FacilityMedicationInventory::with('medication')
+            ->selectRaw('
+                medication_id,
+                SUM(current_stock) as total_stock,
+                SUM(reorder_point) as total_reorder_point,
+                SUM(minimum_stock_level) as total_minimum_stock_level,
+                MAX(created_at) as latest_update
+            ')
+            ->groupBy('medication_id')
+            ->orderBy($inventorySort, $inventoryDirection)
+            ->paginate($inventoryPerPage, ['*'], 'page', $inventoryPage);
 
-        // -------------------------
-        // Inventory Query
-        // -------------------------
-        $inventoryQuery = FacilityMedicationInventory::with([
-            'medication',
-        ])->select();
-
-        if ($request->filled('medication_id')) {
-            $inventoryQuery->where('medication_id', 'like', '%' . $request->medication_id . '%');
-        }
-
+        /**
+         * 🚨 LOW STOCK ITEMS (merged as well)
+         */
         $low_stock_items = FacilityMedicationInventory::with('medication')
-            ->whereColumn('current_stock', '<', 'reorder_point')
+            ->selectRaw('
+                medication_id,
+                SUM(current_stock) as total_stock,
+                SUM(reorder_point) as total_reorder_point,
+                SUM(minimum_stock_level) as total_minimum_stock_level
+            ')
+            ->groupBy('medication_id')
+            ->havingRaw('SUM(current_stock) < SUM(reorder_point)')
             ->get();
 
-
-        $inventorySort = $request->get('inventory_sort', 'created_at');
-        $inventoryDirection = $request->get('inventory_direction', 'desc');
-
-        $inventory = $inventoryQuery
-            ->orderBy($inventorySort, $inventoryDirection)
-            ->paginate($perPage)
-            ->appends($request->query());
-
-        // -------------------------
-        // Return to Inertia
-        // -------------------------
         return Inertia::render('inventory/inventory-index', [
-            'medi' => $medications,
-            'curr_inventory' => $inventory,
+            'medications' => $medications, // ✅ all meds (no pagination)
+            'curr_inventory' => $inventory, // ✅ paginated, merged by medication_id
             'low_stock_items' => $low_stock_items,
-            'filters' => $request->only([
-                'generic_name',
-                'medication_id',
-                'medications_sort',
-                'medications_direction',
-                'inventory_sort',
-                'inventory_direction',
-                'per_page',
-            ]),
+            'filters' => $request->only(['curr_stock', 'sort', 'direction', 'per_page']),
         ]);
     }
-
 
 }

@@ -9,7 +9,7 @@ use App\Models\FacilityMedicationInventory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ExistingInventoryController extends Controller
+class ExistingMedicationController extends Controller
 {
 
     /**
@@ -47,17 +47,6 @@ class ExistingInventoryController extends Controller
             ->with('success', 'Medication updated successfully.');
     }
 
-    public function bulkupdate(Request $request)
-    {
-        $changes = $request->input('changes', []);
-
-        foreach ($changes as $id => $fields) {
-            FacilityMedicationInventory::where('inventory_id', $id)->update($fields);
-        }
-
-        return redirect()->route('inventory.index')
-            ->with('success', 'Inventory updated successfully!');
-    }
     /**
      * Remove the specified medication from storage.
      */

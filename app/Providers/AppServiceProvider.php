@@ -28,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
                     'warning' => session('warning'),
 
                     'invitation_link' => session('invitation_link'),
+                    'open_vitals_dialog' => session('open_vitals_dialog'),
+                    'selected_encounter_id' => session('selected_encounter_id'),
                 ];
             },
         ]);

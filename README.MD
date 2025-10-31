@@ -15,9 +15,9 @@ Citizen Access
 3. php composer install
    npm install
 
-      4. php artisan key:generate
+4. php artisan key:generate
 
-6. composer run dev
+5. composer run dev
 
 ## to-do list
 
@@ -32,8 +32,8 @@ Citizen Access
 
 - [x] polish encounters panel
 - [x] add medical encounters intake
-- [ ] add vital signs intake <!--test-->
-- [ ] add prescriptions intake <!--test-->
+- [x] add vital signs intake <!--test-->
+- [x] add prescriptions intake <!--test-->
 
 - [x] add file attachments
 
@@ -62,7 +62,7 @@ Citizen Access
 - [ ] data integrity <!--complete below-->
 - [x] notifications for actions
 - [x] audit tracing for admin accounts
-- [ ] update all controllers to include proper logging <!--test-->
+- [x] update all controllers to include proper logging <!--test-->
 
 - [ ] one source of truth
 - [x] patient facing interface

@@ -1,3 +1,4 @@
+import ExistingPatientController from '@/actions/App/Http/Controllers/Patients/ExistingPatientController';
 import CreateEncounterModal from '@/components/form-encounter';
 import PatientForm from '@/components/form-patient';
 import VitalSignsDashboard from '@/components/patient-vitals-charts';
@@ -102,7 +103,7 @@ export default function PatientSingleView() {
                             {/* Scrollable Patient Form */}
                             <ScrollArea className="h-[calc(90vh-4rem)]">
                                 <div className="px-6 py-6">
-                                    <PatientForm data={patient} mode="edit" />
+                                    <PatientForm {...ExistingPatientController.update.put(patient.patient_id)} data={patient} mode="edit" />
                                 </div>
                             </ScrollArea>
                         </DialogContent>

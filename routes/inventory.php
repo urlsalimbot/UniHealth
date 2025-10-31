@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Inventory\ExistingMedicationController;
+use App\Http\Controllers\Inventory\ExistingStockController;
 use App\Http\Controllers\Inventory\InventoryCreateController;
 use App\Http\Controllers\Inventory\InventoryDashboardController;
 use App\Http\Controllers\Inventory\ExistingInventoryController;
@@ -10,47 +12,48 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('inventory')->name('inventory.')->group(function () {
     Route::middleware(['auth', 'role:administrator,pharmacist'])->group(function () {
 
-
-
         // CREATE — Show inventory medication creation form
         Route::get('medication/create', [MedicationCreateController::class, 'create'])
-            ->name('medicationcreate');
+            ->name('medication.create');
 
         // STORE — Handle inventory medication form submission
         Route::post('medication/', [MedicationCreateController::class, 'store'])
-            ->name('medicationstore');
+            ->name('medication.store');
+
+
+        // UPDATE — Update an existing inventory
+        Route::put('medication/{id}', [ExistingMedicationController::class, 'update'])
+            ->name('medication.update');
+
+        // DELETE — Delete a inventory
+        Route::delete('/{id}', [ExistingMedicationController::class, 'destroy'])
+            ->name('medication.destroy');
 
         // CREATE — Show inventory medication creation form
         Route::get('stock/create', [StockCreateController::class, 'create'])
-            ->name('stockcreate');
+            ->name('stock.create');
 
         // STORE — Handle inventory medication form submission
         Route::post('stock/', [StockCreateController::class, 'store'])
-            ->name('stockstore');
+            ->name('stock.store');
 
         // UPDATE — Update an existing inventory
-        Route::put('medication/{id}', [ExistingInventoryController::class, 'update'])
-            ->name('update');
-
-        // UPDATE — Update an existing inventory
-        Route::put('stocks/bulkupdate', [ExistingInventoryController::class, 'bulkupdate'])
-            ->name('bulkupdate');
-
-        // DELETE — Delete a inventory
-        Route::delete('/{id}', [ExistingInventoryController::class, 'destroy'])
-            ->name('destroy');
+        Route::put('stocks/bulkupdate', [ExistingStockController::class, 'bulkupdate'])
+            ->name('stock.bulkupdate');
     });
 
-    Route::middleware(['auth', 'role:administrator,intake-staff,patient,pharm,doctor'])->group(function () {
-
-
-        // SHOW — Show a single inventory
-        Route::get('/{id}', [ExistingInventoryController::class, 'show'])
-            ->name('item.show');
-
+    Route::middleware(['auth', 'role:administrator,intake-staff,pharm,doctor'])->group(function () {
 
         // INDEX — List all inventory
         Route::get('/', [InventoryDashboardController::class, 'index'])
             ->name('index');
+    });
+
+    Route::middleware(['auth', 'role:administrator,intake-staff,patient,pharm,doctor'])->group(function () {
+
+        // SHOW — Show a single inventory
+        Route::get('/{id}', [ExistingMedicationController::class, 'show'])
+            ->name('item.show');
+
     });
 });

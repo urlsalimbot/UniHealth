@@ -15,16 +15,11 @@ return new class extends Migration {
             $table->string('facility_id');
             $table->string('medication_id');
 
-            // Transaction metadata
-            $table->enum('transaction_type', [
-                'intake',
-                'release',
-                'transfer_in',
-                'transfer_out',
-                'adjustment'
-            ]);
-
+            // Transaction metadata            
             $table->enum('direction', ['in', 'out']);
+            $table->enum('transaction_type', ['purchase', 'dispense', 'adjustment', 'return', 'transfer', 'waste']);
+
+
             $table->integer('quantity');
             $table->string('reference_no')->nullable();
             $table->text('remarks')->nullable();
