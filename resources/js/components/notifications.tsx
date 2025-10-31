@@ -3,6 +3,7 @@ import admin from '@/routes/admin';
 import { Link } from '@inertiajs/react';
 
 export default function NotificationsPanel({ auth, notifications }: any) {
+    console.log(notifications);
     return (
         <ScrollArea className="h-80">
             {notifications?.length > 0 ? (

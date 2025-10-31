@@ -68,9 +68,14 @@ export default function Index() {
                     <Card className="mt-4 flex-3">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>Stocks</CardTitle>
-                            <Button className="w-fit justify-end" onClick={() => router.get(inventory.stock.create.url())}>
-                                + New Stock
-                            </Button>
+                            <div className='space-x-6'>
+                                <Button className="w-fit justify-end" onClick={() => router.get(inventory.stock.create.url())}>
+                                    + Intake Stock
+                                </Button>
+                                <Button className="w-fit justify-end" onClick={() => router.get(inventory.stock.release.url())}>
+                                    - Release Medication
+                                </Button>
+                            </div>
                         </CardHeader>
 
                         <CardContent>

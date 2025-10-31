@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use \OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Auditable;
+use App\Events\LowStockDetected;
 
 class FacilityMedicationInventory extends Model implements AuditableContract
 {
@@ -16,7 +16,7 @@ class FacilityMedicationInventory extends Model implements AuditableContract
 
     protected $table = 'facility_medication_inventory';
     protected $primaryKey = 'inventory_id';
-    public $incrementing = False;
+    public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -80,6 +80,67 @@ class FacilityMedicationInventory extends Model implements AuditableContract
     public const STATUS_DISPOSED = 'Disposed';
     public const STATUS_EMPTY = 'Depleted';
 
+    // Boot method to dispatch events on update
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updating(function ($model) {
+            // Check if stock is being updated and is now below reorder point
+            if ($model->isDirty('current_stock')) {
+                $oldStock = $model->getOriginal('current_stock');
+                $newStock = $model->current_stock;
+
+                // Trigger alert if transitioning from adequate to low stock
+                if ($oldStock > $model->reorder_point && $newStock <= $model->reorder_point) {
+                    if (!$model->low_stock_alert_sent) {
+                        LowStockDetected::dispatch($model);
+                        $model->low_stock_alert_sent = true;
+                    }
+                }
+
+                // Reset alert flag if stock returns to adequate levels
+                if ($newStock > $model->reorder_point) {
+                    $model->low_stock_alert_sent = false;
+                }
+            }
+        });
+
+        static::creating(function ($model) {
+            if (empty($model->inventory_id)) {
+                do {
+                    $id = 'STOCK' . rand(100, 999999);
+                } while (self::where('inventory_id', $id)->exists());
+                $model->inventory_id = $id;
+            }
+        });
+    }
+
+    public function isLowStock(): bool
+    {
+        return $this->current_stock <= $this->reorder_point;
+    }
+
+    public function scopeLowStock($query)
+    {
+        return $query->whereColumn('current_stock', '<=', 'reorder_point');
+    }
+
+    public function healthcare_facilities(): BelongsTo
+    {
+        return $this->belongsTo(HealthcareFacilities::class, 'facility_id', 'facility_id');
+    }
+
+    public function medication()
+    {
+        return $this->belongsTo(Medications::class, 'medication_id', 'medication_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(MedicationInventoryTransaction::class, 'inventory_id', 'inventory_id');
+    }
+
     public function markAsDisposed(string $remarks = null): void
     {
         $this->update([
@@ -88,7 +149,6 @@ class FacilityMedicationInventory extends Model implements AuditableContract
             'remarks' => $remarks ?? 'Disposed due to expiry',
         ]);
 
-        // Optional: record disposal as a transaction
         $this->transactions()->create([
             'facility_id' => $this->facility_id,
             'medication_id' => $this->medication_id,
@@ -118,36 +178,4 @@ class FacilityMedicationInventory extends Model implements AuditableContract
             'performed_by' => auth()->id(),
         ]);
     }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (empty($model->inventory_id)) {
-                do {
-                    $id = 'STOCK' . rand(100, 999999);
-                } while (self::where('inventory_id', $id)->exists());
-
-                $model->inventory_id = $id;
-            }
-        });
-    }
-
-
-    public function healthcare_facilities(): BelongsTo
-    {
-        return $this->belongsTo(HealthcareFacilities::class, 'facility_id', 'facility_id');
-    }
-
-    public function medication()
-    {
-        return $this->belongsTo(Medications::class, 'medication_id', 'medication_id');
-    }
-
-    public function transactions()
-    {
-        return $this->hasMany(MedicationInventoryTransaction::class, 'inventory_id', 'inventory_id');
-    }
-
 }

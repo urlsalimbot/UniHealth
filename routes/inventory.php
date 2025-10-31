@@ -3,6 +3,7 @@
 use App\Http\Controllers\Inventory\ExistingMedicationController;
 use App\Http\Controllers\Inventory\ExistingStockController;
 use App\Http\Controllers\Inventory\StockIntakeController;
+use App\Http\Controllers\Inventory\StockReleaseController;
 use App\Http\Controllers\Inventory\InventoryDashboardController;
 use App\Http\Controllers\Inventory\MedicationCreateController;
 use App\Http\Controllers\Inventory\StockEndOfLifeController;
@@ -29,14 +30,21 @@ Route::prefix('inventory')->name('inventory.')->group(function () {
         Route::delete('/{id}', [ExistingMedicationController::class, 'destroy'])
             ->name('medication.destroy');
 
-        // CREATE — Show inventory medication creation form
+        // CREATE — Show inventory stock creation form
         Route::get('stock/create', [StockIntakeController::class, 'create'])
             ->name('stock.create');
 
-        // STORE — Handle inventory medication form submission
+        // STORE — Handle inventory stock form submission
         Route::post('stock/', [StockIntakeController::class, 'store'])
             ->name('stock.store');
 
+        // CREATE — Show inventory stock release form
+        Route::get('stock/release', [StockReleaseController::class, 'show'])
+            ->name('stock.release');
+
+        // STORE — Handle inventory stock release form submission
+        Route::post('stock/', [StockReleaseController::class, 'store'])
+            ->name('stock.fulfill');
 
         Route::post('/{inventory}/dispose', [StockEndOfLifeController::class, 'dispose'])
             ->name('dispose');
