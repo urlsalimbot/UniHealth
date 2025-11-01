@@ -86,20 +86,17 @@ class FacilityMedicationInventory extends Model implements AuditableContract
         parent::boot();
 
         static::updating(function ($model) {
-            // Check if stock is being updated and is now below reorder point
             if ($model->isDirty('current_stock')) {
                 $oldStock = $model->getOriginal('current_stock');
                 $newStock = $model->current_stock;
 
-                // Trigger alert if transitioning from adequate to low stock
-                if ($oldStock > $model->reorder_point && $newStock <= $model->reorder_point) {
-                    if (!$model->low_stock_alert_sent) {
-                        LowStockDetected::dispatch($model);
-                        $model->low_stock_alert_sent = true;
-                    }
+                // When stock goes below or equal reorder point
+                if ($newStock <= $model->reorder_point) {
+                    // fire event regardless of flag; listener dedupes within 24h
+                    LowStockDetected::dispatch($model);
                 }
 
-                // Reset alert flag if stock returns to adequate levels
+                // Reset alert flag when it goes back above reorder point (optional)
                 if ($newStock > $model->reorder_point) {
                     $model->low_stock_alert_sent = false;
                 }
