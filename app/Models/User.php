@@ -72,10 +72,16 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         return $this->role === self::ROLE_PHARM;
     }
 
-
     public function isPatient(): bool
     {
         return $this->role === self::ROLE_PTNT;
+    }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(Notification::class, 'notification_user')
+            ->withPivot('is_viewed')
+            ->withTimestamps();
     }
 
     /**

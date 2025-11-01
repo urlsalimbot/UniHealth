@@ -1,13 +1,11 @@
 <?php
 
 use App\Http\Controllers\Inventory\ExistingMedicationController;
-use App\Http\Controllers\Inventory\ExistingStockController;
 use App\Http\Controllers\Inventory\StockIntakeController;
 use App\Http\Controllers\Inventory\StockReleaseController;
 use App\Http\Controllers\Inventory\InventoryDashboardController;
 use App\Http\Controllers\Inventory\MedicationCreateController;
 use App\Http\Controllers\Inventory\StockEndOfLifeController;
-
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('inventory')->name('inventory.')->group(function () {
@@ -53,7 +51,7 @@ Route::prefix('inventory')->name('inventory.')->group(function () {
             ->name('zero');
     });
 
-    Route::middleware(['auth', 'role:administrator,intake-staff,pharm,doctor'])->group(function () {
+    Route::middleware(['auth', 'role:administrator,intake-staff,patient,pharm,doctor'])->group(function () {
 
         // INDEX — List all inventory
         Route::get('/', [InventoryDashboardController::class, 'index'])

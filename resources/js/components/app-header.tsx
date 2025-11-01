@@ -14,7 +14,7 @@ import inventory from '@/routes/inventory';
 import patients from '@/routes/patients';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/react';
-import { Bell, CheckCircle2, Clipboard, LayoutGrid, Menu, Pill, User } from 'lucide-react';
+import { CheckCircle2, Clipboard, LayoutGrid, Menu, Pill, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 import NotificationsPanel from './notifications';
@@ -206,16 +206,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         {!isGuest && (
                             <div className="relative flex items-center space-x-1">
                                 {/* Notifications */}
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
-                                            <Bell className="!size-5 opacity-80 group-hover:opacity-100" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent className="w-56" align="end">
-                                        <NotificationsPanel auth={auth} notifications={auth?.user?.notifications} />
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                <NotificationsPanel />
                             </div>
                         )}
 

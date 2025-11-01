@@ -109,16 +109,16 @@ export default function About() {
 
                     {/* Lead member card centered */}
                     <div className="mb-10 flex justify-center">
-                        <div className="flex w-full max-w-sm flex-col items-center rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.08)] transition hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:bg-[#161615] dark:shadow-[0_2px_10px_rgba(255,255,255,0.08)]">
+                        <div className="flex w-full max-w-sm flex-col items-center rounded-2xl bg-gradient-to-br from-green-500 to-teal-600 p-6 shadow-[0_2px_10px_rgba(0,0,0,0.08)] transition hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:bg-[#161615] dark:shadow-[0_2px_10px_rgba(255,255,255,0.08)]">
                             <Avatar className="mb-4 h-20 w-20">
                                 <AvatarImage src={lead.avatar} alt={lead.name} />
                                 <AvatarFallback className="rounded-full bg-neutral-200 text-lg font-medium text-black dark:bg-neutral-700 dark:text-white">
                                     {getInitials(lead.name)}
                                 </AvatarFallback>
                             </Avatar>
-                            <h2 className="mb-1 text-xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">{lead.name}</h2>
-                            <p className="mb-1 text-sm text-muted-foreground">{lead.email}</p>
-                            <span className="text-xs font-medium tracking-wide text-[#6b7280] uppercase dark:text-[#9ca3af]">{lead.role}</span>
+                            <h2 className="mb-1 text-xl font-semibold text-white">{lead.name}</h2>
+                            <p className="mb-1 text-sm text-white">{lead.email}</p>
+                            <span className="text-xs font-medium tracking-wide text-white uppercase">{lead.role}</span>
                         </div>
                     </div>
 
@@ -127,7 +127,7 @@ export default function About() {
                         {others.map((user, idx) => (
                             <div
                                 key={idx}
-                                className="flex flex-col items-center rounded-2xl bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.08)] transition hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:bg-[#161615] dark:shadow-[0_2px_10px_rgba(255,255,255,0.08)]"
+                                className="flex flex-col items-center rounded-2xl bg-gradient-to-br from-green-500 to-teal-600 p-6 shadow-[0_2px_10px_rgba(0,0,0,0.08)] transition hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:bg-[#161615] dark:shadow-[0_2px_10px_rgba(255,255,255,0.08)]"
                             >
                                 <Avatar className="mb-4 h-16 w-16">
                                     <AvatarImage src={user.avatar} alt={user.name} />
@@ -135,9 +135,9 @@ export default function About() {
                                         {getInitials(user.name)}
                                     </AvatarFallback>
                                 </Avatar>
-                                <h2 className="mb-1 text-lg font-medium text-[#1b1b18] dark:text-[#EDEDEC]">{user.name}</h2>
-                                <p className="mb-1 text-sm text-muted-foreground">{user.email}</p>
-                                <span className="text-xs font-medium tracking-wide text-[#6b7280] uppercase dark:text-[#9ca3af]">{user.role}</span>
+                                <h2 className="mb-1 text-lg font-medium text-white">{user.name}</h2>
+                                <p className="mb-1 text-sm text-white">{user.email}</p>
+                                <span className="text-xs font-medium tracking-wide text-white uppercase">{user.role}</span>
                             </div>
                         ))}
                     </div>

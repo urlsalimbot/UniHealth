@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import inventory from '@/routes/inventory';
+import medicationRequests from '@/routes/medication-requests';
 import { BreadcrumbItem } from '@/types';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
@@ -68,12 +69,15 @@ export default function Index() {
                     <Card className="mt-4 flex-3">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>Stocks</CardTitle>
-                            <div className='space-x-6'>
+                            <div className="space-x-6">
                                 <Button className="w-fit justify-end" onClick={() => router.get(inventory.stock.create.url())}>
                                     + Intake Stock
                                 </Button>
-                                <Button className="w-fit justify-end" onClick={() => router.get(inventory.stock.release.url())}>
+                                <Button className="w-fit justify-end" onClick={() => router.get(medicationRequests.main.url())}>
                                     - Release Medication
+                                </Button>
+                                <Button className="w-fit justify-end" onClick={() => router.get(medicationRequests.create.url())}>
+                                    - Test Medication
                                 </Button>
                             </div>
                         </CardHeader>

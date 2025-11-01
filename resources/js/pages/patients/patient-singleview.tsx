@@ -20,6 +20,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import AppLayout from '@/layouts/app-layout';
 import patients from '@/routes/patients';
 import { Head, router, usePage } from '@inertiajs/react';
+import { QRCodeCanvas } from 'qrcode.react';
 import { useState } from 'react';
 
 export default function PatientSingleView() {
@@ -54,8 +55,16 @@ export default function PatientSingleView() {
                         </DialogTrigger>
 
                         <DialogContent className="h-[90vh] max-w-[95vw] overflow-hidden p-0 md:max-w-6xl">
-                            <DialogHeader className="p-4 pb-0">
+                            <DialogHeader className="flex items-center justify-between p-4 pb-0">
                                 <DialogTitle className="text-lg font-semibold">Patient Details</DialogTitle>
+
+                                {/* ✅ Inline QR Code (top-right corner) */}
+                                {patient?.patient_id && (
+                                    <div className="flex flex-col items-center">
+                                        <QRCodeCanvas value={patient.patient_id.toString()} size={96} level="H" includeMargin={true} />
+                                        <span className="mt-1 text-xs text-muted-foreground">ID: {patient.patient_id}</span>
+                                    </div>
+                                )}
                             </DialogHeader>
 
                             {/* Scrollable area for the patient form */}

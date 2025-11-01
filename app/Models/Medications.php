@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Medications extends Model implements Auditable
+class Medications extends Model implements AuditableContract
 {
 
-    use \OwenIt\Auditing\Auditable;
     protected $table = 'medications';
     protected $primaryKey = 'medication_id';
     public $incrementing = false;
     protected $keyType = 'string';
     public $timestamps = false; // migration only defines created_at
-    use hasFactory;
+    use hasFactory, Auditable;
 
     protected $fillable = [
         'generic_name',
