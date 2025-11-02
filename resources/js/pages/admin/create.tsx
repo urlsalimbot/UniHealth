@@ -26,7 +26,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Create() {
-    const [role, setRole] = useState<string>('staff');
+    const [role, setRole] = useState<string>('');
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -67,9 +67,9 @@ export default function Create() {
                                             <SelectValue placeholder="Select a role" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="staff">Intake-Staff</SelectItem>
+                                            <SelectItem value="intake-staff">Intake Staff</SelectItem>
                                             <SelectItem value="doctor">Doctor</SelectItem>
-                                            <SelectItem value="pharm">Pharmacist</SelectItem>
+                                            <SelectItem value="inventory-staff">Inventory Staff</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <InputError message={errors.role} />

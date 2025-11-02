@@ -9,7 +9,7 @@ use App\Http\Controllers\Inventory\StockEndOfLifeController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('inventory')->name('inventory.')->group(function () {
-    Route::middleware(['auth', 'role:administrator,pharmacist'])->group(function () {
+    Route::middleware(['auth', 'role:administrator,inventory-staff'])->group(function () {
 
         // CREATE — Show inventory medication creation form
         Route::get('medication/create', [MedicationCreateController::class, 'create'])
@@ -35,14 +35,6 @@ Route::prefix('inventory')->name('inventory.')->group(function () {
         // STORE — Handle inventory stock form submission
         Route::post('stock/', [StockIntakeController::class, 'store'])
             ->name('stock.store');
-
-        // CREATE — Show inventory stock release form
-        Route::get('stock/release', [StockReleaseController::class, 'show'])
-            ->name('stock.release');
-
-        // STORE — Handle inventory stock release form submission
-        Route::post('stock/', [StockReleaseController::class, 'store'])
-            ->name('stock.fulfill');
 
         Route::post('/{inventory}/dispose', [StockEndOfLifeController::class, 'dispose'])
             ->name('dispose');

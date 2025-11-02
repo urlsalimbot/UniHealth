@@ -41,7 +41,7 @@ export default function PatientSingleView() {
     const latestVitals = latest_encounter?.vital_signs?.[0] || patient.vital_signs?.[0] || {};
 
     // console.log(vitalsigns);
-
+    console.log(latest_encounter);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Patient Details" />
@@ -162,7 +162,7 @@ export default function PatientSingleView() {
                                                 <ul className="ml-4 list-disc space-y-0.5">
                                                     {latest_encounter.patient_prescriptions.slice(0, 2).map((rx: any) => (
                                                         <li key={rx.prescription_id} className="truncate">
-                                                            {rx.medication_name}
+                                                            {rx.medication.generic_name}
                                                         </li>
                                                     ))}
                                                     {latest_encounter.patient_prescriptions.length > 2 && (

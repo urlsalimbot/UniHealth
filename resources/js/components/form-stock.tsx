@@ -30,7 +30,7 @@ export default function StockForm({ medications = [], facilities = [], ...Action
 
     return (
         <Form {...Actions} className="space-y-8">
-            {({ processing, recentlySuccessful, errors }) => (  
+            {({ processing, recentlySuccessful, errors }) => (
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                     {/* LEFT SIDE: Medication Selector */}
                     <Card className="md:col-span-1">
@@ -92,7 +92,7 @@ export default function StockForm({ medications = [], facilities = [], ...Action
                                         <option value="">Select facility</option>
                                         {facilities.map((f: any) => (
                                             <option key={f.facility_id} value={f.facility_id}>
-                                                {f.name}
+                                                {f.facility_name}
                                             </option>
                                         ))}
                                     </select>
@@ -109,6 +109,18 @@ export default function StockForm({ medications = [], facilities = [], ...Action
                                     <Label htmlFor="minimum_stock_level">Minimum Stock Level</Label>
                                     <Input id="minimum_stock_level" name="minimum_stock_level" type="number" min="0" />
                                     <InputError message={errors['minimum_stock_level']} />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="maximum_stock_level">Maximum Stock Level</Label>
+                                    <Input id="maximum_stock_level" name="maximum_stock_level" type="number" min="0" />
+                                    <InputError message={errors['maximum_stock_level']} />
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="maximum_stock_level">Reorder Point</Label>
+                                    <Input id="reorder_point" name="reorder_point" type="number" min="0" />
+                                    <InputError message={errors['reorder_point']} />
                                 </div>
 
                                 <div>

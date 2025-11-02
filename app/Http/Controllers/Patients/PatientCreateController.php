@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Patients;
 use Inertia\Inertia;
+use App\Mail\PatientValidationMail;
+use App\Mail\PatientCreatedMail;
+use Illuminate\Support\Facades\Mail;
+use App\Services\EmailLoggerService;
 
 
 class PatientCreateController extends Controller
@@ -33,7 +37,7 @@ class PatientCreateController extends Controller
 
             'date_of_birth' => 'required|date',
             'place_of_birth' => 'required|string|max:255',
-            'gender' => 'required|in:Male,Female,other',
+            'gender' => 'required|in:Male,Female,Other',
             'civil_status' => 'required|string|max:50',
             'nationality' => 'required|string|max:100',
             'religion' => 'nullable|string|max:100',
@@ -64,6 +68,67 @@ class PatientCreateController extends Controller
         }
 
         $patient = Patients::create($validated);
+
+        // Ensure patient was created successfully and has an ID
+        if (!$patient || !$patient->patient_id) {
+            \Log::error('Failed to create patient or missing patient_id', [
+                'validated_data' => $validated
+            ]);
+            return back()->with('error', 'Failed to create patient record. Please try again.');
+        }
+
+        // Log patient creation
+        \Log::info('Patient created successfully', [
+            'patient_id' => $patient->patient_id,
+            'email' => $patient->email,
+            'name' => $patient->first_name . ' ' . $patient->last_name
+        ]);
+
+        // Send validation email to patient
+        try {
+            $validationMail = new PatientValidationMail($patient);
+            
+            // Log full email content
+            EmailLoggerService::logEmailContent($validationMail, $patient->email);
+            EmailLoggerService::logToFile($validationMail, $patient->email, 'patient_validation');
+            
+            \Log::info('Sending PatientValidationMail', [
+                'to' => $patient->email,
+                'subject' => $validationMail->envelope()->subject,
+                'patient_id' => $patient->patient_id
+            ]);
+            Mail::to($patient->email)->send($validationMail);
+            \Log::info('PatientValidationMail sent successfully');
+        } catch (\Exception $e) {
+            \Log::error('Failed to send PatientValidationMail', [
+                'error' => $e->getMessage(),
+                'patient_id' => $patient->patient_id,
+                'email' => $patient->email
+            ]);
+        }
+        
+        // Send creation confirmation email
+        try {
+            $creationMail = new PatientCreatedMail($patient);
+            
+            // Log full email content
+            EmailLoggerService::logEmailContent($creationMail, $patient->email);
+            EmailLoggerService::logToFile($creationMail, $patient->email, 'patient_created');
+            
+            \Log::info('Sending PatientCreatedMail', [
+                'to' => $patient->email,
+                'subject' => $creationMail->envelope()->subject,
+                'patient_id' => $patient->patient_id
+            ]);
+            Mail::to($patient->email)->send($creationMail);
+            \Log::info('PatientCreatedMail sent successfully');
+        } catch (\Exception $e) {
+            \Log::error('Failed to send PatientCreatedMail', [
+                'error' => $e->getMessage(),
+                'patient_id' => $patient->patient_id,
+                'email' => $patient->email
+            ]);
+        }
 
         return to_route('patients.show', ['id' => $patient->patient_id]);
     }

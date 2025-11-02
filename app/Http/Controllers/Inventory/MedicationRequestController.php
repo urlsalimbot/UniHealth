@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inventory;
 use App\Events\MedicationFulfilled;
 use App\Http\Controllers\Controller;
 use App\Models\MedicationRequest;
+use App\Models\MedicationRequestItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -13,21 +14,6 @@ use Inertia\Inertia;
 
 class MedicationRequestController extends Controller
 {
-    public function main()
-    {
-        $requests = MedicationRequest::with(['patient', 'reviewer'])
-            ->latest()
-            ->get();
-
-        return Inertia::render('inventory/med-request-index', [
-            'requests' => $requests
-        ]);
-    }
-
-    public function create()
-    {
-        return Inertia::render('inventory/med-request-p');
-    }
 
     public function store(Request $request)
     {
@@ -52,7 +38,7 @@ class MedicationRequestController extends Controller
             'role' => 'inventory-staff', // or 'admin', depending on how your roles are structured
             'title' => 'New Medication Request Pending Review',
             'message' => 'A new prescription has been uploaded and requires validation.',
-            'action_url' => route('medication-requests.main'),
+            'action_url' => route('inventory.patient.index'),
         ]);
 
         // Optionally notify both admins and pharmacists:
@@ -62,7 +48,7 @@ class MedicationRequestController extends Controller
             'role' => 'administrator',
             'title' => 'New Medication Request Pending Review',
             'message' => 'A new prescription has been uploaded and requires validation.',
-            'action_url' => route('medication-requests.main'),
+            'action_url' => route('inventory.patient.index'),
         ]);
 
         // Redirect properly with success flash
@@ -92,28 +78,35 @@ class MedicationRequestController extends Controller
         ]);
     }
 
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
-        $medRequest = MedicationRequest::with('items')->findOrFail($id);
-        $medRequest->update(['status' => 'approved']);
-
-        event(new MedicationFulfilled($medRequest));
-
-        return back()->with('success', 'Prescription approved for fulfillment.');
-    }
-
-    public function updateStatus(Request $request, MedicationRequest $medicationRequest)
-    {
-        $request->validate([
-            'status' => 'required|in:approved,rejected,fulfilled',
+        $validated = request()->validate([
+            'items' => 'required|array',
+            'items.*.medication_id' => 'required|exists:medications,medication_id',
+            'items.*.quantity' => 'required|integer|min:1',
         ]);
 
+        $medicationRequest = MedicationRequest::findOrFail($id);
+
+        // Store the approved items
+        foreach ($validated['items'] as $item) {
+            MedicationRequestItem::create([
+                'medication_request_id' => $medicationRequest->id,
+                'medication_id' => $item['medication_id'],
+                'quantity' => $item['quantity'],
+            ]);
+        }
+
+        // Mark request as fulfilled
         $medicationRequest->update([
-            'status' => $request->status,
-            'reviewed_by' => Auth::id(),
-            'reviewed_at' => now(),
+            'status' => 'approved',
+            'approved_by' => auth()->id(),
+            'approved_at' => now(),
         ]);
 
-        return back()->with('success', 'Request status updated.');
+        event(new MedicationFulfilled($medicationRequest));
+
+        return back()->with('success', 'Request approved successfully');
     }
+
 }

@@ -9,8 +9,13 @@ class MedicationRequestItem extends Model
 {
     protected $fillable = ['medication_request_id', 'medication_id', 'quantity'];
 
-    public function medication()
+   public function medication()
     {
         return $this->belongsTo(Medications::class);
+    }
+
+    public function request()
+    {
+        return $this->belongsTo(MedicationRequest::class, 'medication_request_id');
     }
 }

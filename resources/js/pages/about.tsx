@@ -12,11 +12,11 @@ export default function About() {
     const user = auth.user;
 
     // Define destination based on role
-    const isUser = user && user.role === 'user';
+    const isUser = user && user.role === 'patient';
     const patientId = user && typeof user.patient_id === 'string' ? user.patient_id : null;
 
     const dashboardLink = isUser && patientId ? patients.show(patientId) : dashboard();
-    const dashboardLabel = isUser ? 'Patient' : 'Dashboard';
+    const dashboardLabel = isUser ? 'My Health' : 'Dashboard';
 
     const teamMembers = [
         {
@@ -79,7 +79,7 @@ export default function About() {
                             {auth.user ? (
                                 <Link
                                     href={dashboardLink}
-                                    className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                    className="inline-block rounded-sm bg-gradient-to-r from-green-500 to-teal-600 px-4 py-1.5 text-xs leading-normal font-medium text-white transition-all hover:from-green-600 hover:to-teal-700 sm:text-sm"
                                 >
                                     {dashboardLabel}
                                 </Link>
@@ -87,13 +87,13 @@ export default function About() {
                                 <>
                                     <Link
                                         href={login()}
-                                        className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                                        className="inline-block rounded-sm border border-transparent px-4 py-1.5 text-xs leading-normal text-[#1b1b18] transition-colors hover:border-[#19140035] sm:text-sm dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
                                     >
                                         Log in
                                     </Link>
                                     <Link
                                         href={register()}
-                                        className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                        className="inline-block rounded-sm border border-[#1b1b18] bg-[#1b1b18] px-4 py-1.5 text-xs leading-normal font-medium text-white transition-colors hover:bg-black sm:text-sm dark:border-[#3E3E3A] dark:bg-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:bg-[#4E4E4A]"
                                     >
                                         Register
                                     </Link>

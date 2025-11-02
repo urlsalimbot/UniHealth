@@ -19,7 +19,7 @@ class ExistingPatientController extends Controller
         $patient = Patients::with([
             'medical_encounters' => function ($q) {
                 $q->orderBy('encounter_date', 'desc')
-                    ->with(['vital_signs', 'patient_prescriptions'])
+                    ->with(['vital_signs', 'patient_prescriptions.medication'])
                     ->take(5);
             },
         ])->findOrFail($id);

@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         Medications::factory(20)->create();
         FacilityMedicationInventory::factory(100)->create();
 
-        MedicalEncounters::factory(20)->create();
+        MedicalEncounters::factory(200)->create();
         PatientPrescriptions::factory(100)->create();
         VitalSigns::factory(100)->create();
 

@@ -12,11 +12,20 @@ return new class extends Migration {
     {
         Schema::create('medication_request_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('medication_request_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('medication_id')->constrained('medications')->cascadeOnDelete();
-            $table->integer('quantity');
+            $table->foreignId('medication_request_id')->constrained()->onDelete('cascade');
+
+            // must match Medications::$primaryKey exactly
+            $table->string('medication_id');
+            $table->integer('quantity')->default(1);
             $table->timestamps();
+
+            // correct FK definition
+            $table->foreign('medication_id')
+                ->references('medication_id')
+                ->on('medications')
+                ->onDelete('cascade');
         });
+
     }
 
     /**

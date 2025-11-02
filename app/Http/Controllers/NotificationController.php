@@ -53,4 +53,17 @@ class NotificationController extends Controller
             ->updateExistingPivot($notification->id, ['is_viewed' => true]);
         return response()->json(['success' => true]);
     }
+
+    public function markAllAsViewed(Request $request)
+    {
+        $user = $request->user();
+
+        // Mark all notifications for the user as viewed in the pivot table
+        $user->notifications()->updateExistingPivot(
+            $user->notifications->pluck('id')->toArray(),
+            ['is_viewed' => true]
+        );
+
+        return response()->json(['success' => true]);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inventory;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\MedicationRequest;
 use App\Models\Medications;
 use App\Models\FacilityMedicationInventory;
 use Illuminate\Http\Request;
@@ -68,7 +69,14 @@ class InventoryDashboardController extends Controller
             ->havingRaw('SUM(current_stock) < SUM(reorder_point)')
             ->get();
 
+        $medrequests = MedicationRequest::with(['patient', 'reviewer'])
+            ->latest()
+            ->get();
+
+
+
         return Inertia::render('inventory/inventory-index', [
+            'requests' => $medrequests,
             'medications' => $medications, // ✅ all meds (no pagination)
             'curr_inventory' => $inventory, // ✅ paginated, merged by medication_id
             'low_stock_items' => $low_stock_items,
@@ -76,28 +84,28 @@ class InventoryDashboardController extends Controller
         ]);
     }
 
-        public function patientIndex()
-        {
-            /**
-             * 💊 LOAD ALL MEDICATIONS (no pagination)
-             */
-            $medications = Medications::select([
-                'medication_id',
-                'generic_name',
-                'brand_names',
-                'strength',
-                'dosage_form',
-                'drug_class',
-                'created_at',
-            ])
-                ->orderBy('created_at', 'desc')
-                ->get(); // ✅ no pagination here
+    public function patientIndex()
+    {
+        /**
+         * 💊 LOAD ALL MEDICATIONS (no pagination)
+         */
+        $medications = Medications::select([
+            'medication_id',
+            'generic_name',
+            'brand_names',
+            'strength',
+            'dosage_form',
+            'drug_class',
+            'created_at',
+        ])
+            ->orderBy('created_at', 'desc')
+            ->get(); // ✅ no pagination here
 
 
 
-            return Inertia::render('inventory/indexp', [
-                'medications' => $medications, // ✅ all meds (no pagination)
-            ]);
-        }
+        return Inertia::render('inventory/indexp', [
+            'medications' => $medications, // ✅ all meds (no pagination)
+        ]);
+    }
 
 }

@@ -17,7 +17,7 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className 
     }
 
     return (
-        <div className={cn('flex items-center gap-2', className)}>
+        <div className={cn('', className)}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="-ml-3 h-8 data-[state=open]:bg-accent">

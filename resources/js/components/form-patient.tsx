@@ -10,6 +10,15 @@ import InputError from './input-error';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
+function RequiredLabel({ children }: { children: React.ReactNode }) {
+    return (
+        <Label>
+            {children}
+            <span className="ml-0.5 text-red-500">*</span>
+        </Label>
+    );
+}
+
 export default function PatientForm({ data = null, mode = 'create', ...Actions }: any) {
     const isView = mode === 'view';
 
@@ -25,8 +34,6 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                 <>
                     {/* Personal Info + Address */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2">
-
-
                         {/* Personal Info */}
                         <Card className="flex flex-col">
                             <CardHeader>
@@ -35,7 +42,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                             <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {/* First Name */}
                                 <div className="space-y-1">
-                                    <Label>First Name</Label>
+                                    <RequiredLabel>First Name</RequiredLabel>
                                     <Input name="first_name" defaultValue={data?.first_name ?? ''} readOnly={isView} />
                                     <InputError message={errors.first_name} />
                                 </div>
@@ -49,28 +56,28 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
 
                                 {/* Last Name */}
                                 <div className="space-y-1">
-                                    <Label>Last Name</Label>
+                                    <RequiredLabel>Last Name</RequiredLabel>
                                     <Input name="last_name" defaultValue={data?.last_name ?? ''} readOnly={isView} />
                                     <InputError message={errors.last_name} />
                                 </div>
 
                                 {/* Date of Birth */}
                                 <div className="space-y-1">
-                                    <Label>Date of Birth</Label>
+                                    <RequiredLabel>Date of Birth</RequiredLabel>
                                     <Input type="date" name="date_of_birth" defaultValue={data?.date_of_birth ?? ''} readOnly={isView} />
                                     <InputError message={errors.date_of_birth} />
                                 </div>
 
                                 {/* Place of Birth */}
                                 <div className="space-y-1">
-                                    <Label>Place of Birth</Label>
+                                    <RequiredLabel>Place of Birth</RequiredLabel>
                                     <Input name="place_of_birth" defaultValue={data?.place_of_birth ?? ''} readOnly={isView} />
                                     <InputError message={errors.place_of_birth} />
                                 </div>
 
                                 {/* Gender */}
                                 <div className="space-y-1">
-                                    <Label>Gender</Label>
+                                    <RequiredLabel>Gender</RequiredLabel>
                                     <Select name="gender" value={gender} onValueChange={setGender} disabled={isView}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select Gender" />
@@ -86,7 +93,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
 
                                 {/* Civil Status */}
                                 <div className="space-y-1">
-                                    <Label>Civil Status</Label>
+                                    <RequiredLabel>Civil Status</RequiredLabel>
                                     <Select name="civil_status" value={civil} onValueChange={setCivil} disabled={isView}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select Civil Status" />
@@ -104,7 +111,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
 
                                 {/* Nationality */}
                                 <div className="space-y-1">
-                                    <Label>Nationality</Label>
+                                    <RequiredLabel>Nationality</RequiredLabel>
                                     <Input name="nationality" defaultValue={data?.nationality ?? ''} readOnly={isView} />
                                     <InputError message={errors.nationality} />
                                 </div>
@@ -118,25 +125,25 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-1">
-                                    <Label>Region</Label>
+                                    <RequiredLabel>Region</RequiredLabel>
                                     <Input readOnly value={psgc?.region.name ?? ''} />
                                     <input type="hidden" name="region" value={psgc?.region.name ?? ''} />
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Label>Province</Label>
+                                    <RequiredLabel>Province</RequiredLabel>
                                     <Input readOnly value={psgc?.province.name ?? ''} />
                                     <input type="hidden" name="province" value={psgc?.province.name ?? ''} />
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Label>Municipality / City</Label>
+                                    <RequiredLabel>Municipality / City</RequiredLabel>
                                     <Input readOnly value={psgc?.city_municipality.name ?? ''} />
                                     <input type="hidden" name="municipality_city" value={psgc?.city_municipality.name ?? ''} />
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Label>Barangay</Label>
+                                    <RequiredLabel>Barangay</RequiredLabel>
                                     <Select value={selectedBarangay} onValueChange={setSelectedBarangay} disabled={isView}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select Barangay" />
@@ -160,13 +167,13 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Label>Street</Label>
+                                    <RequiredLabel>Street</RequiredLabel>
                                     <Input name="street" defaultValue={data?.street ?? ''} readOnly={isView} />
                                     <InputError message={errors.street} />
                                 </div>
 
                                 <div className="space-y-1">
-                                    <Label>Postal Code</Label>
+                                    <RequiredLabel>Postal Code</RequiredLabel>
                                     <Input readOnly value="3013" />
                                     <input type="hidden" name="postal_code" value="3013" />
                                 </div>
@@ -183,20 +190,38 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 gap-4">
                                 <div>
-                                    <Label>Email</Label>
-                                    <Input type="email" name="email" placeholder="example@gmail.com"defaultValue={data?.email ?? ''} readOnly={isView} />
+                                    <RequiredLabel>Email</RequiredLabel>
+                                    <Input
+                                        type="email"
+                                        name="email"
+                                        placeholder="example@gmail.com"
+                                        defaultValue={data?.email ?? ''}
+                                        readOnly={isView}
+                                    />
                                     <InputError message={errors.email} />
                                 </div>
 
                                 <div>
-                                    <Label>Mobile Number</Label>
-                                    <Input type="tel" name="mobile_number" placeholder='09XXXXXXXXX' defaultValue={data?.mobile_number ?? ''} readOnly={isView} />
+                                    <RequiredLabel>Mobile Number</RequiredLabel>
+                                    <Input
+                                        type="tel"
+                                        name="mobile_number"
+                                        placeholder="09XXXXXXXXX"
+                                        defaultValue={data?.mobile_number ?? ''}
+                                        readOnly={isView}
+                                    />
                                     <InputError message={errors.mobile_number} />
                                 </div>
 
                                 <div>
-                                    <Label>Landline Number</Label>
-                                    <Input type="tel" name="landline_number" placeholder='(XXX)XXX-XXXX' defaultValue={data?.landline_number ?? ''} readOnly={isView} />
+                                    <RequiredLabel>Landline Number</RequiredLabel>
+                                    <Input
+                                        type="tel"
+                                        name="landline_number"
+                                        placeholder="(XXX)XXX-XXXX"
+                                        defaultValue={data?.landline_number ?? ''}
+                                        readOnly={isView}
+                                    />
                                     <InputError message={errors.landline_number} />
                                 </div>
                             </CardContent>
@@ -235,13 +260,13 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
-                                    <Label>Name</Label>
+                                    <RequiredLabel>Name</RequiredLabel>
                                     <Input name="emergency_contact_name" defaultValue={data?.emergency_contact_name ?? ''} readOnly={isView} />
                                     <InputError message={errors.emergency_contact_name} />
                                 </div>
 
                                 <div>
-                                    <Label>Relationship</Label>
+                                    <RequiredLabel>Relationship</RequiredLabel>
                                     <Input
                                         name="emergency_contact_relationship"
                                         defaultValue={data?.emergency_contact_relationship ?? ''}
@@ -251,13 +276,13 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                 </div>
 
                                 <div>
-                                    <Label>Contact Number</Label>
+                                    <RequiredLabel>Contact Number</RequiredLabel>
                                     <Input name="emergency_contact_number" defaultValue={data?.emergency_contact_number ?? ''} readOnly={isView} />
                                     <InputError message={errors.emergency_contact_number} />
                                 </div>
 
                                 <div className="md:col-span-2">
-                                    <Label>Address</Label>
+                                    <RequiredLabel>Address</RequiredLabel>
                                     <Textarea
                                         name="emergency_contact_address"
                                         defaultValue={data?.emergency_contact_address ?? ''}
@@ -273,7 +298,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                     {/* Consent + Submit */}
                     {!isView && (
                         <div className="flex flex-col items-start justify-between rounded-md sm:flex-row sm:items-center">
-                            <Label className="flex items-center gap-2 text-sm font-medium">
+                            <div className="flex items-center gap-2 text-sm font-medium">
                                 <Input
                                     type="checkbox"
                                     name="data_privacy_consent"
@@ -281,12 +306,14 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                     defaultChecked={!!data?.data_privacy_consent}
                                     className="h-4 w-4 rounded"
                                 />
-                                <span>Data Privacy Consent</span>
+                                <RequiredLabel>
+                                    <span>Data Privacy Consent</span>
+                                </RequiredLabel>
                                 {data?.data_privacy_consent_date && (
                                     <span className="ml-2 text-xs text-muted-foreground">({data.data_privacy_consent_date})</span>
                                 )}
                                 <InputError className="ml-2" message={errors['data_privacy_consent']} />
-                            </Label>
+                            </div>
 
                             <div className="flex items-center gap-3">
                                 <Button className="px-8" disabled={processing}>
