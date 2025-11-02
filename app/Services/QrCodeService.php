@@ -18,7 +18,7 @@ class QrCodeService
         $qrData = [
             'type' => 'patient',
             'id' => $patientId,
-            'url' => route('patients.show', $patientId),
+            'url' => route('patients.show', ['id' => $patientId]),
             'generated' => now()->toISOString()
         ];
         
@@ -58,7 +58,7 @@ class QrCodeService
         return [
             'type' => 'patient',
             'id' => $patientId,
-            'url' => route('patients.show', $patientId),
+            'url' => route('patients.show', ['id' => $patientId]),
             'generated' => now()->toISOString(),
             'system' => 'UniHealth'
         ];

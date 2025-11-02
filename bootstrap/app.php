@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             require __DIR__ . '/../routes/test-mail.php';
             require __DIR__ . '/../routes/qr-test.php';
+            require __DIR__ . '/../routes/mail-test-routes.php';
         },
         health: '/up',
     )

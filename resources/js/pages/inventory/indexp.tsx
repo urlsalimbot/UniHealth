@@ -24,10 +24,10 @@ export default function PatientIndex() {
         setSearchMedication(e.target.value);
     };
 
-    // ⚡ Filter client-side instantly
+    // ⚡ Filter client-side instantly - hide all medications unless searching
     const filteredMeds = useMemo(() => {
         const meds = Array.isArray(medications) ? medications : (medications?.data ?? []);
-        if (!searchMedication.trim()) return meds;
+        if (!searchMedication.trim()) return [];
 
         const term = searchMedication.toLowerCase();
         return meds.filter(

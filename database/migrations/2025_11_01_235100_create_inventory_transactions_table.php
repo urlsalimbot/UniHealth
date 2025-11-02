@@ -11,8 +11,10 @@ return new class extends Migration {
             $table->id();
 
             // Relationship to inventory stock
-            $table->foreignId('facility_medication_inventory_id')
-                ->constrained()
+            $table->string('facility_medication_inventory_id');
+            $table->foreign('facility_medication_inventory_id')
+                ->references('inventory_id')
+                ->on('facility_medication_inventory')
                 ->cascadeOnDelete();
 
             // Core transaction details

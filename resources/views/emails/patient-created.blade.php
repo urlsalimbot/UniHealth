@@ -121,7 +121,7 @@
         </ul>
         
         <div style="text-align: center;">
-            <a href="{{ route('patients.show', $patient->patient_id) }}" class="cta-button">
+            <a href="{{ route('patients.show', ['id' => $patient->patient_id]) }}" class="cta-button">
                 View Your Patient Dashboard
             </a>
         </div>

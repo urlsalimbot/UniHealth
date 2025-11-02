@@ -120,6 +120,9 @@ export default function InventorySingle() {
 
                                                     <CardContent className="space-y-1 text-xs sm:text-sm">
                                                         <p>
+                                                            <span className="font-medium">Lot:</span> {inv.lot_number}
+                                                        </p>
+                                                        <p>
                                                             <span className="font-medium">Current Stock:</span> {inv.current_stock}
                                                         </p>
                                                         <p>

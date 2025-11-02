@@ -13,7 +13,7 @@ export default function MedicationsTable({ medications, search, onSearchChange, 
     return (
         <div className="flex w-full flex-col gap-4">
             {/* 🔍 Search bar */}
-            <Input placeholder="Search medications..." value={search} onChange={onSearchChange} className="w-full text-sm md:text-base" />
+            <Input placeholder="Search to view medications..." value={search} onChange={onSearchChange} className="w-full text-sm md:text-base" />
 
             {/* 💻 Desktop Table View */}
             <div className="hidden rounded-md border md:block">
@@ -46,7 +46,7 @@ export default function MedicationsTable({ medications, search, onSearchChange, 
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={5} className="p-4 text-center text-muted-foreground">
-                                        No medications found.
+                                        Start typing to search for medications.
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -78,7 +78,7 @@ export default function MedicationsTable({ medications, search, onSearchChange, 
                         </div>
                     ))
                 ) : (
-                    <p className="py-6 text-center text-sm text-muted-foreground">No medications found.</p>
+                    <p className="py-6 text-center text-sm text-muted-foreground">Start typing to search for medications.</p>
                 )}
             </div>
         </div>

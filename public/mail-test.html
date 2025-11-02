@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailHog Email Test - UniHealth</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .success { background: #10b981; color: white; }
+        .error { background: #ef4444; color: white; }
+        .info { background: #3b82f6; color: white; }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background: #16a34a;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        button:hover { background: #15803d; }
+        button:disabled { background: #9ca3af; cursor: not-allowed; }
+        .steps {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        .steps h3 { margin-top: 0; }
+        .steps li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 UniHealth Email Testing</h1>
+            <p>Test the temporary password email feature with MailHog</p>
+        </div>
+
+        <div id="status" class="status info" style="display: none;"></div>
+
+        <div class="form-group">
+            <label for="email">Test Email Address:</label>
+            <input type="email" id="email" placeholder="test@example.com" value="test@example.com">
+        </div>
+
+        <button onclick="testConfig()">Test Mail Configuration</button>
+        <button onclick="sendTestEmail()">Send Test Email</button>
+
+        <div class="steps">
+            <h3>📋 Testing Steps:</h3>
+            <ol>
+                <li><strong>Test Configuration:</strong> Click to verify mail settings</li>
+                <li><strong>Send Test Email:</strong> Sends a temporary password email</li>
+                <li><strong>Check MailHog:</strong> Visit <a href="http://localhost:8025" target="_blank">http://localhost:8025</a> to view the email</li>
+                <li><strong>Test User Creation:</strong> Go to <a href="/admin/users/create" target="_blank">/admin/users/create</a> to test the actual feature</li>
+            </ol>
+            
+            <h3>🔧 Troubleshooting:</h3>
+            <ul>
+                <li>If MailHog isn't accessible, run: <code>docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog</code></li>
+                <li>Check Laravel logs: <code>tail -f storage/logs/laravel.log</code></li>
+                <li>Verify .env mail settings match MailHog configuration</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+
+        async function testConfig() {
+            try {
+                const response = await fetch('/mail-test');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus('✅ Mail configuration loaded successfully!', 'success');
+                    console.log('Mail Config:', data);
+                } else {
+                    showStatus('❌ Mail configuration error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Network error: ' + error.message, 'error');
+            }
+        }
+
+        async function sendTestEmail() {
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                showStatus('❌ Please enter an email address', 'error');
+                return;
+            }
+
+            try {
+                showStatus('📧 Sending test email...', 'info');
+                
+                const response = await fetch('/mail-test/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showStatus('✅ Test email sent! Check MailHog at http://localhost:8025', 'success');
+                    console.log('Email sent:', data);
+                } else {
+                    showStatus('❌ Failed to send email: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Auto-test configuration on page load
+        window.addEventListener('load', testConfig);
+    </script>
+</body>
+</html>

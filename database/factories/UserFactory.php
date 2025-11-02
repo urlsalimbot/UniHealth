@@ -38,15 +38,20 @@ class UserFactory extends Factory
 
         // ✅ If user is a patient, attach a random Patient record
         if ($role === User::ROLE_PTNT) {
-            $patient = Patients::inRandomOrder()->first();
-
-            // Create one if none exist (so seeding won't break)
-            if (!$patient) {
+            // Use a more reliable approach to get/create a patient
+            $patientCount = Patients::count();
+            
+            if ($patientCount > 0) {
+                $patient = Patients::inRandomOrder()->limit(1)->first();
+            } else {
+                // Create a new patient if none exist
                 $patient = Patients::factory()->create();
             }
 
-            $name = trim($patient->first_name . ' ' . $patient->last_name);
-            $patientId = $patient->patient_id; // or $patient->id depending on your schema
+            if ($patient) {
+                $name = trim($patient->first_name . ' ' . $patient->last_name);
+                $patientId = $patient->patient_id;
+            }
         }
 
         return [
