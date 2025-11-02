@@ -56,20 +56,25 @@ export default function PatientSingleView() {
 
                         <DialogContent className="h-[90vh] max-w-[95vw] overflow-hidden p-0 md:max-w-6xl">
                             <DialogHeader className="flex items-center justify-between p-4 pb-0">
-                                <DialogTitle className="text-lg font-semibold">Patient Details</DialogTitle>
-
-                                {/* ✅ Inline QR Code (top-right corner) */}
-                                {patient?.patient_id && (
-                                    <div className="flex flex-col items-center">
-                                        <QRCodeCanvas value={patient.patient_id.toString()} size={96} level="H" includeMargin={true} />
-                                        <span className="mt-1 text-xs text-muted-foreground">ID: {patient.patient_id}</span>
-                                    </div>
-                                )}
+                                <DialogTitle className="font-semibold">Patient Details</DialogTitle>
                             </DialogHeader>
 
                             {/* Scrollable area for the patient form */}
                             <ScrollArea className="h-[calc(90vh-5rem)] px-6 pb-6">
-                                <PatientForm data={patient} mode="view" />
+                                <div className="flex items-start justify-between gap-6">
+                                    {/* ✅ Patient Info Form (left side) */}
+                                    <div className="flex-1">
+                                        <PatientForm data={patient} mode="view" />
+                                    </div>
+
+                                    {/* ✅ QR Code (right side) */}
+                                    {patient?.patient_id && (
+                                        <div className="flex flex-col items-center justify-start">
+                                            <QRCodeCanvas value={patient.patient_id.toString()} size={256} level="H" includeMargin={true} />
+                                            <span className="mt-1 text-xs text-muted-foreground">UHID: {patient.patient_id}</span>
+                                        </div>
+                                    )}
+                                </div>
                             </ScrollArea>
                         </DialogContent>
                     </Dialog>

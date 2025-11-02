@@ -47,7 +47,7 @@ export default function NotificationsDropdown() {
                         <DropdownMenuItem
                             key={n.id}
                             onClick={() => markAsViewed(n.id, n.action_url)}
-                            className={`flex flex-col items-start space-y-1 ${!n.is_viewed ? 'bg-blue-50' : ''}`}
+                            className={`flex flex-col items-start space-y-1 ${!n.is_viewed ? 'bg-secondary' : ''}`}
                         >
                             <div className="flex w-full justify-between">
                                 <span className="font-semibold">{n.title}</span>

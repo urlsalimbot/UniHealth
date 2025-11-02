@@ -26,10 +26,10 @@ class SendLowStockNotification implements ShouldQueue
 
         $facilityName = $facility->facility_name ?? 'Unknown Facility';
         // medication name fallback — change to your actual attribute if different
-        $medName = $medication->name ?? ($inventory->medication_id ?? 'Medication');
+        $medName = $medication->generic_name ?? ($inventory->medication_id ?? 'Medication');
 
         // Build message / title exactly as we'll search for them (keep format consistent)
-        $title = "Low Stock Alert: {$medName}";
+        $title = "Low Stock Alert: {$medName} {$inventory->supplier}";
         $message = "Stock for {$medName} in {$facilityName} has dropped to {$inventory->current_stock} (Reorder point: {$inventory->reorder_point}).";
 
         // Dedup criteria: same 'type' + a title match + created_at within last 24 hours
@@ -49,21 +49,21 @@ class SendLowStockNotification implements ShouldQueue
         $notification = Notification::create([
             'user_id' => null, // null = global / non-specific. Change if you want it assigned.
             'role' => 'administrator', // adjust to match your viewer filtering logic
-            'is_global' => true,
+            'is_global' => false,
             'type' => 'low_stock',
             'title' => $title,
             'message' => $message,
-            'action_url' => route('inventory.item.show', $inventory->inventory_id ?? $inventory->medication_id),
+            'action_url' => route('inventory.item.show', $inventory->medication_id),
         ]);
 
         $notification = Notification::create([
             'user_id' => null, // null = global / non-specific. Change if you want it assigned.
-            'role' => 'inventoy-staff', // adjust to match your viewer filtering logic
-            'is_global' => true,
+            'role' => 'inventory-staff', // adjust to match your viewer filtering logic
+            'is_global' => false,
             'type' => 'low_stock',
             'title' => $title,
             'message' => $message,
-            'action_url' => route('inventory.item.show', $inventory->inventory_id ?? $inventory->medication_id),
+            'action_url' => route('inventory.item.show', $inventory->medication_id),
         ]);
 
         // Attach viewers (administrators) to pivot without duplicating existing attachments

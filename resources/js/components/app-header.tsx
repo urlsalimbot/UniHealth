@@ -85,8 +85,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     const getInitials = useInitials();
 
-    const notifications = user?.notifications ?? [];
-
     const isActiveRoute = (href: string) => {
         const normalize = (url: string) => url.replace(/\/+$/, '').toLowerCase();
         if (href === '/') return normalize(page.url) === '/';
@@ -102,19 +100,19 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             { title: 'Users', href: admin.dashboard(), icon: Clipboard },
             { title: 'Audits', href: admin.audits.index(), icon: CheckCircle2 },
         ],
-        'patient-intake': [{ title: 'Patients', href: patients.index(), icon: User }],
+        'intake-staff': [{ title: 'Patients', href: patients.index(), icon: User }],
         doctor: [
             { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
             { title: 'Patients', href: patients.index(), icon: User },
             { title: 'Inventory', href: inventory.index(), icon: Pill },
         ],
-        pharmacist: [
+        'inventory-staff': [
             { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
             { title: 'Inventory', href: inventory.index(), icon: Pill },
         ],
         patient: [
             { title: 'Patient', href: `/patients/${patientId ?? '#'}`, icon: User },
-            { title: 'Inventory', href: inventory.index(), icon: Pill },
+            { title: 'Inventory', href: inventory.patient.index(), icon: Pill },
         ],
         guest: [],
     };
@@ -123,6 +121,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
     const activeItemStyles = 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
+    const isPatient = userRole === 'patient';
     const isGuest = userRole === 'guest';
     return (
         <>
@@ -163,8 +162,13 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         <div className="flex items-center select-none">
                             <AppLogo />
                         </div>
+                    ) : isPatient ? (
+                        // Clickable logo for patients
+                        <Link href="/" className="flex items-center">
+                            <AppLogo />
+                        </Link>
                     ) : (
-                        // Clickable logo for authenticated users
+                        // Clickable logo for other authenticated users
                         <Link href="/dashboard" className="flex items-center">
                             <AppLogo />
                         </Link>
@@ -236,7 +240,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             {breadcrumbs.length > 1 && (
                 <div className="flex w-full border-b border-sidebar-border/70">
                     <div className="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
-                        <Breadcrumbs breadcrumbs={breadcrumbs} />
+                        <Breadcrumbs breadcrumbs={breadcrumbs} isPatient={isPatient} />
                     </div>
                 </div>
             )}

@@ -51,7 +51,7 @@ Route::prefix('inventory')->name('inventory.')->group(function () {
             ->name('zero');
     });
 
-    Route::middleware(['auth', 'role:administrator,intake-staff,patient,pharm,doctor'])->group(function () {
+    Route::middleware(['auth', 'role:administrator,intake-staff,pharm,doctor'])->group(function () {
 
         // INDEX — List all inventory
         Route::get('/', [InventoryDashboardController::class, 'index'])
@@ -60,9 +60,13 @@ Route::prefix('inventory')->name('inventory.')->group(function () {
 
     Route::middleware(['auth', 'role:administrator,intake-staff,patient,pharm,doctor'])->group(function () {
 
+        Route::get('for-patient', [InventoryDashboardController::class, 'patientIndex'])
+            ->name('patient.index');
+
         // SHOW — Show a single inventory
         Route::get('/{id}', [ExistingMedicationController::class, 'show'])
             ->name('item.show');
+
 
     });
 });

@@ -35,7 +35,6 @@ Citizen Access
 - [x] add vital signs intake <!--test-->
 - [x] add prescriptions intake <!--test-->
 
-
 - [ ] inventory dashboard
 - [x] stocks quantity modification
 - [x] inside medication interface
@@ -65,13 +64,14 @@ Citizen Access
 - [x] show only patients tab and inventory tab
 - [x] patients tab view-only
 
-- [ ] stocks low quantity alert <!--IMPROVE-->
-- [ ] send temporary passwords to email add <!--implement-->
+- [x] stocks low quantity alert <!--IMPROVE-->
+- [ ] send temporary passwords to user email add <!--implement-->
+- [ ] send temporary uhid to patient email add <!--implement-->
 
-- [ ] add file attachments
+- [x] add file attachments
 - [ ] release table for transaction auditing <!--implement-->
 - [ ] medication search bar for patient
-- [ ] patient medication release request
+- [x] patient medication release request
 
 - [ ] mobile accessibility for patient show
 - [ ] mobile accessibility for inventory request show

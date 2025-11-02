@@ -76,9 +76,6 @@ export default function Index() {
                                 <Button className="w-fit justify-end" onClick={() => router.get(medicationRequests.main.url())}>
                                     - Release Medication
                                 </Button>
-                                <Button className="w-fit justify-end" onClick={() => router.get(medicationRequests.create.url())}>
-                                    - Test Medication
-                                </Button>
                             </div>
                         </CardHeader>
 

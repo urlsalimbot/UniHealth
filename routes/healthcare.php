@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     Route::get('/medication-requests', [MedicationRequestController::class, 'main'])
         ->name('medication-requests.main');
-    Route::get('/medication-requests/create', [
-        MedicationRequestController::class,
-        'create'
-    ])->name('medication-requests.create');
+
 
 
     Route::post('/medication-requests', [MedicationRequestController::class, 'store'])

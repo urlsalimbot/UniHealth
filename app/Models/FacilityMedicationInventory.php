@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use App\Events\LowStockDetected;
+use Illuminate\Support\Str;
 
 class FacilityMedicationInventory extends Model implements AuditableContract
 {
@@ -20,34 +21,6 @@ class FacilityMedicationInventory extends Model implements AuditableContract
     protected $keyType = 'string';
 
     protected $fillable = [
-        'facility_id',
-        'medication_id',
-        'current_stock',
-        'minimum_stock_level',
-        'maximum_stock_level',
-        'reorder_point',
-        'lot_number',
-        'expiration_date',
-        'manufacturer_batch',
-        'unit_cost',
-        'total_value',
-        'storage_location',
-        'storage_conditions',
-        'storage_temperature_min',
-        'storage_temperature_max',
-        'supplier',
-        'purchase_order_number',
-        'received_date',
-        'received_by',
-        'stock_status',
-        'last_count_date',
-        'last_counted_by',
-        'expiry_alert_sent',
-        'low_stock_alert_sent',
-        'created_at',
-    ];
-
-    protected $auditInclude = [
         'inventory_id',
         'facility_id',
         'medication_id',
@@ -73,59 +46,53 @@ class FacilityMedicationInventory extends Model implements AuditableContract
         'last_counted_by',
         'expiry_alert_sent',
         'low_stock_alert_sent',
-        'created_at',
+    ];
+
+    protected $casts = [
+        'current_stock' => 'integer',
+        'reorder_point' => 'integer',
+        'expiry_alert_sent' => 'boolean',
+        'low_stock_alert_sent' => 'boolean',
+        'expiration_date' => 'date',
     ];
 
     public const STATUS_ACTIVE = 'Active';
     public const STATUS_DISPOSED = 'Disposed';
     public const STATUS_EMPTY = 'Depleted';
 
-    // Boot method to dispatch events on update
     protected static function boot()
     {
         parent::boot();
 
+        static::creating(function ($model) {
+            if (empty($model->inventory_id)) {
+                // stable unique id generator
+                $model->inventory_id = 'STOCK-' . (string) Str::uuid();
+            }
+        });
+
         static::updating(function ($model) {
             if ($model->isDirty('current_stock')) {
-                $oldStock = $model->getOriginal('current_stock');
-                $newStock = $model->current_stock;
+                $old = (int) $model->getOriginal('current_stock');
+                $new = (int) $model->current_stock;
 
-                // When stock goes below or equal reorder point
-                if ($newStock <= $model->reorder_point) {
-                    // fire event regardless of flag; listener dedupes within 24h
+                if ($new <= ($model->reorder_point ?? 0)) {
+                    // Fire event (listener should dedupe if necessary)
                     LowStockDetected::dispatch($model);
                 }
 
-                // Reset alert flag when it goes back above reorder point (optional)
-                if ($newStock > $model->reorder_point) {
+                // If stock goes above reorder point, reset flag so future alerts can be sent
+                if ($new > ($model->reorder_point ?? 0)) {
                     $model->low_stock_alert_sent = false;
                 }
             }
         });
-
-        static::creating(function ($model) {
-            if (empty($model->inventory_id)) {
-                do {
-                    $id = 'STOCK' . rand(100, 999999);
-                } while (self::where('inventory_id', $id)->exists());
-                $model->inventory_id = $id;
-            }
-        });
     }
 
-    public function isLowStock(): bool
+    // relationships
+    public function transactions(): HasMany
     {
-        return $this->current_stock <= $this->reorder_point;
-    }
-
-    public function scopeLowStock($query)
-    {
-        return $query->whereColumn('current_stock', '<=', 'reorder_point');
-    }
-
-    public function healthcare_facilities(): BelongsTo
-    {
-        return $this->belongsTo(HealthcareFacilities::class, 'facility_id', 'facility_id');
+        return $this->hasMany(InventoryTransaction::class, 'inventory_id', 'inventory_id');
     }
 
     public function medication()
@@ -133,46 +100,46 @@ class FacilityMedicationInventory extends Model implements AuditableContract
         return $this->belongsTo(Medications::class, 'medication_id', 'medication_id');
     }
 
-    public function transactions()
+    public function healthcare_facilities()
     {
-        return $this->hasMany(MedicationInventoryTransaction::class, 'inventory_id', 'inventory_id');
+        return $this->belongsTo(HealthcareFacilities::class, 'facility_id', 'facility_id');
     }
 
-    public function markAsDisposed(string $remarks = null): void
+    public function isLowStock(): bool
     {
-        $this->update([
-            'current_stock' => 0,
-            'stock_status' => self::STATUS_DISPOSED,
-            'remarks' => $remarks ?? 'Disposed due to expiry',
-        ]);
+        return (int) $this->current_stock <= (int) ($this->reorder_point ?? 0);
+    }
 
+    /**
+     * Release stock from this inventory instance and create transaction record.
+     * Uses the model's transaction relation.
+     */
+    public function releaseStock(int $quantity, ?int $performedBy = null, string $remarks = null, string $referenceNo = null): int
+    {
+        $previous = (int) $this->current_stock;
+        if ($quantity <= 0) {
+            throw new \InvalidArgumentException('Quantity to release must be > 0');
+        }
+
+        if ($previous < $quantity) {
+            throw new \RuntimeException("Not enough stock in inventory {$this->inventory_id}");
+        }
+
+        $this->current_stock = $previous - $quantity;
+        $this->save(); // will trigger updating event & low-stock event if needed
+
+        // create transaction record
         $this->transactions()->create([
             'facility_id' => $this->facility_id,
             'medication_id' => $this->medication_id,
-            'transaction_type' => 'DISPOSAL',
-            'direction' => 'OUT',
-            'quantity' => 0,
-            'remarks' => $remarks ?? 'Expired stock disposed',
-            'performed_by' => auth()->id(),
-        ]);
-    }
-
-    public function markAsDepleted(string $remarks = null): void
-    {
-        $this->update([
-            'current_stock' => 0,
-            'stock_status' => self::STATUS_EMPTY,
-            'remarks' => $remarks ?? 'Stock naturally depleted',
+            'transaction_type' => \App\Enums\TransactionType::RELEASE->value,
+            'quantity' => $quantity,
+            'direction' => \App\Enums\TransactionDirection::OUT->value,
+            'remarks' => $remarks,
+            'reference_no' => $referenceNo,
+            'performed_by' => $performedBy,
         ]);
 
-        $this->transactions()->create([
-            'facility_id' => $this->facility_id,
-            'medication_id' => $this->medication_id,
-            'transaction_type' => 'ADJUSTMENT',
-            'direction' => 'OUT',
-            'quantity' => 0,
-            'remarks' => $remarks ?? 'Stock zeroed out manually',
-            'performed_by' => auth()->id(),
-        ]);
+        return (int) $this->current_stock;
     }
 }

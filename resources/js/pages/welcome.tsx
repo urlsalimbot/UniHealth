@@ -7,7 +7,7 @@ export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
     const user = auth.user;
 
-    const isUser = user && user.role === 'user';
+    const isUser = user && user.role === 'patient';
     const patientId = user && typeof user.patient_id === 'string' ? user.patient_id : null;
 
     const dashboardLink = isUser && patientId ? patients.show(patientId) : dashboard();

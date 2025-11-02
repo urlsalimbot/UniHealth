@@ -76,4 +76,28 @@ class InventoryDashboardController extends Controller
         ]);
     }
 
+        public function patientIndex()
+        {
+            /**
+             * 💊 LOAD ALL MEDICATIONS (no pagination)
+             */
+            $medications = Medications::select([
+                'medication_id',
+                'generic_name',
+                'brand_names',
+                'strength',
+                'dosage_form',
+                'drug_class',
+                'created_at',
+            ])
+                ->orderBy('created_at', 'desc')
+                ->get(); // ✅ no pagination here
+
+
+
+            return Inertia::render('inventory/indexp', [
+                'medications' => $medications, // ✅ all meds (no pagination)
+            ]);
+        }
+
 }

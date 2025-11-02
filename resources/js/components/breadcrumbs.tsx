@@ -3,7 +3,12 @@ import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Fragment } from 'react';
 
-export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: BreadcrumbItemType[] }) {
+interface BreadcrumbsProps {
+    breadcrumbs: BreadcrumbItemType[];
+    isPatient?: boolean;
+}
+
+export function Breadcrumbs({ breadcrumbs, isPatient = false }: BreadcrumbsProps) {
     return (
         <>
             {breadcrumbs.length > 0 && (
@@ -11,14 +16,17 @@ export function Breadcrumbs({ breadcrumbs }: { breadcrumbs: BreadcrumbItemType[]
                     <BreadcrumbList>
                         {breadcrumbs.map((item, index) => {
                             const isLast = index === breadcrumbs.length - 1;
+
                             return (
                                 <Fragment key={index}>
                                     <BreadcrumbItem>
-                                        {isLast ? (
+                                        {isLast || isPatient ? (
                                             <BreadcrumbPage>{item.title}</BreadcrumbPage>
                                         ) : (
                                             <BreadcrumbLink asChild>
-                                                <Link href={item.href}>{item.title}</Link>
+                                                <Link href={item.href} className="hover:text-foreground hover:underline">
+                                                    {item.title}
+                                                </Link>
                                             </BreadcrumbLink>
                                         )}
                                     </BreadcrumbItem>
