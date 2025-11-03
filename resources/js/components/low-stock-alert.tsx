@@ -159,7 +159,7 @@ export default function LowStockAlertCard({ lowStocks }: LowStockAlertCardProps)
                                 <TableRow
                                     key={item.inventory_id}
                                     className="cursor-pointer transition-colors hover:bg-muted/50"
-                                    onClick={() => handleItemClick(item)}
+                                    // onClick={() => handleItemClick(item)}
                                 >
                                     <TableCell>
                                         <div className="space-y-1">

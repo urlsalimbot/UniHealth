@@ -106,7 +106,7 @@ export default function Patients() {
                                 <DialogHeader>
                                     <DialogTitle>Register New Patient</DialogTitle>
                                     <DialogDescription>
-                                        Create a new patient record following ISO 80601 healthcare standards.
+                                        Create a new patient record.
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="flex flex-col gap-4 py-4">
@@ -125,114 +125,11 @@ export default function Patients() {
                             </DialogContent>
                         </Dialog>
 
-                        <Button 
-                            onClick={() => router.post(patients.invite.url())}
-                            size="sm"
-                            className="gap-2"
-                        >
-                            <Mail className="h-4 w-4" />
-                            <span className="hidden sm:inline">Invite Patient</span>
-                            <span className="sm:hidden">Invite</span>
-                        </Button>
 
 
                     </div>
                 </div>
 
-                {/* --- Advanced Filters (Optional) --- */}
-                <Card className="border-dashed">
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                                className="gap-2"
-                            >
-                                <Filter className="h-4 w-4" />
-                                Advanced Filters
-                                <Badge variant="secondary" className="ml-2">
-                                    {Object.keys(filters || {}).filter(key => key !== 'last_name' && filters[key]).length}
-                                </Badge>
-                            </Button>
-                        </div>
-
-                        {showAdvancedFilters && (
-                            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-medium text-muted-foreground">Status</label>
-                                    <Select 
-                                        value={filters?.status || 'all'} 
-                                        onValueChange={(value) => handleAdvancedFilter('status', value)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="All statuses" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">All Statuses</SelectItem>
-                                            {PATIENT_STATUS_OPTIONS.map((option) => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    <div className="flex items-center gap-2">
-                                                        <div className={`h-2 w-2 rounded-full ${option.color}`} />
-                                                        {option.label}
-                                                    </div>
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-medium text-muted-foreground">Admission Type</label>
-                                    <Select 
-                                        value={filters?.admission_type || 'all'} 
-                                        onValueChange={(value) => handleAdvancedFilter('admission_type', value)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="All types" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">All Types</SelectItem>
-                                            {ADMISSION_TYPE_OPTIONS.map((option) => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-medium text-muted-foreground">Date Range</label>
-                                    <Input 
-                                        type="date" 
-                                        value={filters?.date || ''}
-                                        onChange={(e) => handleAdvancedFilter('date', e.target.value)}
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-medium text-muted-foreground">Department</label>
-                                    <Select 
-                                        value={filters?.department || 'all'} 
-                                        onValueChange={(value) => handleAdvancedFilter('department', value)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="All departments" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">All Departments</SelectItem>
-                                            <SelectItem value="emergency">Emergency</SelectItem>
-                                            <SelectItem value="icu">ICU</SelectItem>
-                                            <SelectItem value="general">General Ward</SelectItem>
-                                            <SelectItem value="pediatrics">Pediatrics</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
 
                 {/* --- Main Data Table --- */}
                 <Card className="flex-1 overflow-hidden">
