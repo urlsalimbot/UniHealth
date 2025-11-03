@@ -40,6 +40,16 @@ class AuthenticatedSessionController extends Controller
                 ->with('success', 'successfully logged in');
         }
 
+        if ($user->role === \App\Models\User::ROLE_STAFF || $user->role === \App\Models\User::ROLE_DOCTOR) {
+            return redirect()->route('patients.index')
+                ->with('success', 'successfully logged in');
+        }
+
+        if ($user->role === \App\Models\User::ROLE_PHARM) {
+            return redirect()->route('inventory.index')
+                ->with('success', 'successfully logged in');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
