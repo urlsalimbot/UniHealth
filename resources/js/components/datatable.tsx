@@ -35,17 +35,22 @@ export function DataTable<TData, TValue>({
     onRowClick,
 }: DataTableProps<TData, TValue>) {
     const [query, setQuery] = useState(filters[field] ?? '');
+    const [sorting, setSorting] = React.useState<SortingState>([]);
 
     const handleSearch = () => {
-        navigate({ [field]: query });
+        navigate({ [field]: query, page: 1 }); // Reset to page 1 when searching
     };
 
     const handleReset = () => {
         setQuery('');
-        navigate({ [field]: '' });
+        navigate({ [field]: '', page: 1 });
     };
 
-    const [sorting, setSorting] = React.useState<SortingState>([]);
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
 
     const table = useReactTable({
         data,
@@ -59,31 +64,62 @@ export function DataTable<TData, TValue>({
     });
 
     const navigate = (params: Record<string, any>) => {
-        router.get(baseUrl, { ...filters, ...params }, { preserveState: true });
+        // Build URL with existing filters plus new params
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Update or add new params
+        Object.entries(params).forEach(([key, value]) => {
+            if (value === '' || value === null || value === undefined) {
+                urlParams.delete(key);
+            } else {
+                urlParams.set(key, value.toString());
+            }
+        });
+        
+        // Preserve existing filters that aren't being updated
+        Object.entries(filters).forEach(([key, value]) => {
+            if (!(key in params) && value !== '' && value !== null && value !== undefined) {
+                urlParams.set(key, value.toString());
+            }
+        });
+        
+        const newUrl = `${baseUrl}?${urlParams.toString()}`;
+        router.get(newUrl, {}, { preserveState: true, preserveScroll: true });
     };
+
+    // Sync query state with URL parameters
+    React.useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentQuery = urlParams.get(field) || '';
+        if (currentQuery !== query) {
+            setQuery(currentQuery);
+        }
+    }, [field]);
 
     return (
         <div className="space-y-4">
             {/* Filter */}
-            <div className="flex items-center gap-6">
-                <div className="relative w-full max-w-sm">
+            <div className="flex items-center gap-2">
+                <div className="relative flex-1 max-w-sm">
                     <Input
-                        placeholder={`Filter ${label ?? field}`}
+                        placeholder={`Filter ${label ?? field}...`}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        className="pr-10" // add space for the button
+                        onKeyPress={handleKeyPress}
+                        className="pr-10"
                     />
                     {query && (
                         <button
                             onClick={handleReset}
-                            className="absolute top-1/2 right-1 -translate-y-1/2 rounded-full p-2 text-gray-500 hover:text-gray-800 dark:bg-gray-400 dark:hover:text-gray-200"
+                            className="absolute top-1/2 right-1 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:text-foreground transition-colors"
                         >
                             <X className="h-4 w-4" />
                         </button>
                     )}
                 </div>
-                <Button onClick={handleSearch} className="px-4">
-                    <Search />
+                <Button onClick={handleSearch} size="sm" className="gap-2">
+                    <Search className="h-4 w-4" />
+                    <span className="hidden sm:inline">Search</span>
                 </Button>
             </div>
 
@@ -141,37 +177,51 @@ export function DataTable<TData, TValue>({
             {/* Pagination */}
             <div className="flex items-center justify-between px-2">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    Page {paginator.current_page} of {paginator.last_page} — {paginator.total} records
+                    Showing {((paginator.current_page - 1) * paginator.per_page) + 1} to {Math.min(paginator.current_page * paginator.per_page, paginator.total)} of {paginator.total} records
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
                     <div className="flex items-center space-x-1">
-                        <Button size="icon" variant="outline" disabled={paginator.current_page === 1} onClick={() => navigate({ page: 1 })}>
-                            <ChevronsLeft />
+                        <Button 
+                            size="icon" 
+                            variant="outline" 
+                            disabled={paginator.current_page === 1} 
+                            onClick={() => navigate({ page: 1 })}
+                            className="h-8 w-8"
+                        >
+                            <ChevronsLeft className="h-4 w-4" />
                         </Button>
                         <Button
                             size="icon"
                             variant="outline"
                             disabled={paginator.current_page === 1}
                             onClick={() => navigate({ page: paginator.current_page - 1 })}
+                            className="h-8 w-8"
                         >
-                            <ChevronLeft />
+                            <ChevronLeft className="h-4 w-4" />
                         </Button>
+                        
+                        <div className="flex items-center justify-center text-sm font-medium min-w-[3rem]">
+                            {paginator.current_page}
+                        </div>
+                        
                         <Button
                             size="icon"
                             variant="outline"
                             disabled={paginator.current_page === paginator.last_page}
                             onClick={() => navigate({ page: paginator.current_page + 1 })}
+                            className="h-8 w-8"
                         >
-                            <ChevronRight />
+                            <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
                             size="icon"
                             variant="outline"
                             disabled={paginator.current_page === paginator.last_page}
                             onClick={() => navigate({ page: paginator.last_page })}
+                            className="h-8 w-8"
                         >
-                            <ChevronsRight />
+                            <ChevronsRight className="h-4 w-4" />
                         </Button>
                     </div>
                 </div>

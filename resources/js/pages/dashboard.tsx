@@ -1,5 +1,4 @@
 import LowStockAlertCard from '@/components/low-stock-alert';
-import PatientsTriageUrgency from '@/components/patients-triage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PatientEncountersHeatmap from '@/components/visits-heatmap';
 import VisitsRadialChart from '@/components/visits-radial-chart';
@@ -121,7 +120,6 @@ export default function Dashboard() {
                     </Card>
 
                     <Card className="relative overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border hover:shadow-lg transition-shadow duration-200">
-                        <PatientsTriageUrgency triageUrgency={triageUrgency} />
                     </Card>
 
                     <Card className="relative overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border hover:shadow-lg transition-shadow duration-200">

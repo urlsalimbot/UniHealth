@@ -8,6 +8,8 @@ use App\Models\FacilityMedicationInventory;
 use App\Models\InventoryTransaction;
 use App\Models\Notification;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MedicationRequestFulfilledMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -293,9 +295,15 @@ class ProcessMedicationFulfillment implements ShouldQueue
                 'action_url' => route('medication-requests.show', $request->id),
             ]);
 
+            // Send fulfillment email
+            if ($user->email) {
+                \Mail::to($user->email)->queue(new \App\Mail\MedicationRequestFulfilledMail($request));
+                Log::info("✅ Fulfillment email sent to patient (User #{$user->id}, {$user->email}) for Request #{$request->id}.");
+            }
+
             Log::info("✅ Fulfillment notification sent to patient (User #{$user->id}) for Request #{$request->id}.");
         } catch (\Exception $e) {
-            Log::error("❌ Error sending fulfillment notification: " . $e->getMessage());
+            Log::error("❌ Error sending fulfillment notification/email: " . $e->getMessage());
         }
     }
 }

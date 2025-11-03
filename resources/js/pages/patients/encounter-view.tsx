@@ -58,14 +58,14 @@ export default function MedicalEncounterView() {
         >
             <Head title="Medical Encounters" />
 
-            <div className="flex h-[calc(100vh-8.5rem)] gap-4 p-4">
+            <div className="flex flex-col lg:flex-row h-[calc(100vh-8.5rem)] gap-4 p-4">
                 {/* --- LEFT PANEL: Encounter List --- */}
-                <Card className="flex w-1/4 flex-col border border-muted/30 shadow-sm">
+                <Card className="flex flex-col lg:w-1/4 w-full border border-muted/30 shadow-sm">
                     <CardHeader>
                         <CardTitle className="text-md font-semibold">Medical Encounters</CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 overflow-hidden">
-                        <ScrollArea className="h-full pr-2">
+                        <ScrollArea className="h-full pr-2 lg:pr-4">
                             {Object.entries(encountersByMonth).map(([month, encounters]) => (
                                 <div key={month} className="mb-4">
                                     <h3 className="mb-2 text-sm font-semibold">{month}</h3>
@@ -73,17 +73,25 @@ export default function MedicalEncounterView() {
                                         {encounters.map((enc: any) => (
                                             <li
                                                 key={enc.encounter_id}
-                                                onClick={() => setSelectedEncounter(enc)}
+                                                onClick={() => {
+                                                    setSelectedEncounter(enc);
+                                                    // Auto-close mobile panel after selection
+                                                    if (window.innerWidth < 1024) {
+                                                        setTimeout(() => {
+                                                            document.getElementById('encounter-viewer')?.scrollIntoView({ behavior: 'smooth' });
+                                                        }, 100);
+                                                    }
+                                                }}
                                                 className={cn(
-                                                    'cursor-pointer rounded-md border p-2 text-sm transition hover:bg-accent/50',
+                                                    'cursor-pointer rounded-md border p-3 text-sm transition hover:bg-accent/50 active:bg-accent/70',
                                                     selectedEncounter?.encounter_id === enc.encounter_id && 'bg-accent',
                                                 )}
                                             >
-                                                <div className="flex justify-between">
-                                                    <span className="font-medium">{enc.encounter_type}</span>
-                                                    <span className="text-xs">{new Date(enc.encounter_date).toLocaleDateString()}</span>
+                                                <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                                                    <span className="font-medium text-base sm:text-sm">{enc.encounter_type}</span>
+                                                    <span className="text-xs text-muted-foreground">{new Date(enc.encounter_date).toLocaleDateString()}</span>
                                                 </div>
-                                                <div className="truncate text-xs">{enc.chief_complaint ?? 'No complaint'}</div>
+                                                <div className="truncate text-xs sm:text-xs text-muted-foreground mt-1">{enc.chief_complaint ?? 'No complaint'}</div>
                                             </li>
                                         ))}
                                     </ul>
@@ -94,36 +102,44 @@ export default function MedicalEncounterView() {
                 </Card>
 
                 {/* --- RIGHT PANEL: Encounter Viewer --- */}
-                <Card className="flex w-3/4 flex-col border border-muted/30 shadow-sm">
+                <Card id="encounter-viewer" className="flex flex-col lg:w-3/4 w-full border border-muted/30 shadow-sm">
                     <CardHeader>
                         <CardTitle className="text-md font-semibold">
                             {selectedEncounter ? `Encounter: ${selectedEncounter.encounter_type}` : 'Select an Encounter'}
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1 overflow-y-auto p-6">
+                    <CardContent className="flex-1 overflow-y-auto p-4 lg:p-6">
                         {selectedEncounter ? (
                             <div className="space-y-6">
                                 {/* Encounter Summary */}
-                                <div>
-                                    <h2 className="mb-2 font-semibold">Summary</h2>
-                                    <p className="text-sm">
-                                        <strong>Complaint:</strong> {selectedEncounter.chief_complaint ?? 'N/A'}
-                                    </p>
-                                    <p className="text-sm">
-                                        <strong>Intervention:</strong> {selectedEncounter.intervention ?? selectedEncounter.encounter_class ?? 'N/A'}
-                                    </p>
+                                <div className="bg-muted/20 rounded-lg p-4">
+                                    <h2 className="mb-3 font-semibold text-base lg:text-lg">Summary</h2>
+                                    <div className="space-y-2">
+                                        <p className="text-sm">
+                                            <strong className="font-medium">Complaint:</strong> {selectedEncounter.chief_complaint ?? 'N/A'}
+                                        </p>
+                                        <p className="text-sm">
+                                            <strong className="font-medium">Intervention:</strong> {selectedEncounter.intervention ?? selectedEncounter.encounter_class ?? 'N/A'}
+                                        </p>
+                                        <p className="text-sm">
+                                            <strong className="font-medium">Date:</strong> {new Date(selectedEncounter.encounter_date).toLocaleDateString()}
+                                        </p>
+                                        <p className="text-sm">
+                                            <strong className="font-medium">Status:</strong> {selectedEncounter.encounter_status ?? 'N/A'}
+                                        </p>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <div className="mb-2 flex items-center justify-between">
-                                        <h2 className="mb-2 font-semibold">Vital Signs</h2>
+                                <div className="bg-muted/20 rounded-lg p-4">
+                                    <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                        <h2 className="font-semibold text-base lg:text-lg">Vital Signs</h2>
                                         <Dialog open={vitalsDialogOpen} onOpenChange={setVitalsDialogOpen}>
                                             <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline" onClick={() => setVitalsDialogOpen(true)}>
+                                                <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => setVitalsDialogOpen(true)}>
                                                     + Add Vital Signs
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="sm:max-w-lg">
+                                            <DialogContent className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg">
                                                 <DialogHeader>
                                                     <DialogTitle>Update Vital Signs</DialogTitle>
                                                     <DialogDescription>Add a new vital signs reading for this medical encounter.</DialogDescription>
@@ -143,19 +159,19 @@ export default function MedicalEncounterView() {
                                 )}
 
                                 {/* Prescriptions */}
-                                <div>
-                                    <div className="mb-2 flex items-center justify-between">
-                                        <h2 className="mb-2 font-semibold">Prescriptions</h2>
+                                <div className="bg-muted/20 rounded-lg p-4">
+                                    <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                        <h2 className="font-semibold text-base lg:text-lg">Prescriptions</h2>
                                         <Dialog>
                                             <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline">
+                                                <Button size="sm" variant="outline" className="w-full sm:w-auto">
                                                     + Add Prescription
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="sm:max-w-lg">
+                                            <DialogContent className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg">
                                                 <DialogHeader>
-                                                    <DialogTitle>Upload Attachment</DialogTitle>
-                                                    <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
+                                                    <DialogTitle>Add Prescription</DialogTitle>
+                                                    <DialogDescription>Add a new prescription for this medical encounter.</DialogDescription>
                                                 </DialogHeader>
 
                                                 {/* Patient Prescription Form*/}
@@ -172,31 +188,34 @@ export default function MedicalEncounterView() {
                                         </Dialog>
                                     </div>
                                     {selectedEncounter.patient_prescriptions?.length > 0 ? (
-                                        <ul className="ml-4 list-disc space-y-1 text-sm">
+                                        <div className="space-y-2">
                                             {selectedEncounter.patient_prescriptions.map((rx: any) => (
-                                                <li key={rx.prescription_id}>
-                                                    {rx.medication_name} — {rx.dosage ?? ''} {rx.frequency ?? ''}
-                                                </li>
+                                                <div key={rx.prescription_id} className="bg-background rounded-md p-3 border">
+                                                    <div className="font-medium text-sm">{rx.medication_name}</div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        {rx.dosage ?? ''} {rx.frequency ?? ''}
+                                                    </div>
+                                                </div>
                                             ))}
-                                        </ul>
+                                        </div>
                                     ) : (
                                         <p className="text-sm text-muted-foreground">No prescriptions recorded.</p>
                                     )}
                                 </div>
 
-                                <div>
-                                    <div className="mb-2 flex items-center justify-between">
-                                        <h2 className="font-semibold">Attached Documents</h2>
+                                <div className="bg-muted/20 rounded-lg p-4">
+                                    <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                        <h2 className="font-semibold text-base lg:text-lg">Attached Documents</h2>
 
                                         {/* Upload Attachment Dialog */}
                                         <Dialog open={open} onOpenChange={setOpen}>
                                             <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline">
+                                                <Button size="sm" variant="outline" className="w-full sm:w-auto">
                                                     + Upload Attachment
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent
-                                                className="sm:max-w-lg"
+                                                className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg"
                                                 onInteractOutside={(e) => e.preventDefault()}
                                                 onEscapeKeyDown={(e) => e.preventDefault()}
                                             >
@@ -222,8 +241,8 @@ export default function MedicalEncounterView() {
                                                     const isPDF = file.filename?.match(/\.pdf$/i);
 
                                                     return (
-                                                        <Card key={file.attachment_id} className="w-fit overflow-hidden">
-                                                            <CardContent className="space-y-2 p-3">
+                                                        <Card key={file.attachment_id} className="overflow-hidden">
+                                                            <CardContent className="space-y-3 p-3">
                                                                 <div className="flex aspect-video items-center justify-center overflow-hidden rounded-md bg-muted/40">
                                                                     {isImage ? (
                                                                         <img
@@ -240,17 +259,19 @@ export default function MedicalEncounterView() {
 
                                                                 <div className="truncate text-sm font-medium">{file.label || file.filename}</div>
 
-                                                                <div className="flex justify-between gap-4">
+                                                                <div className="flex flex-col sm:flex-row gap-2">
                                                                     <Button
                                                                         size="sm"
                                                                         variant="secondary"
+                                                                        className="flex-1"
                                                                         onClick={() => window.open(file.url, '_blank')}
                                                                     >
-                                                                        <Eye className="mr-2 h-4 w-4" /> Preview
+                                                                        <Eye className="mr-2 h-4 w-4" /> <span className="hidden sm:inline">Preview</span><span className="sm:hidden">View</span>
                                                                     </Button>
                                                                     <Button
                                                                         size="sm"
                                                                         variant="outline"
+                                                                        className="flex-1"
                                                                         onClick={() => {
                                                                             const link = document.createElement('a');
                                                                             link.href = file.url;
@@ -258,7 +279,7 @@ export default function MedicalEncounterView() {
                                                                             link.click();
                                                                         }}
                                                                     >
-                                                                        <Download className="mr-2 h-4 w-4" /> Download
+                                                                        <Download className="mr-2 h-4 w-4" /> <span className="hidden sm:inline">Download</span><span className="sm:hidden">Save</span>
                                                                     </Button>
                                                                 </div>
                                                             </CardContent>
@@ -273,8 +294,15 @@ export default function MedicalEncounterView() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex h-full items-center justify-center text-muted-foreground">
-                                Select an encounter from the left to view details.
+                            <div className="flex h-full items-center justify-center p-8 text-center">
+                                <div className="space-y-2">
+                                    <div className="text-muted-foreground">
+                                        Select an encounter from the list to view details.
+                                    </div>
+                                    <div className="text-xs text-muted-foreground lg:hidden">
+                                        Scroll up to see the encounter list.
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </CardContent>

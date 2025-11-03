@@ -275,9 +275,11 @@ export default function Index() {
                     </CardContent>
                 </Card>
 
+<div className="flex space-x-6">
+
                 {/* Recent Activity */}
                 {recentActivity && recentActivity.length > 0 && (
-                    <Card>
+                    <Card className="flex-1">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Activity className="h-5 w-5" />
@@ -312,9 +314,10 @@ export default function Index() {
                 {/* ======================= */}
                 {/* 🚨 Low Stock Alerts */}
                 {/* ======================= */}
-                <Card>
+                <Card className="flex-1">
                     <LowStockAlertCard lowStocks={lowStockAlerts} />
                 </Card>
+                        </div>
             </div>
 
             {/* ======================= */}

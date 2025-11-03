@@ -85,7 +85,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                         <SelectContent>
                                             <SelectItem value="Male">Male</SelectItem>
                                             <SelectItem value="Female">Female</SelectItem>
-                                            <SelectItem value="Other">Other</SelectItem>
+                                            <SelectItem value="other">Other</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <InputError message={errors.gender} />
@@ -115,7 +115,44 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                     <Input name="nationality" defaultValue={data?.nationality ?? ''} readOnly={isView} />
                                     <InputError message={errors.nationality} />
                                 </div>
+
+                                {/* Maiden Name */}
+                                <div className="space-y-1">
+                                    <Label>Maiden Name</Label>
+                                    <Input name="maiden_name" defaultValue={data?.maiden_name ?? ''} readOnly={isView} />
+                                    <InputError message={errors.maiden_name} />
+                                </div>
+
+                                {/* Nickname */}
+                                <div className="space-y-1">
+                                    <Label>Nickname</Label>
+                                    <Input name="nickname" defaultValue={data?.nickname ?? ''} readOnly={isView} />
+                                    <InputError message={errors.nickname} />
+                                </div>
+
+                                {/* Religion */}
+                                <div className="space-y-1">
+                                    <Label>Religion</Label>
+                                    <Input name="religion" defaultValue={data?.religion ?? ''} readOnly={isView} />
+                                    <InputError message={errors.religion} />
+                                </div>
+
+                                {/* is_active */}
+                                <div className="space-y-1 flex items-center gap-2">
+                                    <Label htmlFor="is_active">Active</Label>
+                                    <Input
+                                        type="checkbox"
+                                        id="is_active"
+                                        name="is_active"
+                                        disabled={isView}
+                                        defaultChecked={!!data?.is_active}
+                                        aria-label="Active"
+                                        className="h-4 w-4 rounded"
+                                    />
+                                </div>
                             </CardContent>
+
+                            {/* --- End ISO/PH additions --- */}
                         </Card>
 
                         {/* Address */}
@@ -197,6 +234,9 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                         placeholder="example@gmail.com"
                                         defaultValue={data?.email ?? ''}
                                         readOnly={isView}
+                                        aria-label="Email"
+                                        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+                                        title="Enter a valid email address"
                                     />
                                     <InputError message={errors.email} />
                                 </div>
@@ -209,6 +249,9 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                         placeholder="09XXXXXXXXX"
                                         defaultValue={data?.mobile_number ?? ''}
                                         readOnly={isView}
+                                        aria-label="Mobile Number"
+                                        pattern="^09[0-9]{9}$"
+                                        title="Enter a valid Philippine mobile number (e.g. 09123456789)"
                                     />
                                     <InputError message={errors.mobile_number} />
                                 </div>
@@ -218,9 +261,12 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                     <Input
                                         type="tel"
                                         name="landline_number"
-                                        placeholder="(XXX)XXX-XXXX"
+                                        placeholder="(02)123-4567"
                                         defaultValue={data?.landline_number ?? ''}
                                         readOnly={isView}
+                                        aria-label="Landline Number"
+                                        pattern="^(\(\d{2,4}\))?\d{3,4}-\d{4}$"
+                                        title="Enter a valid landline number (e.g. (02)123-4567)"
                                     />
                                     <InputError message={errors.landline_number} />
                                 </div>
@@ -305,14 +351,32 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                     value="1"
                                     defaultChecked={!!data?.data_privacy_consent}
                                     className="h-4 w-4 rounded"
+                                    aria-label="Data Privacy Consent"
                                 />
                                 <RequiredLabel>
                                     <span>Data Privacy Consent</span>
                                 </RequiredLabel>
+                                <span className="text-xs text-muted-foreground" title="Required under RA 10173 (Data Privacy Act)">[RA 10173]</span>
                                 {data?.data_privacy_consent_date && (
                                     <span className="ml-2 text-xs text-muted-foreground">({data.data_privacy_consent_date})</span>
                                 )}
                                 <InputError className="ml-2" message={errors['data_privacy_consent']} />
+                            </div>
+                            {/* Signature Consent (ISO/DOH legal compliance) */}
+                            <div className="flex items-center gap-2 mt-3">
+                                <Label htmlFor="signature_consent">Signature Consent</Label>
+                                <Input
+                                    type="text"
+                                    name="signature_consent"
+                                    id="signature_consent"
+                                    placeholder="Type your full name as e-signature"
+                                    aria-label="Signature Consent"
+                                    className="w-56"
+                                    required={!isView}
+                                    readOnly={isView}
+                                />
+                                <span className="text-xs text-muted-foreground" title="This serves as your electronic signature for legal compliance.">e-signature</span>
+                                <InputError message={errors.signature_consent} />
                             </div>
 
                             <div className="flex items-center gap-3">
