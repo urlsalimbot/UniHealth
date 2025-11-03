@@ -1,4 +1,5 @@
 import LowStockAlertCard from '@/components/low-stock-alert';
+import RecentActivityFeed from '@/components/recent-activity-feed';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PatientEncountersHeatmap from '@/components/visits-heatmap';
 import VisitsRadialChart from '@/components/visits-radial-chart';
@@ -29,6 +30,15 @@ interface DashboardStats {
     nurses?: number;
 }
 
+interface ActivityItem {
+    id: string;
+    type: 'encounter' | 'patient' | 'prescription' | 'appointment';
+    title: string;
+    description: string;
+    timestamp: string;
+    status?: 'completed' | 'pending' | 'in-progress' | 'cancelled';
+}
+
 interface DashboardProps {
     encounters?: any[];
     lowStocks?: any[];
@@ -40,6 +50,7 @@ interface DashboardProps {
     prescriptionStats?: DashboardStats;
     staffStats?: DashboardStats;
     expiringSoon?: any[];
+    recentActivities?: ActivityItem[];
     isLoading?: boolean;
     error?: string | null;
 }
@@ -63,6 +74,7 @@ export default function Dashboard() {
         prescriptionStats,
         staffStats,
         expiringSoon,
+        recentActivities,
         isLoading = false,
         error = null
     } = usePage().props as DashboardProps;
@@ -120,6 +132,7 @@ export default function Dashboard() {
                     </Card>
 
                     <Card className="relative overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border hover:shadow-lg transition-shadow duration-200">
+                        <RecentActivityFeed activities={recentActivities} />
                     </Card>
 
                     <Card className="relative overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border hover:shadow-lg transition-shadow duration-200">

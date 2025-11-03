@@ -87,12 +87,19 @@ export default function VitalSignsDashboard({ vitalSigns = [] as VitalSign[] }) 
     const [showReferenceRanges, setShowReferenceRanges] = useState(true);
 
     const filteredData = useMemo(() => {
-        return vitalSigns.filter((vs) => {
-            const date = new Date(vs.measurement_date);
-            const afterStart = !startDate || date >= new Date(startDate);
-            const beforeEnd = !endDate || date <= new Date(endDate);
-            return afterStart && beforeEnd;
-        });
+        return vitalSigns
+            .filter((vs) => {
+                const date = new Date(vs.measurement_date);
+                const afterStart = !startDate || date >= new Date(startDate);
+                const beforeEnd = !endDate || date <= new Date(endDate);
+                return afterStart && beforeEnd;
+            })
+            .sort((a, b) => {
+                // Sort by date descending (latest first)
+                const dateA = new Date(`${a.measurement_date} ${a.measurement_time}`);
+                const dateB = new Date(`${b.measurement_date} ${b.measurement_time}`);
+                return dateB.getTime() - dateA.getTime();
+            });
     }, [vitalSigns, startDate, endDate]);
 
     const chartData = useMemo(() => {
@@ -272,6 +279,21 @@ export default function VitalSignsDashboard({ vitalSigns = [] as VitalSign[] }) 
     };
 
     const latest: VitalSign | undefined = filteredData?.[0];
+    
+    // Get last available (non-null) vital signs
+    const getLastAvailable = (key: keyof VitalSign): string | undefined => {
+        for (const vs of filteredData) {
+            if (vs[key] && vs[key] !== null && vs[key] !== '' && vs[key] !== '0') {
+                return vs[key] as string;
+            }
+        }
+        return undefined;
+    };
+    
+    const lastBP = { systolic: getLastAvailable('systolic_bp'), diastolic: getLastAvailable('diastolic_bp') };
+    const lastHR = getLastAvailable('heart_rate');
+    const lastTemp = getLastAvailable('temperature');
+    const lastO2 = getLastAvailable('oxygen_saturation');
 
     if (!vitalSigns.length) {
         return (
@@ -356,99 +378,103 @@ export default function VitalSignsDashboard({ vitalSigns = [] as VitalSign[] }) 
             </Card>
 
             {/* --- Enhanced Summary Cards with Clinical Indicators --- */}
-            {latest && (
+            {(lastBP.systolic || lastHR || lastTemp || lastO2) && (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    <Card className="relative overflow-hidden">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium flex items-center gap-2">
-                                <Activity className="h-4 w-4" />
-                                Blood Pressure
-                            </CardTitle>
-                            {getTrend(parseInt(latest.systolic_bp), filteredData[1]?.systolic_bp)?.icon}
-                        </CardHeader>
-                        <CardContent>
-                            <div className={`text-2xl font-bold ${getVitalStatus(parseInt(latest.systolic_bp), 'blood_pressure').color}`}>
-                                {latest.systolic_bp}/{latest.diastolic_bp} <span className="text-sm font-normal">mmHg</span>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {getVitalStatus(parseInt(latest.systolic_bp), 'blood_pressure').status.replace('_', ' ').toUpperCase()}
-                            </p>
-                        </CardContent>
-                        {parseInt(latest.systolic_bp) > 140 && (
-                            <div className="absolute top-2 right-2">
-                                <AlertTriangle className="h-4 w-4 text-red-500" />
-                            </div>
-                        )}
-                    </Card>
+                    {lastBP.systolic && lastBP.diastolic && (
+                        <Card className="relative overflow-hidden">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                    <Activity className="h-4 w-4" />
+                                    Blood Pressure
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className={`text-2xl font-bold ${getVitalStatus(parseInt(lastBP.systolic), 'blood_pressure').color}`}>
+                                    {lastBP.systolic}/{lastBP.diastolic} <span className="text-sm font-normal">mmHg</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {getVitalStatus(parseInt(lastBP.systolic), 'blood_pressure').status.replace('_', ' ').toUpperCase()}
+                                </p>
+                            </CardContent>
+                            {parseInt(lastBP.systolic) > 140 && (
+                                <div className="absolute top-2 right-2">
+                                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                                </div>
+                            )}
+                        </Card>
+                    )}
 
-                    <Card className="relative overflow-hidden">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium flex items-center gap-2">
-                                <Heart className="h-4 w-4" />
-                                Heart Rate
-                            </CardTitle>
-                            {getTrend(parseInt(latest.heart_rate), filteredData[1]?.heart_rate)?.icon}
-                        </CardHeader>
-                        <CardContent>
-                            <div className={`text-2xl font-bold ${getVitalStatus(parseInt(latest.heart_rate), 'heart_rate').color}`}>
-                                {latest.heart_rate} <span className="text-sm font-normal">bpm</span>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {getVitalStatus(parseInt(latest.heart_rate), 'heart_rate').status.replace('_', ' ').toUpperCase()}
-                            </p>
-                        </CardContent>
-                        {(parseInt(latest.heart_rate) > 120 || parseInt(latest.heart_rate) < 50) && (
-                            <div className="absolute top-2 right-2">
-                                <AlertTriangle className="h-4 w-4 text-red-500" />
-                            </div>
-                        )}
-                    </Card>
+                    {lastHR && (
+                        <Card className="relative overflow-hidden">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                    <Heart className="h-4 w-4" />
+                                    Heart Rate
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className={`text-2xl font-bold ${getVitalStatus(parseInt(lastHR), 'heart_rate').color}`}>
+                                    {lastHR} <span className="text-sm font-normal">bpm</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {getVitalStatus(parseInt(lastHR), 'heart_rate').status.replace('_', ' ').toUpperCase()}
+                                </p>
+                            </CardContent>
+                            {(parseInt(lastHR) > 120 || parseInt(lastHR) < 50) && (
+                                <div className="absolute top-2 right-2">
+                                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                                </div>
+                            )}
+                        </Card>
+                    )}
 
-                    <Card className="relative overflow-hidden">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium flex items-center gap-2">
-                                <Thermometer className="h-4 w-4" />
-                                Temperature
-                            </CardTitle>
-                            {getTrend(parseFloat(latest.temperature), filteredData[1]?.temperature)?.icon}
-                        </CardHeader>
-                        <CardContent>
-                            <div className={`text-2xl font-bold ${getVitalStatus(parseFloat(latest.temperature), 'temperature').color}`}>
-                                {latest.temperature}°C
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {getVitalStatus(parseFloat(latest.temperature), 'temperature').status.toUpperCase()}
-                            </p>
-                        </CardContent>
-                        {parseFloat(latest.temperature) > 38.5 && (
-                            <div className="absolute top-2 right-2">
-                                <AlertTriangle className="h-4 w-4 text-red-500" />
-                            </div>
-                        )}
-                    </Card>
+                    {lastTemp && (
+                        <Card className="relative overflow-hidden">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                    <Thermometer className="h-4 w-4" />
+                                    Temperature
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className={`text-2xl font-bold ${getVitalStatus(parseFloat(lastTemp), 'temperature').color}`}>
+                                    {lastTemp}°C
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {getVitalStatus(parseFloat(lastTemp), 'temperature').status.toUpperCase()}
+                                </p>
+                            </CardContent>
+                            {parseFloat(lastTemp) > 38.5 && (
+                                <div className="absolute top-2 right-2">
+                                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                                </div>
+                            )}
+                        </Card>
+                    )}
 
-                    <Card className="relative overflow-hidden">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium flex items-center gap-2">
-                                <Droplets className="h-4 w-4" />
-                                O₂ Saturation
-                            </CardTitle>
-                            {getTrend(parseInt(latest.oxygen_saturation), filteredData[1]?.oxygen_saturation)?.icon}
-                        </CardHeader>
-                        <CardContent>
-                            <div className={`text-2xl font-bold ${getVitalStatus(parseInt(latest.oxygen_saturation), 'oxygen_saturation').color}`}>
-                                {latest.oxygen_saturation}%
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {getVitalStatus(parseInt(latest.oxygen_saturation), 'oxygen_saturation').status.replace('_', ' ').toUpperCase()}
-                            </p>
-                        </CardContent>
-                        {parseInt(latest.oxygen_saturation) < 92 && (
-                            <div className="absolute top-2 right-2">
-                                <AlertTriangle className="h-4 w-4 text-red-500" />
-                            </div>
-                        )}
-                    </Card>
+                    {lastO2 && (
+                        <Card className="relative overflow-hidden">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                                    <Droplets className="h-4 w-4" />
+                                    O₂ Saturation
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className={`text-2xl font-bold ${getVitalStatus(parseInt(lastO2), 'oxygen_saturation').color}`}>
+                                    {lastO2}%
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {getVitalStatus(parseInt(lastO2), 'oxygen_saturation').status.replace('_', ' ').toUpperCase()}
+                                </p>
+                            </CardContent>
+                            {parseInt(lastO2) < 92 && (
+                                <div className="absolute top-2 right-2">
+                                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                                </div>
+                            )}
+                        </Card>
+                    )}
                 </div>
             )}
 
@@ -549,11 +575,11 @@ export default function VitalSignsDashboard({ vitalSigns = [] as VitalSign[] }) 
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Activity className="h-5 w-5" />
-                        Vital Signs History (ISO 80601 Compliant)
+                        Vital Signs History                                                                                                                                                                                                                                             
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ScrollArea className="h-[400px]">
+                    <ScrollArea className={filteredData.length > 10 ? "h-[400px]" : "max-h-[400px]"}>
                         <Table>
                             <TableHeader className="sticky top-0 bg-background">
                                 <TableRow>

@@ -28,7 +28,10 @@ import { User, Calendar, Activity, FileText, Pill, Edit, Eye, Plus, ArrowRight }
 export default function PatientSingleView() {
     const [open, setOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const { patient, medical_encounters, latest_encounter, vitalsigns, encounterTypes } = usePage().props as any;
+    const { patient, medical_encounters, latest_encounter, vitalsigns, encounterTypes, auth } = usePage().props as any;
+    
+    // Check if current user is a patient
+    const isPatient = auth?.user?.role === 'patient';
 
     const breadcrumbs = [
         { title: 'Patients', href: '/patients' },
@@ -232,7 +235,7 @@ export default function PatientSingleView() {
                                     Medical Encounters
                                 </CardTitle>
                                 <div className="flex gap-2">
-                                    <CreateEncounterModal patient={patient} lastEncounter={latest_encounter} encounterTypes={encounterTypes} />
+                                    {!isPatient && <CreateEncounterModal patient={patient} lastEncounter={latest_encounter} encounterTypes={encounterTypes} />}
                                     <Button
                                         variant="outline"
                                         size="sm"

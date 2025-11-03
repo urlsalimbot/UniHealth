@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -31,50 +32,51 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        Log::info('Registration attempt', [
+            'email' => $request->email,
+            'has_patient_id' => $request->filled('patient_id'),
+            'patient_id' => $request->patient_id,
+        ]);
+
+        // Validate basic fields
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:staff,user',
-            'philhealth_id' => 'nullable|string',
+            'patient_id' => 'required|uuid',
         ]);
 
-        $patientId = null;
+        // Validate patient_id and lookup patient
+        $patient = Patients::where('patient_id', $request->patient_id)->first();
 
-        // Only enforce patient check if role = "user"
-        if ($request->role === User::ROLE_PTNT) {
-            $request->validate([
-                'philhealth_id' => 'required|string',
-            ]);
-
-            $patient = Patients::whereRaw('LOWER(philhealth_id) = ?', [strtolower($request->philhealth_id)])->first();
-
-            if (!$patient) {
-                return back()->withErrors([
-                    'philhealth_id' => 'No matching patient record found. Please contact the clinic.',
-                ])->onlyInput('name', 'email');
-            }
-
-            // ✅ Correct key name for your model
-            $patientId = $patient->patient_id;
+        if (!$patient) {
+            Log::warning('Patient not found', ['patient_id' => $request->patient_id]);
+            return back()->withErrors([
+                'patient_id' => 'No matching patient record found. Please verify your UHID or contact the clinic.',
+            ])->onlyInput('name', 'email');
         }
 
-        // Create user
+        Log::info('Patient found', [
+            'patient_id' => $patient->patient_id,
+            'patient_name' => $patient->first_name . ' ' . $patient->last_name,
+        ]);
+
+        // Create user with patient role
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'patient',
-            'patient_id' => $patientId,
+            'role' => User::ROLE_PTNT,
+            'patient_id' => $patient->patient_id,
         ]);
+
+        Log::info('User created successfully', ['user_id' => $user->id]);
 
         event(new Registered($user));
         Auth::login($user);
 
-        if ($patientId !== null) {
-            return redirect()->route('patients.show', $user->patient_id);
-        }
+        Log::info('User logged in, redirecting', ['patient_id' => $user->patient_id]);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('patients.show', $user->patient_id);
     }
 }

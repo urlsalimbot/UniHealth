@@ -14,10 +14,13 @@ import { Download, Eye, FileText, ImageIcon } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 export default function MedicalEncounterView() {
-    const { patient, medical_encounters, vitalsigns, flash } = usePage().props as any;
+    const { patient, medical_encounters, vitalsigns, flash, auth } = usePage().props as any;
     const [selectedEncounter, setSelectedEncounter] = useState<any>(null);
     const [open, setOpen] = useState(false);
     const [vitalsDialogOpen, setVitalsDialogOpen] = useState(false);
+    
+    // Check if current user is a patient
+    const isPatient = auth?.user?.role === 'patient';
 
     // --- Group encounters by month (descending) ---
     const encountersByMonth = useMemo(() => {
@@ -133,24 +136,26 @@ export default function MedicalEncounterView() {
                                 <div className="bg-muted/20 rounded-lg p-4">
                                     <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                         <h2 className="font-semibold text-base lg:text-lg">Vital Signs</h2>
-                                        <Dialog open={vitalsDialogOpen} onOpenChange={setVitalsDialogOpen}>
-                                            <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => setVitalsDialogOpen(true)}>
-                                                    + Add Vital Signs
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg">
-                                                <DialogHeader>
-                                                    <DialogTitle>Update Vital Signs</DialogTitle>
-                                                    <DialogDescription>Add a new vital signs reading for this medical encounter.</DialogDescription>
-                                                </DialogHeader>
-                                                <VitalSignsForm
-                                                    data={{ encounter_id: selectedEncounter.encounter_id }}
-                                                    patient={patient}
-                                                    encounter={selectedEncounter}
-                                                />
-                                            </DialogContent>
-                                        </Dialog>
+                                        {!isPatient && (
+                                            <Dialog open={vitalsDialogOpen} onOpenChange={setVitalsDialogOpen}>
+                                                <DialogTrigger asChild>
+                                                    <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => setVitalsDialogOpen(true)}>
+                                                        + Add Vital Signs
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Update Vital Signs</DialogTitle>
+                                                        <DialogDescription>Add a new vital signs reading for this medical encounter.</DialogDescription>
+                                                    </DialogHeader>
+                                                    <VitalSignsForm
+                                                        data={{ encounter_id: selectedEncounter.encounter_id }}
+                                                        patient={patient}
+                                                        encounter={selectedEncounter}
+                                                    />
+                                                </DialogContent>
+                                            </Dialog>
+                                        )}
                                     </div>
                                 </div>
                                 {/* Vital Signs */}
@@ -162,30 +167,32 @@ export default function MedicalEncounterView() {
                                 <div className="bg-muted/20 rounded-lg p-4">
                                     <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                         <h2 className="font-semibold text-base lg:text-lg">Prescriptions</h2>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline" className="w-full sm:w-auto">
-                                                    + Add Prescription
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg">
-                                                <DialogHeader>
-                                                    <DialogTitle>Add Prescription</DialogTitle>
-                                                    <DialogDescription>Add a new prescription for this medical encounter.</DialogDescription>
-                                                </DialogHeader>
+                                        {!isPatient && (
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button size="sm" variant="outline" className="w-full sm:w-auto">
+                                                        + Add Prescription
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Add Prescription</DialogTitle>
+                                                        <DialogDescription>Add a new prescription for this medical encounter.</DialogDescription>
+                                                    </DialogHeader>
 
-                                                {/* Patient Prescription Form*/}
-                                                <PatientPrescriptionForm
-                                                    data={{ encounter_id: selectedEncounter.encounter_id }}
-                                                    patient={patient}
-                                                    encounter={selectedEncounter}
-                                                    onSubmit={(e: any) => {
-                                                        e.preventDefault();
-                                                        // Handle submission logic (e.g., Inertia form post)
-                                                    }}
-                                                />
-                                            </DialogContent>
-                                        </Dialog>
+                                                    {/* Patient Prescription Form*/}
+                                                    <PatientPrescriptionForm
+                                                        data={{ encounter_id: selectedEncounter.encounter_id }}
+                                                        patient={patient}
+                                                        encounter={selectedEncounter}
+                                                        onSubmit={(e: any) => {
+                                                            e.preventDefault();
+                                                            // Handle submission logic (e.g., Inertia form post)
+                                                        }}
+                                                    />
+                                                </DialogContent>
+                                            </Dialog>
+                                        )}
                                     </div>
                                     {selectedEncounter.patient_prescriptions?.length > 0 ? (
                                         <div className="space-y-2">
@@ -208,29 +215,31 @@ export default function MedicalEncounterView() {
                                         <h2 className="font-semibold text-base lg:text-lg">Attached Documents</h2>
 
                                         {/* Upload Attachment Dialog */}
-                                        <Dialog open={open} onOpenChange={setOpen}>
-                                            <DialogTrigger asChild>
-                                                <Button size="sm" variant="outline" className="w-full sm:w-auto">
-                                                    + Upload Attachment
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent
-                                                className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg"
-                                                onInteractOutside={(e) => e.preventDefault()}
-                                                onEscapeKeyDown={(e) => e.preventDefault()}
-                                            >
-                                                <DialogHeader>
-                                                    <DialogTitle>Upload Attachment</DialogTitle>
-                                                    <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
-                                                </DialogHeader>
+                                        {!isPatient && (
+                                            <Dialog open={open} onOpenChange={setOpen}>
+                                                <DialogTrigger asChild>
+                                                    <Button size="sm" variant="outline" className="w-full sm:w-auto">
+                                                        + Upload Attachment
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent
+                                                    className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg"
+                                                    onInteractOutside={(e) => e.preventDefault()}
+                                                    onEscapeKeyDown={(e) => e.preventDefault()}
+                                                >
+                                                    <DialogHeader>
+                                                        <DialogTitle>Upload Attachment</DialogTitle>
+                                                        <DialogDescription>Add a new attachment for this medical encounter.</DialogDescription>
+                                                    </DialogHeader>
 
-                                                <AttachmentUploadForm
-                                                    patient={patient}
-                                                    encounter={selectedEncounter}
-                                                    onSuccess={() => setOpen(false)} // ✅ Close dialog only after success
-                                                />
-                                            </DialogContent>
-                                        </Dialog>
+                                                    <AttachmentUploadForm
+                                                        patient={patient}
+                                                        encounter={selectedEncounter}
+                                                        onSuccess={() => setOpen(false)} // ✅ Close dialog only after success
+                                                    />
+                                                </DialogContent>
+                                            </Dialog>
+                                        )}
                                     </div>
 
                                     {selectedEncounter.attachments?.length > 0 ? (

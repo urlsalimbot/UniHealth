@@ -44,6 +44,7 @@ class AdminDashboardController extends Controller
                 'prescriptionStats' => $this->getPrescriptionStats(),
                 'staffStats' => $this->getStaffStats(),
                 'expiringSoon' => $this->getExpiringMedications(),
+                'recentActivities' => $this->getRecentActivities(),
             ];
         });
 
@@ -287,6 +288,100 @@ class AdminDashboardController extends Controller
                     'current_stock' => $item->current_stock,
                 ];
             });
+    }
+
+    /**
+     * Get recent activities from various sources
+     */
+    private function getRecentActivities()
+    {
+        $activities = collect();
+
+        // Get recent encounters (last 24 hours)
+        $recentEncounters = MedicalEncounters::with(['patient'])
+            ->where('created_at', '>=', now()->subHours(24))
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($encounter) {
+                return [
+                    'id' => $encounter->encounter_id,
+                    'type' => 'encounter',
+                    'title' => 'New Patient Encounter',
+                    'description' => ($encounter->encounter_type ?? 'Consultation') . ' - ' . 
+                                   ($encounter->patient->first_name ?? 'Patient') . ' ' . 
+                                   ($encounter->patient->last_name ?? ''),
+                    'timestamp' => $encounter->created_at->toISOString(),
+                    'status' => $encounter->encounter_status ?? 'completed',
+                ];
+            });
+
+        // Get recent patient registrations (last 24 hours)
+        $recentPatients = Patients::where('created_at', '>=', now()->subHours(24))
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($patient) {
+                return [
+                    'id' => $patient->patient_id,
+                    'type' => 'patient',
+                    'title' => 'New Patient Registration',
+                    'description' => ($patient->first_name ?? '') . ' ' . 
+                                   ($patient->last_name ?? '') . ' registered as a new patient',
+                    'timestamp' => $patient->created_at->toISOString(),
+                    'status' => 'completed',
+                ];
+            });
+
+        // Get recent prescriptions (last 24 hours)
+        $recentPrescriptions = PatientPrescriptions::with(['patient', 'medication'])
+            ->where('created_at', '>=', now()->subHours(24))
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($prescription) {
+                return [
+                    'id' => $prescription->prescription_id,
+                    'type' => 'prescription',
+                    'title' => 'Prescription Issued',
+                    'description' => ($prescription->medication->generic_name ?? 'Medication') . ' prescribed for ' .
+                                   ($prescription->patient->first_name ?? 'Patient') . ' ' .
+                                   ($prescription->patient->last_name ?? ''),
+                    'timestamp' => $prescription->created_at->toISOString(),
+                    'status' => strtolower($prescription->prescription_status ?? 'completed'),
+                ];
+            });
+
+        // Get recent vital signs (last 24 hours)
+        $recentVitals = VitalSigns::with(['patient'])
+            ->where('created_at', '>=', now()->subHours(24))
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($vital) {
+                return [
+                    'id' => $vital->vital_sign_id,
+                    'type' => 'encounter',
+                    'title' => 'Vital Signs Recorded',
+                    'description' => 'Vital signs updated for ' .
+                                   ($vital->patient->first_name ?? 'Patient') . ' ' .
+                                   ($vital->patient->last_name ?? ''),
+                    'timestamp' => $vital->created_at->toISOString(),
+                    'status' => 'completed',
+                ];
+            });
+
+        // Merge all activities and sort by timestamp
+        $activities = $activities
+            ->merge($recentEncounters)
+            ->merge($recentPatients)
+            ->merge($recentPrescriptions)
+            ->merge($recentVitals)
+            ->sortByDesc('timestamp')
+            ->take(10)
+            ->values();
+
+        return $activities;
     }
 
     /**

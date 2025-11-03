@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
+import patients from '@/routes/patients';
 import { BreadcrumbItem } from '@/types';
 import { Head, router, usePage } from '@inertiajs/react';
 
@@ -24,6 +25,9 @@ export default function ShowUser() {
         { title: user.name, href: admin.users.show.url(user.id) },
     ];
 
+    const isPatient = user.role === 'patient';
+
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`User: ${user.name}`} />
@@ -33,6 +37,9 @@ export default function ShowUser() {
                     <CardHeader className="flex items-center justify-between">
                         <CardTitle className="text-xl font-semibold">User Details</CardTitle>
                         <div className="space-x-2">
+     {isPatient && <Button onClick={() => {router.visit(patients.show.url(user.patient_id))}}>
+                        View Patient Record
+                    </Button>}
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="destructive">Delete</Button>
