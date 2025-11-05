@@ -88,7 +88,7 @@ export default function Patients() {
                         <div>
                             <h1 className="text-xl font-semibold">Patients Management</h1>
                             <p className="text-sm text-muted-foreground">
-                                {patient?.total || 0} total patients • ISO 80601 compliant
+                                {patient?.total || 0} total patients
                             </p>
                         </div>
                     </div>
@@ -124,7 +124,7 @@ export default function Patients() {
                                 </div>
                             </DialogContent>
                         </Dialog>
-
+{/* 
                         <Button 
                             onClick={() => router.post(patients.invite.url())}
                             size="sm"
@@ -134,13 +134,13 @@ export default function Patients() {
                             <span className="hidden sm:inline">Invite Patient</span>
                             <span className="sm:hidden">Invite</span>
                         </Button>
-
+ */}
 
                     </div>
                 </div>
 
                 {/* --- Advanced Filters (Optional) --- */}
-                <Card className="border-dashed">
+                {/* <Card className="border-dashed">
                     <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                             <Button
@@ -232,7 +232,7 @@ export default function Patients() {
                             </div>
                         )}
                     </CardContent>
-                </Card>
+                </Card> */}
 
                 {/* --- Main Data Table --- */}
                 <Card className="flex-1 overflow-hidden">
