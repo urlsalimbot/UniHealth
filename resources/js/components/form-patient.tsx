@@ -85,7 +85,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                         <SelectContent>
                                             <SelectItem value="Male">Male</SelectItem>
                                             <SelectItem value="Female">Female</SelectItem>
-                                            <SelectItem value="other">Other</SelectItem>
+                                            {/* <SelectItem value="Other">Other</SelectItem> */}
                                         </SelectContent>
                                     </Select>
                                     <InputError message={errors.gender} />
@@ -137,7 +137,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                     <InputError message={errors.religion} />
                                 </div>
 
-                                {/* is_active */}
+                                {/* is_active
                                 <div className="space-y-1 flex items-center gap-2">
                                     <Label htmlFor="is_active">Active</Label>
                                     <Input
@@ -149,7 +149,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                         aria-label="Active"
                                         className="h-4 w-4 rounded"
                                     />
-                                </div>
+                                </div> */}
                             </CardContent>
 
                             {/* --- End ISO/PH additions --- */}
@@ -256,20 +256,7 @@ export default function PatientForm({ data = null, mode = 'create', ...Actions }
                                     <InputError message={errors.mobile_number} />
                                 </div>
 
-                                <div>
-                                    <RequiredLabel>Landline Number</RequiredLabel>
-                                    <Input
-                                        type="tel"
-                                        name="landline_number"
-                                        placeholder="(02)123-4567"
-                                        defaultValue={data?.landline_number ?? ''}
-                                        readOnly={isView}
-                                        aria-label="Landline Number"
-                                        pattern="^(\(\d{2,4}\))?\d{3,4}-\d{4}$"
-                                        title="Enter a valid landline number (e.g. (02)123-4567)"
-                                    />
-                                    <InputError message={errors.landline_number} />
-                                </div>
+
                             </CardContent>
                         </Card>
 
